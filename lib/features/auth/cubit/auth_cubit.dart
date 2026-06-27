@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:green_mind/features/auth/model/user_model/user_model.dart';
+import 'package:green_mind/global/dio/exceptions.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 import 'package:green_mind/features/auth/model/sign_in_post_model/sign_in_post_model.dart';
@@ -11,7 +12,6 @@ import 'package:green_mind/features/auth/service/auth_service.dart';
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart';
 import 'package:green_mind/global/blocs/internet_connection/cubit/internet_connection_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
-import 'package:green_mind/global/dio/app_interceptor.dart';
 
 part 'states/auth_state.dart';
 part 'states/sign_in_state.dart';
@@ -28,7 +28,6 @@ class AuthCubit extends Cubit<AuthState> {
   SignUpPostModel signUpPostModel = const SignUpPostModel();
   // VerifyModel verifyModel = const VerifyModel();
   // ResetPasswordModel resetPasswordModel = const ResetPasswordModel();
-
 
   void setEmail(String email) {
     signInPostModel = signInPostModel.copyWith(email: () => email);

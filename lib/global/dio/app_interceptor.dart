@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/dio/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:green_mind/global/utils/logger.dart';
 
@@ -47,60 +47,5 @@ class AppInterceptor extends Interceptor {
       error: err.error,
       requestOptions: err.requestOptions,
     );
-  }
-}
-
-class UnauthorizedException extends DioException {
-  UnauthorizedException(RequestOptions requestOptions)
-    : super(requestOptions: requestOptions);
-
-  @override
-  String toString() {
-    return "unauthorized".tr();
-  }
-}
-
-class DeadlineExceededException extends DioException {
-  DeadlineExceededException(RequestOptions requestOptions)
-    : super(requestOptions: requestOptions);
-
-  @override
-  String toString() {
-    return "connection_out".tr();
-  }
-}
-
-class BadRequestException extends DioException {
-  BadRequestException({
-    required super.requestOptions,
-    required super.response,
-    super.message,
-  });
-
-  @override
-  String toString() {
-    return response?.data["message"] ?? "invalid_request".tr();
-  }
-}
-
-class CustomDioException extends DioException {
-  CustomDioException({
-    required super.requestOptions,
-    required super.response,
-    super.error,
-    super.type,
-    super.message,
-  });
-
-  @override
-  String toString() {
-    try {
-      return response?.data?["message"]?.toString() ??
-          response?.data ??
-          error?.toString() ??
-          "something_went_wrong".tr();
-    } catch (e) {
-      return "something_went_wrong".tr();
-    }
   }
 }

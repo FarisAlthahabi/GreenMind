@@ -39,11 +39,9 @@ class AuthManagerBloc extends Bloc<AuthManagerEvent, GeneralAuthManagerState> {
     SignInRequested event,
     Emitter<GeneralAuthManagerState> emit,
   ) async {
-    // await prefs.setString("user", event.signInModel.user.toString());
     await prefs.setString("user", event.user.toString());
     event.onSuccess?.call();
     emit(AuthenticatedState(event.user));
-    // emit(AuthenticatedState(event.signInModel.user));
   }
 
   Future<void> _signOut(
