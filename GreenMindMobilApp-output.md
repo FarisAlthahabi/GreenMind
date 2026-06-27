@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `GreenMindMobilApp`
-- **Generated On**: 2026-06-27 10:05:55 (Asia/Damascus / GMT+03:00)
+- **Generated On**: 2026-06-27 10:19:19 (Asia/Damascus / GMT+03:00)
 - **Total Files Processed**: 201
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -329,7 +329,7 @@
 │   └── 📄 CMakeLists.txt (4.16 KB)
 ├── 📄 analysis_options.yaml (1.41 KB)
 ├── 📄 pubspec.lock (37.69 KB)
-├── 📄 pubspec.yaml (2.1 KB)
+├── 📄 pubspec.yaml (2.23 KB)
 └── 📄 README.md (569 B)
 ```
 
@@ -4143,9 +4143,9 @@ linter:
 - **Location**: `pubspec.lock`
 - **Relative Path**: `root`
 - **Created**: 2026-06-27 08:52:47 (Asia/Damascus / GMT+03:00)
-- **Modified**: 2026-06-27 10:05:14 (Asia/Damascus / GMT+03:00)
-- **MD5**: `a60eb2296a4455617f0dc59d9dbbba8c`
-- **SHA256**: `01670515c2cb627a9dc057f02124a9f147679f14cbc550203b7dd79363c187cd`
+- **Modified**: 2026-06-27 10:19:05 (Asia/Damascus / GMT+03:00)
+- **MD5**: `f6117edb376aeef3dc6b889e780a4540`
+- **SHA256**: `cbc39bec9bcb73ef9ef1447385cddee4bcaf66981872b1465d16b781fb973e04`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -4536,7 +4536,7 @@ packages:
     source: hosted
     version: "5.14.1"
   flutter_gen_runner:
-    dependency: "direct main"
+    dependency: "direct dev"
     description:
       name: flutter_gen_runner
       sha256: db00922dd5f4c1aa33aeab7f74117f1cd224e7a1e8bea1e312b8d09b8101a909
@@ -5430,15 +5430,15 @@ sdks:
 ### <a id="📄-pubspec-yaml"></a>📄 `pubspec.yaml`
 
 **File Info:**
-- **Size**: 2.1 KB
+- **Size**: 2.23 KB
 - **Extension**: `.yaml`
 - **Language**: `yaml`
 - **Location**: `pubspec.yaml`
 - **Relative Path**: `root`
 - **Created**: 2026-06-27 08:52:47 (Asia/Damascus / GMT+03:00)
-- **Modified**: 2026-06-27 10:05:52 (Asia/Damascus / GMT+03:00)
-- **MD5**: `023a55ec5d70150bbf455475ce190d25`
-- **SHA256**: `a95f28d4aba3b1e117a51a5ddc58798315dd90f17592c86820bf31f0e6582a74`
+- **Modified**: 2026-06-27 10:19:18 (Asia/Damascus / GMT+03:00)
+- **MD5**: `8b18796f65f01cd0790614476ecaa2eb`
+- **SHA256**: `f9975bd1dec235bd72705895e4bed61478a0ff6e43cd682bcfef958a7230ba3c`
 - **Encoding**: ASCII
 
 **File code content:**
@@ -5478,7 +5478,6 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   another_flushbar: ^2.2.4
   connectivity_plus: ^7.1.1
-  flutter_gen_runner: ^5.14.1
 
 dev_dependencies:
   flutter_test:
@@ -5486,6 +5485,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.15.0
   json_serializable: ^6.14.0
+  flutter_gen_runner: ^5.14.1
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -5526,6 +5526,12 @@ flutter:
 scripts:
   build: dart run build_runner build --delete-conflicting-outputs
   watch: dart run build_runner watch --delete-conflicting-outputs
+
+flutter_assets:
+  assets_path: assets/images/
+  output_path: lib/global/utils
+  filename: app_images.dart
+  field_prefix:
 
 ```
 

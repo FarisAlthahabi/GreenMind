@@ -32,7 +32,6 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   another_flushbar: ^2.2.4
   connectivity_plus: ^7.1.1
-  flutter_gen_runner: ^5.14.1
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +39,7 @@ dev_dependencies:
   flutter_lints: ^6.0.0
   build_runner: ^2.15.0
   json_serializable: ^6.14.0
+  flutter_gen_runner: ^5.14.1
 
 flutter_launcher_icons:
   android: "launcher_icon"
@@ -80,3 +80,9 @@ flutter:
 scripts:
   build: dart run build_runner build --delete-conflicting-outputs
   watch: dart run build_runner watch --delete-conflicting-outputs
+
+flutter_assets:
+  assets_path: assets/images/
+  output_path: lib/global/utils
+  filename: app_images.dart
+  field_prefix:
