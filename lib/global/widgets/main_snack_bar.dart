@@ -1,6 +1,5 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
 abstract class MainSnackBar {
@@ -10,10 +9,13 @@ abstract class MainSnackBar {
     Color? color,
     Duration? duration,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     _showSnackBar(
       context,
       message,
-      backgroundColor: color ?? AppColors.green,
+      backgroundColor: color ?? colorScheme.primary,
       icon: Icons.check_circle,
       duration: duration,
     );
@@ -25,10 +27,13 @@ abstract class MainSnackBar {
     Color? color,
     Duration? duration,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     _showSnackBar(
       context,
       message,
-      backgroundColor: color ?? Colors.blueGrey.shade200,
+      backgroundColor: color ?? colorScheme.secondaryContainer,
       icon: Icons.info,
       duration: duration,
     );
@@ -40,10 +45,13 @@ abstract class MainSnackBar {
     Color? color,
     Duration? duration,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     _showSnackBar(
       context,
       message,
-      backgroundColor: color ?? AppColors.red,
+      backgroundColor: color ?? colorScheme.error,
       icon: Icons.error,
       duration: duration,
     );
@@ -56,6 +64,9 @@ abstract class MainSnackBar {
     required IconData icon,
     Duration? duration,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
     Flushbar(
       shouldIconPulse: true,
       onTap: (flushbar) => flushbar.dismiss(),
@@ -64,8 +75,13 @@ abstract class MainSnackBar {
       backgroundColor: backgroundColor,
       duration: duration ?? AppConstants.duration1500ms,
       flushbarPosition: FlushbarPosition.TOP,
-      icon: Icon(icon, color: AppColors.white),
-      messageText: Text(message),
+      icon: Icon(icon, color: colorScheme.onPrimary),
+      messageText: Text(
+        message,
+        style: theme.textTheme.bodyLarge?.copyWith(
+          color: colorScheme.onPrimary,
+        ),
+      ),
     ).show(context);
   }
 }

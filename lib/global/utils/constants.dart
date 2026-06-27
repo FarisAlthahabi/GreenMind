@@ -122,6 +122,4 @@ abstract class AppConstants {
   static const padding2 = EdgeInsets.all(2);
   static const padding1 = EdgeInsets.all(1);
   static const padding0 = EdgeInsets.zero;
-
-  static const appLogo = "assets/images/app_logo.png";
 }

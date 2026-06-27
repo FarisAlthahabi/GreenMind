@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
+import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 
@@ -53,7 +53,7 @@ class _MainActionButtonState extends State<MainActionButton> {
   late Widget textWidget = Text(
     widget.text,
     style: TextStyle(
-      color: widget.textColor ?? AppColors.whiteShade,
+      color: widget.textColor ?? context.cs.secondary,
       height: 1.19,
       fontSize: widget.fontSize ?? 20,
       fontWeight: widget.fontWeight,
@@ -76,7 +76,7 @@ class _MainActionButtonState extends State<MainActionButton> {
         padding: widget.padding ?? AppConstants.paddingH36V8,
         decoration: BoxDecoration(
           border: widget.border,
-          color: widget.buttonColor ?? AppColors.mainColor,
+          color: widget.buttonColor ?? context.cs.primary,
           borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
           boxShadow: widget.shadow,
         ),

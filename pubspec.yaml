@@ -32,12 +32,15 @@ dependencies:
   flutter_launcher_icons: ^0.14.4
   another_flushbar: ^2.2.4
   connectivity_plus: ^7.1.1
+  flutter_svg: ^2.3.0
+  flutter_gen: ^5.14.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
   build_runner: ^2.15.0
+  flutter_gen_runner:
   json_serializable: ^6.14.0
 
 
@@ -45,10 +48,16 @@ flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
   remove_alpha_ios: true
-  image_path: "assets/images/app_logo.png"
+  image_path: "assets/images/green_mind_png.png"
   background_color: "#FFFFFF"
   android_adaptive_icon_background: "#FFFFFF"
   min_sdk_android: 21 # android min sdk min:16, default 21  
+
+flutter_gen:
+  output: lib/global/gen/
+
+  integrations:
+    flutter_svg: true
 
 flutter:
   uses-material-design: true
@@ -57,26 +66,27 @@ flutter:
     - assets/images/
     - assets/locales/
 
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/to/font-from-package
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Cairo-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Cairo-ExtraLight.ttf
+          weight: 200
+        - asset: assets/fonts/Cairo-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Cairo-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Cairo-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Cairo-ExtraBold.ttf
+          weight: 800
+        - asset: assets/fonts/Cairo-Black.ttf
+          weight: 900
 
 scripts:
   build: dart run build_runner build --delete-conflicting-outputs
   watch: dart run build_runner watch --delete-conflicting-outputs    
+  buildlogo: dart run flutter_launcher_icons

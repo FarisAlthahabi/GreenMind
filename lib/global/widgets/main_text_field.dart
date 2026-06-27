@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
+import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
 class MainTextField extends StatefulWidget {
@@ -21,11 +21,8 @@ class MainTextField extends StatefulWidget {
     this.suffixIcon,
     this.obscureText = false,
     this.controller,
-    this.textColor = AppColors.black,
-    this.floatingLabelColor,
     this.hintStyle,
     this.borderRadius,
-    this.borderColor = AppColors.whiteShade,
     this.borderWidth = 1,
     this.outlineInputBorder,
     this.fillColor,
@@ -35,14 +32,12 @@ class MainTextField extends StatefulWidget {
     this.title,
     this.subTitle,
     this.prefixIcon,
-    this.hintColor,
     this.validator,
     this.maxLines,
     this.minLines = 1,
     this.titleSize = 20,
     this.titlePadding = AppConstants.padding0,
     this.titleHeight = 10,
-    this.titleColor = AppColors.greyShade3,
     this.boxShadow = const [],
   });
 
@@ -64,16 +59,9 @@ class MainTextField extends StatefulWidget {
   final Widget? prefixIcon;
   final bool obscureText;
   final TextEditingController? controller;
-  final Color textColor;
-  final Color? floatingLabelColor;
-  final Color borderColor;
-  final double borderWidth;
-  final Color? fillColor;
   final TextStyle? hintStyle;
-  final Color? hintColor;
-  final BorderRadius? borderRadius;
-  final InputBorder? outlineInputBorder;
-  final bool? filled;
+  final Color? fillColor;
+  final bool filled;
   final VoidCallback? onClearTap;
   final bool? showCloseIcon;
   final String? Function(String?)? validator;
@@ -82,15 +70,16 @@ class MainTextField extends StatefulWidget {
   final double titleSize;
   final EdgeInsets titlePadding;
   final double titleHeight;
-  final Color titleColor;
   final List<BoxShadow> boxShadow;
+  final BorderRadius? borderRadius;
+  final double borderWidth;
+  final InputBorder? outlineInputBorder;
 
   @override
   State<MainTextField> createState() => _MainTextFieldState();
 }
 
 class _MainTextFieldState extends State<MainTextField> {
-  late Color? floatingLabelColor = widget.floatingLabelColor;
   late TextEditingController _controller;
 
   @override
@@ -107,6 +96,7 @@ class _MainTextFieldState extends State<MainTextField> {
     final showCloseIcon = widget.showCloseIcon ?? true;
     final title = widget.title;
     final subTitle = widget.subTitle;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,20 +106,27 @@ class _MainTextFieldState extends State<MainTextField> {
             padding: widget.titlePadding,
             child: Text(
               title,
-              style: TextStyle(
+              style: context.tt.titleLarge?.copyWith(
                 fontSize: widget.titleSize,
                 fontWeight: FontWeight.w700,
-                color: widget.titleColor,
+                color: context.cs.onSurface,
               ),
             ),
           ),
           if (subTitle == null) SizedBox(height: widget.titleHeight),
         ],
         if (subTitle != null) ...[
-          Padding(padding: widget.titlePadding, child: Text(subTitle)),
+          Padding(
+            padding: widget.titlePadding,
+            child: Text(
+              subTitle,
+              style: context.tt.bodyMedium?.copyWith(
+                color: context.cs.onSurfaceVariant,
+              ),
+            ),
+          ),
           SizedBox(height: widget.titleHeight),
         ],
-
         DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
@@ -150,40 +147,46 @@ class _MainTextFieldState extends State<MainTextField> {
             focusNode: widget.focusNode,
             keyboardType: widget.textInputType ?? TextInputType.name,
             inputFormatters: widget.inputFormatters,
-            cursorColor: widget.textColor,
-            style: TextStyle(color: widget.textColor),
+            cursorColor: context.cs.primary,
+            style: context.tt.bodyLarge?.copyWith(color: context.cs.onSurface),
             decoration: InputDecoration(
               contentPadding: widget.padding ?? AppConstants.padding16,
               labelText: widget.labelText,
-              floatingLabelStyle: TextStyle(
+              floatingLabelStyle: context.tt.bodyMedium?.copyWith(
                 color: widget.errorText == null
-                    ? floatingLabelColor ?? AppColors.black
-                    : AppColors.red,
+                    ? context.cs.primary
+                    : context.cs.error,
               ),
-              labelStyle: TextStyle(
+              labelStyle: context.tt.bodyMedium?.copyWith(
                 color: widget.errorText == null
-                    ? AppColors.grey
-                    : AppColors.red,
+                    ? context.cs.onSurfaceVariant
+                    : context.cs.error,
                 fontSize: 14,
               ),
               alignLabelWithHint: true,
               hintText: widget.hintText,
               hintStyle:
                   widget.hintStyle ??
-                  TextStyle(
+                  context.tt.bodyLarge?.copyWith(
                     fontSize: 16,
-                    color: widget.hintColor ?? AppColors.greyShade,
+                    color: context.cs.onSurfaceVariant.withOpacity(0.6),
                   ),
-              errorStyle: const TextStyle(fontSize: 16, color: AppColors.red),
+              errorStyle: context.tt.bodyMedium?.copyWith(
+                fontSize: 16,
+                color: context.cs.error,
+              ),
               errorText: widget.errorText,
-              border: widget.outlineInputBorder ?? outlineInputBorder(),
-              focusedBorder: widget.outlineInputBorder ?? outlineInputBorder(),
-              enabledBorder: widget.outlineInputBorder ?? outlineInputBorder(),
+              border: widget.outlineInputBorder ?? _outlineInputBorder(context),
+              focusedBorder:
+                  widget.outlineInputBorder ??
+                  _outlineInputBorder(context, isFocused: true),
+              enabledBorder:
+                  widget.outlineInputBorder ?? _outlineInputBorder(context),
               suffixIcon: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  ?suffixIcon,
+                  if (suffixIcon != null) suffixIcon,
                   if (_controller.text.isNotEmpty && showCloseIcon)
                     InkWell(
                       onTap: () {
@@ -192,7 +195,10 @@ class _MainTextFieldState extends State<MainTextField> {
                         widget.onClearTap?.call();
                         setState(() {});
                       },
-                      child: const Icon(Icons.close, color: AppColors.grey),
+                      child: Icon(
+                        Icons.close,
+                        color: context.cs.onSurfaceVariant,
+                      ),
                     ),
                   if (!widget.readOnly &&
                       _controller.text.isNotEmpty &&
@@ -201,7 +207,7 @@ class _MainTextFieldState extends State<MainTextField> {
                 ],
               ),
               prefixIcon: prefixIcon,
-              fillColor: widget.fillColor ?? AppColors.whiteShade,
+              fillColor: widget.fillColor ?? context.cs.surfaceVariant,
               filled: widget.filled,
             ),
             validator: widget.validator,
@@ -211,12 +217,19 @@ class _MainTextFieldState extends State<MainTextField> {
     );
   }
 
-  OutlineInputBorder outlineInputBorder() {
+  InputBorder _outlineInputBorder(
+    BuildContext context, {
+    bool isFocused = false,
+  }) {
     return OutlineInputBorder(
       borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
       borderSide: BorderSide(
-        color: widget.borderColor,
-        width: widget.borderWidth,
+        color: isFocused
+            ? context.cs.primary
+            : widget.errorText != null
+            ? context.cs.error
+            : context.cs.outlineVariant,
+        width: isFocused ? 2 : widget.borderWidth,
       ),
     );
   }

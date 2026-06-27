@@ -3,8 +3,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart';
+import 'package:green_mind/global/gen/assets.gen.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
+import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
@@ -67,6 +68,7 @@ class _SignInPageState extends State<SignInPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: context.cs.background,
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: AppConstants.padding30,
@@ -77,76 +79,58 @@ class _SignInPageState extends State<SignInPage>
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 40),
-              _buildImage(),
-              _buildTitle(),
+              _buildImage(context),
+              _buildTitle(context),
               const SizedBox(height: 40),
-              _buildEmailTextField(),
+              _buildEmailTextField(context),
               const SizedBox(height: 5),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildPasswordTextField(),
-                  _buildForgetPasswordButton(),
+                  _buildPasswordTextField(context),
+                  _buildForgetPasswordButton(context),
                 ],
               ),
               const SizedBox(height: 20),
               _buildMainActionButton(),
               const SizedBox(height: 20),
-              _buildOrText(),
+              _buildOrText(context),
               // const SizedBox(height: 20),
               // _buildAnotherLoginTypes(),
               const SizedBox(height: 20),
-              _buildGoSignUp(),
+              _buildGoSignUp(context),
               const SizedBox(height: 60),
             ],
           ),
         ),
       ),
     );
-    // return MainAuthTile(
-    //   child: Form(
-    //     key: _formKey,
-    //     child: Column(
-    //       spacing: 5,
-    //       crossAxisAlignment: CrossAxisAlignment.center,
-    //       children: [
-    //         const SizedBox(height: 20),
-    //         _buildImage(),
-    //         _buildTitle(),
-    //         const SizedBox(height: 40),
-    //         _buildEmailTextField(),
-    //         const SizedBox(height: 5),
-    //         _buildPasswordTextField(),
-    //         const SizedBox(height: 20),
-    //         _buildMainActionButton(),
-    //         _buildForgetPasswordButton(),
-    //         const SizedBox(height: 20),
-    //         //_buildGoSignUp(),
-    //         const SizedBox(height: 60),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
-  Widget _buildImage() {
-    return Image.asset(AppConstants.appLogo, width: 150, height: 150);
+  Widget _buildImage(BuildContext context) {
+    return Assets.images.greenMindPng.image(
+      width: 150,
+      height: 150,
+      color: context.cs.primary,
+    );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(BuildContext context) {
     return Text(
       "sign_in".tr(),
-      style: const TextStyle(
-        fontSize: 24,
-        color: AppColors.blackShade2,
+      style: context.tt.headlineMedium?.copyWith(
+        color: context.cs.onSurface,
         fontWeight: FontWeight.bold,
       ),
     );
   }
 
-  Widget _buildEmailTextField() {
+  Widget _buildEmailTextField(BuildContext context) {
     return MainTextField(
-      prefixIcon: const Icon(Icons.email_outlined, color: AppColors.black),
+      prefixIcon: Icon(
+        Icons.email_outlined,
+        color: context.cs.onSurfaceVariant,
+      ),
       hintText: "email".tr(),
       onChanged: authCubit.setEmail,
       textInputType: TextInputType.emailAddress,
@@ -154,12 +138,12 @@ class _SignInPageState extends State<SignInPage>
     );
   }
 
-  Widget _buildPasswordTextField() {
+  Widget _buildPasswordTextField(BuildContext context) {
     return MainTextField(
       obscureText: isObsecurePassword,
       hintText: "password".tr(),
       onChanged: authCubit.setPassword,
-      prefixIcon: const Icon(Icons.lock_outline, color: AppColors.black),
+      prefixIcon: Icon(Icons.lock_outline, color: context.cs.onSurfaceVariant),
       validator: (val) => Utils.validateInput(val, InputTextType.password),
       maxLines: 1,
       suffixIcon: IconButton(
@@ -167,7 +151,7 @@ class _SignInPageState extends State<SignInPage>
           isObsecurePassword
               ? Icons.visibility_outlined
               : Icons.visibility_off_outlined,
-          color: AppColors.black,
+          color: context.cs.onSurfaceVariant,
         ),
         onPressed: onShowPassword,
       ),
@@ -190,11 +174,6 @@ class _SignInPageState extends State<SignInPage>
         }
       },
       builder: (context, state) {
-        // return MainActionButton(
-        //   onPressed: onSignInTap,
-        //   text: "sign_in".tr(),
-        //   isLoading: state is SignInLoading,
-        // );
         return Padding(
           padding: AppConstants.paddingH40,
           child: MainActionButton(
@@ -208,21 +187,24 @@ class _SignInPageState extends State<SignInPage>
     );
   }
 
-  Widget _buildForgetPasswordButton() {
+  Widget _buildForgetPasswordButton(BuildContext context) {
     return TextButton(
       onPressed: onForgetPasswordTap,
       child: Text(
         "نسيت كلمة المرور؟",
-        style: TextStyle(color: AppColors.mainColor, fontSize: 14),
+        style: context.tt.bodyMedium?.copyWith(
+          color: context.cs.primary,
+          fontSize: 14,
+        ),
       ),
     );
   }
 
-  Widget _buildOrText() {
+  Widget _buildOrText(BuildContext context) {
     return Text(
       "or".tr(),
-      style: const TextStyle(
-        color: Color(0xFF1E1E1E),
+      style: context.tt.bodyMedium?.copyWith(
+        color: context.cs.onSurfaceVariant,
         fontSize: 14,
         fontFamily: "Alkatra",
       ),
@@ -239,18 +221,27 @@ class _SignInPageState extends State<SignInPage>
   //   );
   // }
 
-  Widget _buildGoSignUp() {
+  Widget _buildGoSignUp(BuildContext context) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("not_have_account".tr()),
+          Text(
+            "not_have_account".tr(),
+            style: context.tt.bodyMedium?.copyWith(
+              color: context.cs.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(width: 4),
           GestureDetector(
             onTap: onGoToSignUp,
             child: Text(
               "sign_up".tr(),
-              style: TextStyle(color: AppColors.mainColor),
+              style: context.tt.bodyMedium?.copyWith(
+                color: context.cs.primary,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
