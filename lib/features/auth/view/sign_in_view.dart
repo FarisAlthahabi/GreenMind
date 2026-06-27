@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/utils/app_colors.dart';
+import 'package:green_mind/global/utils/app_images.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
@@ -130,7 +131,7 @@ class _SignInPageState extends State<SignInPage>
   }
 
   Widget _buildImage() {
-    return Image.asset(AppConstants.appLogo, width: 150, height: 150);
+    return Image.asset(Assets.imagesPngGreenMindPng, width: 150, height: 150);
   }
 
   Widget _buildTitle() {

@@ -5,8 +5,8 @@ PROJECT EXPORT FOR LLMs
 PROJECT INFORMATION:
 --------------------------------------------------
 Project Name: GreenMindMobilApp
-Generated On: 2026-06-27 10:19:19 (Asia/Damascus / GMT+03:00)
-Total Files Processed: 201
+Generated On: 2026-06-27 11:14:56 (Asia/Damascus / GMT+03:00)
+Total Files Processed: 205
 Export Tool: Easy Whole Project to Single Text File for LLMs v1.1.0
 Tool Author: Jota / José Guilherme Pandolfi
 
@@ -63,10 +63,13 @@ PROJECT STRUCTURE
 │   │   └── 📄 build.gradle.kts (1.4 KB)
 │   ├── 📁 gradle/
 │   │   └── 📁 wrapper/
+│   │       ├── 📄 gradle-wrapper.jar (52.38 KB)
 │   │       └── 📄 gradle-wrapper.properties (206 B)
 │   ├── 📄 build.gradle.kts (561 B)
-│   ├── 📄 gradle.properties (140 B)
-│   ├── 📄 local.properties (101 B)
+│   ├── 📄 gradle.properties (320 B)
+│   ├── 📄 gradlew (4.85 KB)
+│   ├── 📄 gradlew.bat (2.35 KB)
+│   ├── 📄 local.properties (173 B)
 │   └── 📄 settings.gradle.kts (798 B)
 ├── 📁 assets/
 │   ├── 📁 images/
@@ -178,8 +181,8 @@ PROJECT STRUCTURE
 │   │   │       ├── 📄 auth_router.dart (542 B)
 │   │   │       ├── 📄 forget_password_view.dart (6.3 KB)
 │   │   │       ├── 📄 reset_password_view.dart (6.94 KB)
-│   │   │       ├── 📄 sign_in_view.dart (7.5 KB)
-│   │   │       ├── 📄 sign_up_view.dart (8.44 KB)
+│   │   │       ├── 📄 sign_in_view.dart (7.57 KB)
+│   │   │       ├── 📄 sign_up_view.dart (8.5 KB)
 │   │   │       └── 📄 verify_view.dart (9.92 KB)
 │   │   ├── 📁 auth_manager/
 │   │   │   ├── 📁 bloc/
@@ -190,7 +193,8 @@ PROJECT STRUCTURE
 │   │   │       └── 📄 auth_manager_view.dart (1.13 KB)
 │   │   └── 📁 splash/
 │   │       └── 📁 view/
-│   │           └── 📄 splash_view.dart (1.09 KB)
+│   │           └── 📄 splash_view.dart (1.15 KB)
+│   ├── 📁 gen/
 │   ├── 📁 global/
 │   │   ├── 📁 blocs/
 │   │   │   ├── 📁 internet_connection/
@@ -225,7 +229,8 @@ PROJECT STRUCTURE
 │   │   │   └── 📄 theme_x.dart (222 B)
 │   │   ├── 📁 utils/
 │   │   │   ├── 📄 app_colors.dart (1.17 KB)
-│   │   │   ├── 📄 constants.dart (5.7 KB)
+│   │   │   ├── 📄 app_images.dart (1.14 KB)
+│   │   │   ├── 📄 constants.dart (5.64 KB)
 │   │   │   ├── 📄 logger.dart (109 B)
 │   │   │   ├── 📄 run_app_with_reporting.dart (937 B)
 │   │   │   └── 📄 utils.dart (2.57 KB)
@@ -331,21 +336,21 @@ PROJECT STRUCTURE
 │   └── 📄 CMakeLists.txt (4.16 KB)
 ├── 📄 analysis_options.yaml (1.41 KB)
 ├── 📄 pubspec.lock (37.69 KB)
-├── 📄 pubspec.yaml (2.23 KB)
+├── 📄 pubspec.yaml (2.28 KB)
 └── 📄 README.md (569 B)
 
 ================================================================================
 PROJECT STATISTICS
 ================================================================================
-Total Files: 201
-Total Directories: 110
-Text Files: 58
-Binary Files: 143
-Total Size: 1.22 MB
+Total Files: 205
+Total Directories: 111
+Text Files: 59
+Binary Files: 146
+Total Size: 1.28 MB
 
 FILE TYPES DISTRIBUTION:
 ------------------------------
-.dart           : 61
+.dart           : 62
 .png            : 38
 .xcconfig       : 10
 .h              : 9
@@ -360,6 +365,7 @@ FILE TYPES DISTRIBUTION:
 .properties     : 3
 .svg            : 3
 .xcworkspacedata : 3
+no extension    : 2
 .env            : 2
 .sh             : 2
 .md             : 2
@@ -372,8 +378,9 @@ FILE TYPES DISTRIBUTION:
 .yaml           : 2
 .java           : 1
 .kt             : 1
+.jar            : 1
+.bat            : 1
 .py             : 1
-no extension    : 1
 .m              : 1
 .xib            : 1
 .html           : 1
@@ -832,26 +839,149 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-8.14-all.zip
 
 
 ================================================================================
+BINARY/EXCLUDED FILES (not included in text content)
+================================================================================
+- android/gradle/wrapper/gradle-wrapper.jar
+
+
+================================================================================
 FILE: android/gradle.properties
 ================================================================================
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 140 B
+Size: 320 B
 Extension: .properties
 Language: text
 Location: android/gradle.properties
 Relative Path: android
 Created: 2026-06-27 08:52:47 (Asia/Damascus / GMT+03:00)
-Modified: 2026-06-27 08:52:47 (Asia/Damascus / GMT+03:00)
-MD5: 6c140ea6b218e726e042f1d98318ecb1
-SHA256: 1888df8f168eb770ca0f540b7bf84091e6b31b0d5ac55e4de518590b8f7ed8e5
+Modified: 2026-06-27 11:07:11 (Asia/Damascus / GMT+03:00)
+MD5: a867aefdc3c02974a0f69204ce164093
+SHA256: 4922e39cd2ea910bd97156fd4320b0be9217df262fc45435ce408bad534a20d0
 Encoding: ASCII
 
 FILE CONTENT:
 ----------------------------------------
 org.gradle.jvmargs=-Xmx8G -XX:MaxMetaspaceSize=4G -XX:ReservedCodeCacheSize=512m -XX:+HeapDumpOnOutOfMemoryError
 android.useAndroidX=true
+# This builtInKotlin flag was added automatically by Flutter migrator
+android.builtInKotlin=false
+# This newDsl flag was added automatically by Flutter migrator
+android.newDsl=false
+
+================================================================================
+
+
+================================================================================
+FILE: android/gradlew.bat
+================================================================================
+
+FILE INFORMATION:
+----------------------------------------
+Size: 2.35 KB
+Extension: .bat
+Language: batch
+Location: android/gradlew.bat
+Relative Path: android
+Created: 2026-06-27 10:32:28 (Asia/Damascus / GMT+03:00)
+Modified: 2026-06-27 10:32:28 (Asia/Damascus / GMT+03:00)
+MD5: 375ddea382b6c56a7be2a967a20e0ab5
+SHA256: c13c6e91b9a517783976de213d46398c661ea9e17651376d7301e839eaedcc62
+Encoding: ASCII
+
+FILE CONTENT:
+----------------------------------------
+@if "%DEBUG%" == "" @echo off
+@rem ##########################################################################
+@rem
+@rem  Gradle startup script for Windows
+@rem
+@rem ##########################################################################
+
+@rem Set local scope for the variables with windows NT shell
+if "%OS%"=="Windows_NT" setlocal
+
+@rem Add default JVM options here. You can also use JAVA_OPTS and GRADLE_OPTS to pass JVM options to this script.
+set DEFAULT_JVM_OPTS=
+
+set DIRNAME=%~dp0
+if "%DIRNAME%" == "" set DIRNAME=.
+set APP_BASE_NAME=%~n0
+set APP_HOME=%DIRNAME%
+
+@rem Find java.exe
+if defined JAVA_HOME goto findJavaFromJavaHome
+
+set JAVA_EXE=java.exe
+%JAVA_EXE% -version >NUL 2>&1
+if "%ERRORLEVEL%" == "0" goto init
+
+echo.
+echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+
+goto fail
+
+:findJavaFromJavaHome
+set JAVA_HOME=%JAVA_HOME:"=%
+set JAVA_EXE=%JAVA_HOME%/bin/java.exe
+
+if exist "%JAVA_EXE%" goto init
+
+echo.
+echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
+echo.
+echo Please set the JAVA_HOME variable in your environment to match the
+echo location of your Java installation.
+
+goto fail
+
+:init
+@rem Get command-line arguments, handling Windowz variants
+
+if not "%OS%" == "Windows_NT" goto win9xME_args
+if "%@eval[2+2]" == "4" goto 4NT_args
+
+:win9xME_args
+@rem Slurp the command line arguments.
+set CMD_LINE_ARGS=
+set _SKIP=2
+
+:win9xME_args_slurp
+if "x%~1" == "x" goto execute
+
+set CMD_LINE_ARGS=%*
+goto execute
+
+:4NT_args
+@rem Get arguments from the 4NT Shell from JP Software
+set CMD_LINE_ARGS=%$
+
+:execute
+@rem Setup the command line
+
+set CLASSPATH=%APP_HOME%\gradle\wrapper\gradle-wrapper.jar
+
+@rem Execute Gradle
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -classpath "%CLASSPATH%" org.gradle.wrapper.GradleWrapperMain %CMD_LINE_ARGS%
+
+:end
+@rem End local scope for the variables with windows NT shell
+if "%ERRORLEVEL%"=="0" goto mainEnd
+
+:fail
+rem Set variable GRADLE_EXIT_CONSOLE if you need the _script_ return code instead of
+rem the _cmd.exe /c_ return code!
+if  not "" == "%GRADLE_EXIT_CONSOLE%" exit 1
+exit /b 1
+
+:mainEnd
+if "%OS%"=="Windows_NT" endlocal
+
+:omega
 
 ================================================================================
 
@@ -862,21 +992,24 @@ FILE: android/local.properties
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 101 B
+Size: 173 B
 Extension: .properties
 Language: text
 Location: android/local.properties
 Relative Path: android
 Created: 2026-06-27 10:03:21 (Asia/Damascus / GMT+03:00)
-Modified: 2026-06-27 10:03:21 (Asia/Damascus / GMT+03:00)
-MD5: 6673027e40cf01cd3b3f9fe4930bf3e1
-SHA256: 7cde0a49e4232f708bde98c103c83c518937cb930752fbeb771113b35a0a7368
+Modified: 2026-06-27 10:32:27 (Asia/Damascus / GMT+03:00)
+MD5: d822884234c125f57a69cf3bbf320779
+SHA256: 3c32ab842e86e6229913da8d5e343af8b9f4e6f8dc4239c858f67bb421e7dead
 Encoding: ASCII
 
 FILE CONTENT:
 ----------------------------------------
 sdk.dir=C:\\Users\\mhb20\\AppData\\Local\\Android\\sdk
 flutter.sdk=C:\\development_libraries\\flutter
+flutter.buildMode=debug
+flutter.versionName=1.0.0
+flutter.versionCode=1
 ================================================================================
 
 
@@ -884,6 +1017,7 @@ flutter.sdk=C:\\development_libraries\\flutter
 BINARY/EXCLUDED FILES (not included in text content)
 ================================================================================
 - android/build.gradle.kts
+- android/gradlew
 - android/settings.gradle.kts
 
 
@@ -1778,6 +1912,7 @@ BINARY/EXCLUDED FILES (not included in text content)
 BINARY/EXCLUDED FILES (not included in text content)
 ================================================================================
 - lib/global/utils/app_colors.dart
+- lib/global/utils/app_images.dart
 - lib/global/utils/constants.dart
 - lib/global/utils/logger.dart
 - lib/global/utils/run_app_with_reporting.dart
@@ -4137,7 +4272,7 @@ Language: text
 Location: pubspec.lock
 Relative Path: root
 Created: 2026-06-27 08:52:47 (Asia/Damascus / GMT+03:00)
-Modified: 2026-06-27 10:19:05 (Asia/Damascus / GMT+03:00)
+Modified: 2026-06-27 11:12:59 (Asia/Damascus / GMT+03:00)
 MD5: f6117edb376aeef3dc6b889e780a4540
 SHA256: cbc39bec9bcb73ef9ef1447385cddee4bcaf66981872b1465d16b781fb973e04
 Encoding: ASCII
@@ -5425,15 +5560,15 @@ FILE: pubspec.yaml
 
 FILE INFORMATION:
 ----------------------------------------
-Size: 2.23 KB
+Size: 2.28 KB
 Extension: .yaml
 Language: yaml
 Location: pubspec.yaml
 Relative Path: root
 Created: 2026-06-27 08:52:47 (Asia/Damascus / GMT+03:00)
-Modified: 2026-06-27 10:19:18 (Asia/Damascus / GMT+03:00)
-MD5: 8b18796f65f01cd0790614476ecaa2eb
-SHA256: f9975bd1dec235bd72705895e4bed61478a0ff6e43cd682bcfef958a7230ba3c
+Modified: 2026-06-27 11:12:55 (Asia/Damascus / GMT+03:00)
+MD5: 6f66c518f9cea31a872f2aef47d19c38
+SHA256: b25f0f91b34eed8ef01d42a074da09e96a22e251f4e31bc03e0e0d9aaa3e8e1e
 Encoding: ASCII
 
 FILE CONTENT:
@@ -5495,6 +5630,8 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/images/png/
+    - assets/images/svg/
     - assets/locales/
 
   # To add custom fonts to your application, add a fonts section here,
