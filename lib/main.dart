@@ -1,3 +1,18 @@
-import 'package:green_mind/global/utils/run_app_with_reporting.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:green_mind/features/app/green_mind_app.dart';
+import 'package:green_mind/global/di/di.dart';
 
-void main() => runAppWithReporting();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await GoogleFonts.pendingFonts([GoogleFonts.cairo()]);
+  await configureDependencies();
+
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return Scaffold(
+      body: Center(child: Text('حدث خطأ غير متوقع: ${details.exception}')),
+    );
+  };
+
+  runApp(const GreenMindApp());
+}
