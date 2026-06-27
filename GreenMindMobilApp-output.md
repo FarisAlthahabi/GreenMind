@@ -3,7 +3,7 @@
 ## 📊 Project Information
 
 - **Project Name**: `GreenMindMobilApp`
-- **Generated On**: 2026-06-27 11:14:56 (Asia/Damascus / GMT+03:00)
+- **Generated On**: 2026-06-27 11:17:28 (Asia/Damascus / GMT+03:00)
 - **Total Files Processed**: 205
 - **Export Tool**: Easy Whole Project to Single Text File for LLMs v1.1.0
 - **Tool Author**: Jota / José Guilherme Pandolfi
@@ -146,8 +146,8 @@
 ├── 📁 lib/
 │   ├── 📁 features/
 │   │   ├── 📁 app/
-│   │   │   ├── 📄 app_material_app.dart (1.34 KB)
-│   │   │   └── 📄 app.dart (1.21 KB)
+│   │   │   ├── 📄 green_mind_app.dart (1.24 KB)
+│   │   │   └── 📄 green_mind_material_app.dart (1.37 KB)
 │   │   ├── 📁 app_manager/
 │   │   │   ├── 📁 cubit/
 │   │   │   │   ├── 📁 states/
@@ -230,7 +230,7 @@
 │   │   │   ├── 📄 app_images.dart (1.14 KB)
 │   │   │   ├── 📄 constants.dart (5.64 KB)
 │   │   │   ├── 📄 logger.dart (109 B)
-│   │   │   ├── 📄 run_app_with_reporting.dart (937 B)
+│   │   │   ├── 📄 run_app_with_reporting.dart (959 B)
 │   │   │   └── 📄 utils.dart (2.57 KB)
 │   │   └── 📁 widgets/
 │   │       ├── 📄 app_image_widget.dart (2.28 KB)
@@ -300,7 +300,7 @@
 │   └── 📁 RunnerTests/
 │       └── 📄 RunnerTests.swift (302 B)
 ├── 📁 test/
-│   └── 📄 widget_test.dart (1.07 KB)
+│   └── 📄 widget_test.dart (1.09 KB)
 ├── 📁 web/
 │   ├── 📁 icons/
 │   │   ├── 📄 Icon-192.png (5.17 KB)
@@ -1779,8 +1779,8 @@ class RunnerTests: XCTestCase {
 
 The following files were not included in the text content:
 
-- `lib/features/app/app_material_app.dart`
-- `lib/features/app/app.dart`
+- `lib/features/app/green_mind_app.dart`
+- `lib/features/app/green_mind_material_app.dart`
 
 ## 🚫 Binary/Excluded Files
 

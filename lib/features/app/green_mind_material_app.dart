@@ -6,14 +6,14 @@ import 'package:green_mind/global/theme/cubit/theme_cubit.dart';
 import 'package:green_mind/global/theme/themes/dark_theme.dart';
 import 'package:green_mind/global/theme/themes/light_theme.dart';
 
-class AppMaterialApp extends StatefulWidget {
-  const AppMaterialApp({super.key});
+class GreenMindMaterialApp extends StatefulWidget {
+  const GreenMindMaterialApp({super.key});
 
   @override
-  State<AppMaterialApp> createState() => _AppMaterialAppState();
+  State<GreenMindMaterialApp> createState() => _GreenMindMaterialAppState();
 }
 
-class _AppMaterialAppState extends State<AppMaterialApp> {
+class _GreenMindMaterialAppState extends State<GreenMindMaterialApp> {
   final appRouter = AppRouter();
   @override
   Widget build(BuildContext context) {
