@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart';
+import 'package:green_mind/global/blocs/internet_connection/cubit/internet_connection_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/dio/exceptions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,11 @@ class AppInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    if (options.method != "GET") {
+      if (!await get<InternetConnectionCubit>().checkInternetConnection()) {
+        return handler.reject(NoInternetException(requestOptions: options));
+      }
+    }
     options.headers['Accept'] = 'application/json';
 
     final prefs = await SharedPreferences.getInstance();

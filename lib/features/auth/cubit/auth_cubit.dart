@@ -10,8 +10,6 @@ import 'package:green_mind/features/auth/model/sign_in_post_model/sign_in_post_m
 import 'package:green_mind/features/auth/model/sign_up_post_model/sign_up_post_model.dart';
 import 'package:green_mind/features/auth/service/auth_service.dart';
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart';
-import 'package:green_mind/global/blocs/internet_connection/cubit/internet_connection_cubit.dart';
-import 'package:green_mind/global/di/di.dart';
 
 part 'states/auth_state.dart';
 part 'states/sign_in_state.dart';
@@ -68,8 +66,6 @@ class AuthCubit extends Cubit<AuthState> {
   // }
 
   Future<void> signIn({VoidCallback? onSuccess}) async {
-    if (!await get<InternetConnectionCubit>().checkInternetConnection()) return;
-
     emit(SignInLoading());
     try {
       final user = await signInService.signIn(signInPostModel);
@@ -86,8 +82,6 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> signUp() async {
-    if (!await get<InternetConnectionCubit>().checkInternetConnection()) return;
-
     emit(SignInLoading());
     try {
       await signInService.signUp(signUpPostModel);
@@ -101,8 +95,6 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> signOut() async {
-    if (!await get<InternetConnectionCubit>().checkInternetConnection()) return;
-
     emit(SignInLoading());
     try {
       await signInService.signOut();
@@ -124,7 +116,6 @@ class AuthCubit extends Cubit<AuthState> {
   //   bool isForget = false,
   //   VoidCallback? onSuccess,
   // }) async {
-  //   if (!await get<InternetConnectionCubit>().checkInternetConnection()) return;
   //   setCode(code);
 
   //   emit(SignInLoading());
@@ -140,8 +131,6 @@ class AuthCubit extends Cubit<AuthState> {
   // }
 
   // Future<void> sendCode({bool isForget = false, required String email}) async {
-  //   if (!await get<InternetConnectionCubit>().checkInternetConnection()) return;
-
   //   emit(SignInLoading());
   //   try {
   //     emailView = email;
@@ -154,8 +143,6 @@ class AuthCubit extends Cubit<AuthState> {
   // }
 
   // Future<void> resetPassword() async {
-  //   if (!await get<InternetConnectionCubit>().checkInternetConnection()) return;
-
   //   final passwordError = resetPasswordModel.validatePasswords();
   //   if (passwordError != null) {
   //     emit(SignInFail(passwordError));

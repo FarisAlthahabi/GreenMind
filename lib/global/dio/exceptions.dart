@@ -55,3 +55,12 @@ class CustomDioException extends DioException {
     }
   }
 }
+
+class NoInternetException extends DioException {
+  NoInternetException({required super.requestOptions});
+
+  @override
+  String toString() {
+    return "no_internet".tr();
+  }
+}

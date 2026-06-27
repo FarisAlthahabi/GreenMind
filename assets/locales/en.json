@@ -2,5 +2,6 @@
     "unauthorized": "Unauthorized, you have to login please",
     "connection_out": "The connection has timed out, please check your internet connection then try again.",
     "something_went_wrong": "Something went wrong",
-    "invalid_request": "Invalid Request"
+    "invalid_request": "Invalid Request",
+    "no_internet" : "There is no internet connection"
 }

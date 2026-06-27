@@ -183,7 +183,7 @@ class _MainTextFieldState extends State<MainTextField> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (suffixIcon != null) suffixIcon,
+                  ?suffixIcon,
                   if (_controller.text.isNotEmpty && showCloseIcon)
                     InkWell(
                       onTap: () {
