@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
 import 'package:green_mind/global/utils/app_images.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
@@ -148,11 +147,7 @@ class _SignUpPageState extends State<SignUpPage>
   Widget _buildTitle() {
     return Text(
       "sign_up".tr(),
-      style: const TextStyle(
-        fontSize: 24,
-        color: AppColors.blackShade2,
-        fontWeight: FontWeight.bold,
-      ),
+      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
     );
   }
 
@@ -162,7 +157,7 @@ class _SignUpPageState extends State<SignUpPage>
 
   Widget _buildNameTextField() {
     return MainTextField(
-      prefixIcon: const Icon(Icons.person_outline, color: AppColors.black),
+      prefixIcon: const Icon(Icons.person_outline),
       hintText: "username".tr(),
       onChanged: authCubit.setName,
       validator: (val) => Utils.validateInput(val, InputTextType.none),
@@ -171,7 +166,7 @@ class _SignUpPageState extends State<SignUpPage>
 
   Widget _buildEmailTextField() {
     return MainTextField(
-      prefixIcon: const Icon(Icons.email_outlined, color: AppColors.black),
+      prefixIcon: const Icon(Icons.email_outlined),
       hintText: "email".tr(),
       onChanged: authCubit.setEmailSignUp,
       textInputType: TextInputType.emailAddress,
@@ -184,7 +179,7 @@ class _SignUpPageState extends State<SignUpPage>
       obscureText: isObsecurePassword,
       hintText: "password".tr(),
       onChanged: authCubit.setPasswordSignUp,
-      prefixIcon: const Icon(Icons.lock_outline, color: AppColors.black),
+      prefixIcon: const Icon(Icons.lock_outline),
       validator: (val) => Utils.validateInput(val, InputTextType.password),
       maxLines: 1,
       suffixIcon: IconButton(
@@ -192,7 +187,6 @@ class _SignUpPageState extends State<SignUpPage>
           isObsecurePassword
               ? Icons.visibility_outlined
               : Icons.visibility_off_outlined,
-          color: AppColors.black,
         ),
         onPressed: onShowPassword,
       ),
@@ -258,17 +252,8 @@ class _SignUpPageState extends State<SignUpPage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(
-            "already_have_account".tr(),
-            style: const TextStyle(color: AppColors.black),
-          ),
-          GestureDetector(
-            onTap: onGoToSignIn,
-            child: Text(
-              "sign_in".tr(),
-              style: TextStyle(color: AppColors.mainColor),
-            ),
-          ),
+          Text("already_have_account".tr()),
+          GestureDetector(onTap: onGoToSignIn, child: Text("sign_in".tr())),
         ],
       ),
     );

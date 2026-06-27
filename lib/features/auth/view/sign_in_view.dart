@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
 import 'package:green_mind/global/utils/app_images.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
@@ -137,17 +136,13 @@ class _SignInPageState extends State<SignInPage>
   Widget _buildTitle() {
     return Text(
       "sign_in".tr(),
-      style: const TextStyle(
-        fontSize: 24,
-        color: AppColors.blackShade2,
-        fontWeight: FontWeight.bold,
-      ),
+      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
     );
   }
 
   Widget _buildEmailTextField() {
     return MainTextField(
-      prefixIcon: const Icon(Icons.email_outlined, color: AppColors.black),
+      prefixIcon: const Icon(Icons.email_outlined),
       hintText: "email".tr(),
       onChanged: authCubit.setEmail,
       textInputType: TextInputType.emailAddress,
@@ -160,7 +155,7 @@ class _SignInPageState extends State<SignInPage>
       obscureText: isObsecurePassword,
       hintText: "password".tr(),
       onChanged: authCubit.setPassword,
-      prefixIcon: const Icon(Icons.lock_outline, color: AppColors.black),
+      prefixIcon: const Icon(Icons.lock_outline),
       validator: (val) => Utils.validateInput(val, InputTextType.password),
       maxLines: 1,
       suffixIcon: IconButton(
@@ -168,7 +163,6 @@ class _SignInPageState extends State<SignInPage>
           isObsecurePassword
               ? Icons.visibility_outlined
               : Icons.visibility_off_outlined,
-          color: AppColors.black,
         ),
         onPressed: onShowPassword,
       ),
@@ -212,10 +206,7 @@ class _SignInPageState extends State<SignInPage>
   Widget _buildForgetPasswordButton() {
     return TextButton(
       onPressed: onForgetPasswordTap,
-      child: Text(
-        "نسيت كلمة المرور؟",
-        style: TextStyle(color: AppColors.mainColor, fontSize: 14),
-      ),
+      child: Text("نسيت كلمة المرور؟", style: TextStyle(fontSize: 14)),
     );
   }
 
@@ -247,13 +238,7 @@ class _SignInPageState extends State<SignInPage>
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text("not_have_account".tr()),
-          GestureDetector(
-            onTap: onGoToSignUp,
-            child: Text(
-              "sign_up".tr(),
-              style: TextStyle(color: AppColors.mainColor),
-            ),
-          ),
+          GestureDetector(onTap: onGoToSignUp, child: Text("sign_up".tr())),
         ],
       ),
     );

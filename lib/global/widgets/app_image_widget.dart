@@ -1,6 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/image_place_holder_widget.dart';
 
@@ -16,7 +15,6 @@ class AppImageWidget extends StatelessWidget {
     this.shadows,
     this.errorWidget,
     this.onImageLoaded,
-    this.backgroundColor = AppColors.white,
     this.padding = AppConstants.padding0,
   });
 
@@ -28,7 +26,6 @@ class AppImageWidget extends StatelessWidget {
   final Border? border;
   final List<BoxShadow>? shadows;
   final EdgeInsets padding;
-  final Color backgroundColor;
   final Widget? errorWidget;
   final void Function(ImageProvider)? onImageLoaded;
 
@@ -48,7 +45,6 @@ class AppImageWidget extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: backgroundColor,
         borderRadius: borderRadius,
         border: border,
         boxShadow: [...?shadows],

@@ -1,6 +1,5 @@
 import 'package:another_flushbar/flushbar.dart';
 import 'package:flutter/material.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
 abstract class MainSnackBar {
@@ -13,7 +12,6 @@ abstract class MainSnackBar {
     _showSnackBar(
       context,
       message,
-      backgroundColor: color ?? AppColors.green,
       icon: Icons.check_circle,
       duration: duration,
     );
@@ -25,13 +23,7 @@ abstract class MainSnackBar {
     Color? color,
     Duration? duration,
   }) {
-    _showSnackBar(
-      context,
-      message,
-      backgroundColor: color ?? Colors.blueGrey.shade200,
-      icon: Icons.info,
-      duration: duration,
-    );
+    _showSnackBar(context, message, icon: Icons.info, duration: duration);
   }
 
   static void showErrorMessage(
@@ -40,19 +32,12 @@ abstract class MainSnackBar {
     Color? color,
     Duration? duration,
   }) {
-    _showSnackBar(
-      context,
-      message,
-      backgroundColor: color ?? AppColors.red,
-      icon: Icons.error,
-      duration: duration,
-    );
+    _showSnackBar(context, message, icon: Icons.error, duration: duration);
   }
 
   static void _showSnackBar(
     BuildContext context,
     String message, {
-    required Color backgroundColor,
     required IconData icon,
     Duration? duration,
   }) {
@@ -61,10 +46,9 @@ abstract class MainSnackBar {
       onTap: (flushbar) => flushbar.dismiss(),
       margin: AppConstants.padding8,
       borderRadius: BorderRadius.circular(12),
-      backgroundColor: backgroundColor,
       duration: duration ?? AppConstants.duration1500ms,
       flushbarPosition: FlushbarPosition.TOP,
-      icon: Icon(icon, color: AppColors.white),
+      icon: Icon(icon),
       messageText: Text(message),
     ).show(context);
   }

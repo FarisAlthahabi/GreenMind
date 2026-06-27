@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:green_mind/global/utils/app_colors.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
 class MainTextField extends StatefulWidget {
@@ -21,11 +20,9 @@ class MainTextField extends StatefulWidget {
     this.suffixIcon,
     this.obscureText = false,
     this.controller,
-    this.textColor = AppColors.black,
     this.floatingLabelColor,
     this.hintStyle,
     this.borderRadius,
-    this.borderColor = AppColors.whiteShade,
     this.borderWidth = 1,
     this.outlineInputBorder,
     this.fillColor,
@@ -42,7 +39,6 @@ class MainTextField extends StatefulWidget {
     this.titleSize = 20,
     this.titlePadding = AppConstants.padding0,
     this.titleHeight = 10,
-    this.titleColor = AppColors.greyShade3,
     this.boxShadow = const [],
   });
 
@@ -64,9 +60,7 @@ class MainTextField extends StatefulWidget {
   final Widget? prefixIcon;
   final bool obscureText;
   final TextEditingController? controller;
-  final Color textColor;
   final Color? floatingLabelColor;
-  final Color borderColor;
   final double borderWidth;
   final Color? fillColor;
   final TextStyle? hintStyle;
@@ -82,7 +76,6 @@ class MainTextField extends StatefulWidget {
   final double titleSize;
   final EdgeInsets titlePadding;
   final double titleHeight;
-  final Color titleColor;
   final List<BoxShadow> boxShadow;
 
   @override
@@ -119,7 +112,6 @@ class _MainTextFieldState extends State<MainTextField> {
               style: TextStyle(
                 fontSize: widget.titleSize,
                 fontWeight: FontWeight.w700,
-                color: widget.titleColor,
               ),
             ),
           ),
@@ -150,31 +142,14 @@ class _MainTextFieldState extends State<MainTextField> {
             focusNode: widget.focusNode,
             keyboardType: widget.textInputType ?? TextInputType.name,
             inputFormatters: widget.inputFormatters,
-            cursorColor: widget.textColor,
-            style: TextStyle(color: widget.textColor),
             decoration: InputDecoration(
               contentPadding: widget.padding ?? AppConstants.padding16,
               labelText: widget.labelText,
-              floatingLabelStyle: TextStyle(
-                color: widget.errorText == null
-                    ? floatingLabelColor ?? AppColors.black
-                    : AppColors.red,
-              ),
-              labelStyle: TextStyle(
-                color: widget.errorText == null
-                    ? AppColors.grey
-                    : AppColors.red,
-                fontSize: 14,
-              ),
+
               alignLabelWithHint: true,
               hintText: widget.hintText,
-              hintStyle:
-                  widget.hintStyle ??
-                  TextStyle(
-                    fontSize: 16,
-                    color: widget.hintColor ?? AppColors.greyShade,
-                  ),
-              errorStyle: const TextStyle(fontSize: 16, color: AppColors.red),
+              hintStyle: widget.hintStyle ?? TextStyle(fontSize: 16),
+              errorStyle: const TextStyle(fontSize: 16),
               errorText: widget.errorText,
               border: widget.outlineInputBorder ?? outlineInputBorder(),
               focusedBorder: widget.outlineInputBorder ?? outlineInputBorder(),
@@ -192,7 +167,7 @@ class _MainTextFieldState extends State<MainTextField> {
                         widget.onClearTap?.call();
                         setState(() {});
                       },
-                      child: const Icon(Icons.close, color: AppColors.grey),
+                      child: const Icon(Icons.close),
                     ),
                   if (!widget.readOnly &&
                       _controller.text.isNotEmpty &&
@@ -201,7 +176,6 @@ class _MainTextFieldState extends State<MainTextField> {
                 ],
               ),
               prefixIcon: prefixIcon,
-              fillColor: widget.fillColor ?? AppColors.whiteShade,
               filled: widget.filled,
             ),
             validator: widget.validator,
@@ -214,10 +188,7 @@ class _MainTextFieldState extends State<MainTextField> {
   OutlineInputBorder outlineInputBorder() {
     return OutlineInputBorder(
       borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
-      borderSide: BorderSide(
-        color: widget.borderColor,
-        width: widget.borderWidth,
-      ),
+      borderSide: BorderSide(width: widget.borderWidth),
     );
   }
 }
