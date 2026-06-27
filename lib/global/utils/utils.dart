@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 abstract class Utils {
   static Color? stringToColor(String color) {
@@ -86,3 +87,24 @@ abstract class Utils {
 }
 
 enum InputTextType { email, phone, password, none }
+
+TextTheme createTextTheme(
+  TextTheme baseTextTheme,
+  String bodyFontFamily,
+  String displayFontFamily,
+) {
+  final bodyTextTheme = GoogleFonts.getTextTheme(bodyFontFamily, baseTextTheme);
+  final displayTextTheme = GoogleFonts.getTextTheme(
+    displayFontFamily,
+    baseTextTheme,
+  );
+
+  return displayTextTheme.copyWith(
+    bodyLarge: bodyTextTheme.bodyLarge,
+    bodyMedium: bodyTextTheme.bodyMedium,
+    bodySmall: bodyTextTheme.bodySmall,
+    labelLarge: bodyTextTheme.labelLarge,
+    labelMedium: bodyTextTheme.labelMedium,
+    labelSmall: bodyTextTheme.labelSmall,
+  );
+}
