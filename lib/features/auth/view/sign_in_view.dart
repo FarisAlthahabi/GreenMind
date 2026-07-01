@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart';
+import 'package:green_mind/global/gen/assets.gen.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
-import 'package:green_mind/global/utils/app_images.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
@@ -12,7 +12,6 @@ import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
 
 abstract class SignInViewCallBacks {
-  void onShowPassword();
   void onForgetPasswordTap();
   void onSignInTap();
   void onGoToSignUp();
@@ -40,12 +39,6 @@ class _SignInPageState extends State<SignInPage>
   late final AuthCubit authCubit = context.read();
 
   final _formKey = GlobalKey<FormState>();
-
-  bool isObsecurePassword = true;
-
-  @override
-  void onShowPassword() =>
-      setState(() => isObsecurePassword = !isObsecurePassword);
 
   @override
   void onForgetPasswordTap() {
@@ -93,8 +86,6 @@ class _SignInPageState extends State<SignInPage>
               _buildMainActionButton(),
               const SizedBox(height: 20),
               _buildOrText(),
-              // const SizedBox(height: 20),
-              // _buildAnotherLoginTypes(),
               const SizedBox(height: 20),
               _buildGoSignUp(),
               const SizedBox(height: 60),
@@ -103,34 +94,10 @@ class _SignInPageState extends State<SignInPage>
         ),
       ),
     );
-    // return MainAuthTile(
-    //   child: Form(
-    //     key: _formKey,
-    //     child: Column(
-    //       spacing: 5,
-    //       crossAxisAlignment: CrossAxisAlignment.center,
-    //       children: [
-    //         const SizedBox(height: 20),
-    //         _buildImage(),
-    //         _buildTitle(),
-    //         const SizedBox(height: 40),
-    //         _buildEmailTextField(),
-    //         const SizedBox(height: 5),
-    //         _buildPasswordTextField(),
-    //         const SizedBox(height: 20),
-    //         _buildMainActionButton(),
-    //         _buildForgetPasswordButton(),
-    //         const SizedBox(height: 20),
-    //         //_buildGoSignUp(),
-    //         const SizedBox(height: 60),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   Widget _buildImage() {
-    return Image.asset(Assets.imagesPngGreenMindPng, width: 150, height: 150);
+    return Assets.images.png.greenMindPng.image(width: 150,height: 150);
   }
 
   Widget _buildTitle() {
@@ -152,20 +119,12 @@ class _SignInPageState extends State<SignInPage>
 
   Widget _buildPasswordTextField() {
     return MainTextField(
-      obscureText: isObsecurePassword,
       hintText: "password".tr(),
       onChanged: authCubit.setPassword,
       prefixIcon: const Icon(Icons.lock_outline),
       validator: (val) => Utils.validateInput(val, InputTextType.password),
       maxLines: 1,
-      suffixIcon: IconButton(
-        icon: Icon(
-          isObsecurePassword
-              ? Icons.visibility_outlined
-              : Icons.visibility_off_outlined,
-        ),
-        onPressed: onShowPassword,
-      ),
+      isPassword: true,
     );
   }
 
@@ -185,11 +144,6 @@ class _SignInPageState extends State<SignInPage>
         }
       },
       builder: (context, state) {
-        // return MainActionButton(
-        //   onPressed: onSignInTap,
-        //   text: "sign_in".tr(),
-        //   isLoading: state is SignInLoading,
-        // );
         return Padding(
           padding: AppConstants.paddingH40,
           child: MainActionButton(
@@ -206,7 +160,7 @@ class _SignInPageState extends State<SignInPage>
   Widget _buildForgetPasswordButton() {
     return TextButton(
       onPressed: onForgetPasswordTap,
-      child: Text("نسيت كلمة المرور؟", style: TextStyle(fontSize: 14)),
+      child: Text("forget_password?".tr(), style: TextStyle(fontSize: 14)),
     );
   }
 
@@ -235,6 +189,7 @@ class _SignInPageState extends State<SignInPage>
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
+        spacing:5,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text("not_have_account".tr()),

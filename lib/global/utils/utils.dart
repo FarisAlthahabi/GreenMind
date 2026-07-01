@@ -29,11 +29,6 @@ abstract class Utils {
     return DateFormat('yyyy-MM-dd', 'en').format(date);
   }
 
-  static double colorToHue(Color color) {
-    final hsl = HSLColor.fromColor(color);
-    return hsl.hue;
-  }
-
   static String convertToIsoFormatFromString(String inputDate) {
     final regex = RegExp(r'^\d{4}-\d{2}-\d{2}$');
     if (regex.hasMatch(inputDate)) {
@@ -46,14 +41,6 @@ abstract class Utils {
   static String capitalizeFirst(String input) {
     if (input.isEmpty) return input;
     return input[0].toUpperCase() + input.substring(1);
-  }
-
-  static double calcSize(BuildContext context, double size) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth > 600) {
-      return (size / 390) * screenWidth / 1.2;
-    }
-    return (size / 390) * screenWidth;
   }
 
   static String? validateInput(

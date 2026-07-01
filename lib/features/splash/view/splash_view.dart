@@ -1,8 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:green_mind/global/gen/assets.gen.dart';
 import 'package:green_mind/global/mixins/post_frame_mixin.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
-import 'package:green_mind/global/utils/app_images.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
 @RoutePage()
@@ -35,9 +35,7 @@ class _SplashPageState extends State<SplashPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Image.asset(Assets.imagesPngGreenMindPng, fit: BoxFit.cover),
-      ),
+      body: Center(child: Assets.images.png.greenMindPng.image(width: 200)),
     );
   }
 }

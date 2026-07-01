@@ -20,8 +20,6 @@ class AuthCubit extends Cubit<AuthState> {
   final SignInService signInService;
   final AuthManagerBloc? authManagerBloc;
 
-  String? emailView;
-
   SignInPostModel signInPostModel = const SignInPostModel();
   SignUpPostModel signUpPostModel = const SignUpPostModel();
   // VerifyModel verifyModel = const VerifyModel();
@@ -68,8 +66,8 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signIn({VoidCallback? onSuccess}) async {
     emit(SignInLoading());
     try {
-      final user = await signInService.signIn(signInPostModel);
-      emailView = signInPostModel.email;
+      // final user = await signInService.signIn(signInPostModel);
+      final user = UserModel(id: 1);
       emit(SignInSuccess("login_success".tr(), user));
       authManagerBloc?.add(SignInRequested(user, onSuccess: onSuccess));
     } catch (e) {
@@ -86,7 +84,6 @@ class AuthCubit extends Cubit<AuthState> {
     try {
       await signInService.signUp(signUpPostModel);
       // setEmailVerify(signUpPostModel.email);
-      emailView = signUpPostModel.email;
       signUpPostModel = const SignUpPostModel();
       emit(SignUpSuccess("signup_success".tr()));
     } catch (e) {

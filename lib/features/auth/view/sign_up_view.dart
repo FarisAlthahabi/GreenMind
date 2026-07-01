@@ -3,8 +3,8 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart';
+import 'package:green_mind/global/gen/assets.gen.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
-import 'package:green_mind/global/utils/app_images.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
@@ -12,7 +12,6 @@ import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
 
 abstract class SignUpViewCallBacks {
-  void onShowPassword();
   void onGoToSignIn();
   void onSignUpTap();
 }
@@ -38,20 +37,6 @@ class _SignUpPageState extends State<SignUpPage>
     implements SignUpViewCallBacks {
   late final AuthCubit authCubit = context.read();
   final _formKey = GlobalKey<FormState>();
-
-  bool isObsecurePassword = true;
-
-  bool hasTracker = false;
-  bool isHasTrackerChanged = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void onShowPassword() =>
-      setState(() => isObsecurePassword = !isObsecurePassword);
 
   @override
   void onSignUpTap() {
@@ -98,31 +83,6 @@ class _SignUpPageState extends State<SignUpPage>
         ),
       ),
     );
-    // return MainAuthTile(
-    //   child: Form(
-    //     key: _formKey,
-    //     child: Column(
-    //       spacing: 5,
-    //       crossAxisAlignment: CrossAxisAlignment.center,
-    //       children: [
-    //         _buildHeader(),
-    //         const SizedBox(height: 20),
-    //         _buildNameTextField(),
-    //         const SizedBox(height: 5),
-    //         _buildEmailTextField(),
-    //         const SizedBox(height: 5),
-    //         _buildPasswordTextField(),
-    //         const SizedBox(height: 25),
-    //         _buildMainActionButton(),
-    //         _buildDivider(),
-    //         _buildOrWithGoogleText(),
-    //         const SizedBox(height: 10),
-    //         _buildSignInWithGoogleButton(),
-    //         const SizedBox(height: 40),
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 
   // Widget _buildHeader() {
@@ -152,7 +112,7 @@ class _SignUpPageState extends State<SignUpPage>
   }
 
   Widget _buildImage() {
-    return Image.asset(Assets.imagesPngGreenMindPng, width: 150, height: 150);
+    return Assets.images.png.greenMindPng.image(width: 150,height: 150);
   }
 
   Widget _buildNameTextField() {
@@ -176,20 +136,12 @@ class _SignUpPageState extends State<SignUpPage>
 
   Widget _buildPasswordTextField() {
     return MainTextField(
-      obscureText: isObsecurePassword,
       hintText: "password".tr(),
       onChanged: authCubit.setPasswordSignUp,
       prefixIcon: const Icon(Icons.lock_outline),
       validator: (val) => Utils.validateInput(val, InputTextType.password),
       maxLines: 1,
-      suffixIcon: IconButton(
-        icon: Icon(
-          isObsecurePassword
-              ? Icons.visibility_outlined
-              : Icons.visibility_off_outlined,
-        ),
-        onPressed: onShowPassword,
-      ),
+      isPassword: true,
     );
   }
 
@@ -216,11 +168,6 @@ class _SignUpPageState extends State<SignUpPage>
             isLoading: state is SignInLoading,
           ),
         );
-        // return MainActionButton(
-        //   onPressed: onSignUpTap,
-        //   text: "sign_up".tr(),
-        //   isLoading: state is SignInLoading,
-        // );
       },
     );
   }

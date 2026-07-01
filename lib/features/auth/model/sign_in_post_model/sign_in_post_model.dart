@@ -39,22 +39,6 @@ class SignInPostModel {
     return _password ?? (throw "password_required".tr());
   }
 
-  String? validateemail() {
-    if (_email == null || _email.isEmpty) {
-      return "email_required".tr();
-    }
-    return null;
-  }
-
-  String? validatePassword() {
-    if (_password == null || _password.isEmpty) {
-      return "password_required".tr();
-    } else if (_password.length < 8) {
-      return "password_short".tr();
-    }
-    return null;
-  }
-
   Map<String, dynamic> toJson() => _$SignInPostModelToJson(this);
 
   factory SignInPostModel.fromJson(Map<String, dynamic> json) =>

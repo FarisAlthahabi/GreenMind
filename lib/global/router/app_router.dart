@@ -23,7 +23,21 @@ class AppRouter extends RootStackRouter {
             // AutoRoute(page: ResetPasswordRoute.page),
           ],
         ),
-        AdaptiveRoute(page: AppManagerRoute.page, children: []),
+        AdaptiveRoute(
+          page: AppManagerRoute.page,
+          children: [
+            AutoRoute(
+              initial: true,
+              page: DashboardRoute.page,
+              children: [
+                AutoRoute(initial: true, page: AiChatBotRoute.page),
+                AutoRoute(page: StatsRoute.page),
+              ],
+            ),
+            AutoRoute(page: StatsRoute.page),
+            AutoRoute(page: AiChatBotRoute.page),
+          ],
+        ),
       ],
     ),
   ];

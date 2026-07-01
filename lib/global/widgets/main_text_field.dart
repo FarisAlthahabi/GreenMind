@@ -18,7 +18,6 @@ class MainTextField extends StatefulWidget {
     this.readOnly = false,
     this.onTap,
     this.suffixIcon,
-    this.obscureText = false,
     this.controller,
     this.floatingLabelColor,
     this.hintStyle,
@@ -40,6 +39,7 @@ class MainTextField extends StatefulWidget {
     this.titlePadding = AppConstants.padding0,
     this.titleHeight = 10,
     this.boxShadow = const [],
+    this.isPassword = false,
   });
 
   final String? hintText;
@@ -58,7 +58,6 @@ class MainTextField extends StatefulWidget {
   final bool readOnly;
   final Widget? suffixIcon;
   final Widget? prefixIcon;
-  final bool obscureText;
   final TextEditingController? controller;
   final Color? floatingLabelColor;
   final double borderWidth;
@@ -77,6 +76,7 @@ class MainTextField extends StatefulWidget {
   final EdgeInsets titlePadding;
   final double titleHeight;
   final List<BoxShadow> boxShadow;
+  final bool isPassword;
 
   @override
   State<MainTextField> createState() => _MainTextFieldState();
@@ -85,6 +85,7 @@ class MainTextField extends StatefulWidget {
 class _MainTextFieldState extends State<MainTextField> {
   late Color? floatingLabelColor = widget.floatingLabelColor;
   late TextEditingController _controller;
+  late bool isObsecurePassword = widget.isPassword;
 
   @override
   void initState() {
@@ -92,6 +93,9 @@ class _MainTextFieldState extends State<MainTextField> {
     _controller =
         widget.controller ?? TextEditingController(text: widget.initialText);
   }
+
+  void onShowPassword() =>
+      setState(() => isObsecurePassword = !isObsecurePassword);
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +133,7 @@ class _MainTextFieldState extends State<MainTextField> {
           ),
           child: TextFormField(
             controller: _controller,
-            obscureText: widget.obscureText,
+            obscureText: isObsecurePassword,
             readOnly: widget.readOnly,
             onTap: widget.onTap,
             onChanged: (text) {
@@ -145,7 +149,6 @@ class _MainTextFieldState extends State<MainTextField> {
             decoration: InputDecoration(
               contentPadding: widget.padding ?? AppConstants.padding16,
               labelText: widget.labelText,
-
               alignLabelWithHint: true,
               hintText: widget.hintText,
               hintStyle: widget.hintStyle ?? TextStyle(fontSize: 16),
@@ -159,6 +162,15 @@ class _MainTextFieldState extends State<MainTextField> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   ?suffixIcon,
+                  if (widget.isPassword)
+                    IconButton(
+                      icon: Icon(
+                        isObsecurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: onShowPassword,
+                    ),
                   if (_controller.text.isNotEmpty && showCloseIcon)
                     InkWell(
                       onTap: () {

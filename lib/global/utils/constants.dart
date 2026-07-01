@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 abstract class AppConstants {
-  static const restaurantId = "46";
-  static const languages = ["EN", "AR"];
-
   static const duration1m = Duration(minutes: 1);
   static const duration25s = Duration(seconds: 25);
   static const duration15s = Duration(seconds: 15);
@@ -22,36 +19,23 @@ abstract class AppConstants {
   static const borderRadius10 = BorderRadius.all(Radius.circular(10));
   static const borderRadius8 = BorderRadius.all(Radius.circular(8));
   static const borderRadius5 = BorderRadius.all(Radius.circular(5));
-  static const topCornersBorderRadius = BorderRadius.only(
-    topRight: Radius.circular(25),
-    topLeft: Radius.circular(25),
+  static const borderRadiusT25 = BorderRadius.vertical(
+    top: Radius.circular(25),
   );
-  static const bottomCornersBorderRadius = BorderRadius.only(
-    bottomRight: Radius.circular(15),
-    bottomLeft: Radius.circular(15),
+  static const borderRadiusB15 = BorderRadius.vertical(
+    bottom: Radius.circular(15),
   );
-  static const borderRadiusL10 = BorderRadius.only(
-    topLeft: Radius.circular(10),
-    bottomLeft: Radius.circular(10),
+  static const borderRadiusL10 = BorderRadius.horizontal(
+    left: Radius.circular(10),
   );
-  static const borderRadiusR10 = BorderRadius.only(
-    topRight: Radius.circular(10),
-    bottomRight: Radius.circular(10),
+  static const borderRadiusR10 = BorderRadius.horizontal(
+    right: Radius.circular(10),
   );
-  static const borderRadiusBlTr20 = BorderRadius.only(
-    bottomLeft: Radius.circular(20),
-    topRight: Radius.circular(20),
+  static const borderRadiusB40 = BorderRadius.vertical(
+    bottom: Radius.circular(40),
   );
-  static const borderRadiusBlBr40 = BorderRadius.only(
-    bottomLeft: Radius.circular(40),
-    bottomRight: Radius.circular(40),
-  );
-  static const borderRadiusTlBr20 = BorderRadius.only(
-    topLeft: Radius.circular(20),
-    bottomRight: Radius.circular(20),
-  );
+  
   static const paddingB10 = EdgeInsets.only(bottom: 10);
-
   static const paddingR5 = EdgeInsets.only(right: 5);
   static const paddingH4V5 = EdgeInsets.symmetric(horizontal: 4, vertical: 5);
   static const paddingV5 = EdgeInsets.symmetric(vertical: 5);
