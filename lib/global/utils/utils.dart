@@ -38,6 +38,11 @@ abstract class Utils {
     return DateFormat('yyyy-MM-dd', 'en').format(parsedDate);
   }
 
+  // Format time as "AM 12:49"
+  static String formatTimeForMessage(DateTime dateTime) {
+    return DateFormat('a hh:mm', 'ar').format(dateTime);
+  }
+
   static String capitalizeFirst(String input) {
     if (input.isEmpty) return input;
     return input[0].toUpperCase() + input.substring(1);

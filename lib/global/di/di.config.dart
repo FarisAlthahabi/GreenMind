@@ -10,14 +10,24 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:get_it/get_it.dart' as _i174;
+import 'package:green_mind/features/ai_chat_bot/cubit/ai_chat_bot_cubit.dart'
+    as _i123;
+import 'package:green_mind/features/ai_chat_bot/service/ai_chat_bot_service.dart'
+    as _i209;
 import 'package:green_mind/features/app_manager/cubit/app_manager_cubit.dart'
     as _i864;
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart' as _i886;
 import 'package:green_mind/features/auth/service/auth_service.dart' as _i766;
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart'
     as _i753;
+import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart'
+    as _i105;
+import 'package:green_mind/features/diagnosing_diseases/service/diagnosing_diseases_service.dart'
+    as _i593;
 import 'package:green_mind/global/blocs/internet_connection/cubit/internet_connection_cubit.dart'
     as _i749;
+import 'package:green_mind/global/blocs/upload_image_cubit/cubit/upload_image_cubit.dart'
+    as _i872;
 import 'package:green_mind/global/di/app_module.dart' as _i807;
 import 'package:green_mind/global/dio/dio_client.dart' as _i645;
 import 'package:green_mind/global/theme/cubit/theme_cubit.dart' as _i696;
@@ -32,6 +42,7 @@ extension GetItInjectableX on _i174.GetIt {
   }) async {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final appModule = _$AppModule();
+    gh.factory<_i872.UploadImageCubit>(() => _i872.UploadImageCubit());
     await gh.factoryAsync<_i460.SharedPreferences>(
       () => appModule.prefs,
       preResolve: true,
@@ -42,7 +53,20 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i749.InternetConnectionCubit(),
     );
     gh.singleton<_i645.DioClient>(() => _i645.DioClient());
+    gh.factory<_i209.AiChatBotService>(() => _i209.AiChatBotServiceImp());
     gh.factory<_i766.SignInService>(() => _i766.SignInServiceImp());
+    gh.factory<_i593.DiagnosingDiseasesService>(
+      () => _i593.DiagnosingDiseasesServiceImp(),
+    );
+    gh.factory<_i123.AiChatBotCubit>(
+      () =>
+          _i123.AiChatBotCubit(aiChatBotService: gh<_i209.AiChatBotService>()),
+    );
+    gh.factory<_i105.DiagnosingDiseasesCubit>(
+      () => _i105.DiagnosingDiseasesCubit(
+        diagnosingDiseasesService: gh<_i593.DiagnosingDiseasesService>(),
+      ),
+    );
     gh.factory<_i696.ThemeCubit>(
       () => _i696.ThemeCubit(gh<_i460.SharedPreferences>()),
     );

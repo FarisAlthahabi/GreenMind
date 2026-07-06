@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
 class MainTextField extends StatefulWidget {
@@ -200,7 +201,7 @@ class _MainTextFieldState extends State<MainTextField> {
   OutlineInputBorder outlineInputBorder() {
     return OutlineInputBorder(
       borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
-      borderSide: BorderSide(width: widget.borderWidth),
+      borderSide: BorderSide(width: widget.borderWidth , color: context.cs.primary),
     );
   }
 }

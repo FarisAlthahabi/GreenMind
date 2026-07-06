@@ -31,10 +31,12 @@ class AppRouter extends RootStackRouter {
               page: DashboardRoute.page,
               children: [
                 AutoRoute(initial: true, page: AiChatBotRoute.page),
+                AutoRoute(page: DiagnosingDiseasesRoute.page),
                 AutoRoute(page: StatsRoute.page),
               ],
             ),
             AutoRoute(page: StatsRoute.page),
+            AutoRoute(page: DiagnosingDiseasesRoute.page),
             AutoRoute(page: AiChatBotRoute.page),
           ],
         ),

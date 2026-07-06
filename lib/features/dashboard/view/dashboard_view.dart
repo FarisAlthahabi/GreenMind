@@ -45,6 +45,11 @@ class _DashboardPageState extends State<DashboardPage>
 
   late final navItems = [
     PageTitleIconModel(AiChatBotRoute(), "ai_chat_bot".tr(), Icons.chat),
+    PageTitleIconModel(
+      DiagnosingDiseasesRoute(),
+      "diagnosing_diseases".tr(),
+      Icons.abc,
+    ),
     PageTitleIconModel(const StatsRoute(), "stats".tr(), Icons.graphic_eq),
   ];
 
@@ -64,27 +69,26 @@ class _DashboardPageState extends State<DashboardPage>
       drawer: const MainDrawer(),
       appBarBuilder: (context, tabsRouter) => const MainAppBar(),
       routes: routes,
-      extendBody: true,
       resizeToAvoidBottomInset: true,
       bottomNavigationBuilder: (context, tabsRouter) {
         return DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: AppConstants.borderRadiusT25,
-            // color: AppColors.white,
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: context.cs.onTertiaryContainer.withAlpha(60),
-            //     offset: const Offset(0, -4),
-            //     blurRadius: 8,
-            //   ),
-            // ],
+            color: context.cs.surface,
+            boxShadow: [
+              BoxShadow(
+                color: context.cs.onTertiaryContainer.withAlpha(60),
+                offset: const Offset(0, -4),
+                blurRadius: 8,
+              ),
+            ],
           ),
           child: ClipRRect(
             borderRadius: AppConstants.borderRadiusT25,
             child: BottomNavigationBar(
               backgroundColor: context.cs.surface,
-              // backgroundColor: AppColors.white,
-              // selectedItemColor: context.cs.primary,
+              selectedItemColor: context.cs.primary,
+              unselectedItemColor: context.cs.outlineVariant,
               type: BottomNavigationBarType.shifting,
               showSelectedLabels: true,
               showUnselectedLabels: true,

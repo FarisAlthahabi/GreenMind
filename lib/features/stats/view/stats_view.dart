@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:green_mind/global/widgets/main_app_bar.dart';
 
 @RoutePage()
 class StatsView extends StatelessWidget {

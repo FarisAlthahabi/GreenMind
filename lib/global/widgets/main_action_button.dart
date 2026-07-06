@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 
@@ -49,22 +50,21 @@ class MainActionButton extends StatefulWidget {
 }
 
 class _MainActionButtonState extends State<MainActionButton> {
-  late Widget textWidget = Text(
-    widget.text,
-    style: TextStyle(
-      color: widget.textColor,
-      height: 1.19,
-      fontSize: widget.fontSize ?? 20,
-      fontWeight: widget.fontWeight,
-    ),
-    textAlign: TextAlign.center,
-    overflow: TextOverflow.ellipsis,
-  );
-  late final buildText = widget.isExpandText
-      ? Expanded(child: textWidget)
-      : textWidget;
   @override
   Widget build(BuildContext context) {
+    final textWidget = Text(
+      widget.text,
+      style: context.tt.bodyLarge?.copyWith(
+        color: widget.textColor ?? context.cs.onPrimary,
+        fontSize: widget.fontSize,
+        fontWeight: widget.fontWeight,
+      ),
+      textAlign: TextAlign.center,
+      overflow: TextOverflow.ellipsis,
+    );
+    final buildText = widget.isExpandText
+        ? Expanded(child: textWidget)
+        : textWidget;
     final icon = widget.icon;
     return InkWell(
       onTap: widget.isLoading ? null : widget.onPressed,
@@ -75,13 +75,13 @@ class _MainActionButtonState extends State<MainActionButton> {
         padding: widget.padding ?? AppConstants.paddingH36V8,
         decoration: BoxDecoration(
           border: widget.border,
-          color: widget.buttonColor ?? Theme.of(context).colorScheme.primary,
+          color: widget.buttonColor ?? context.cs.primary,
           borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
           boxShadow: widget.shadow,
         ),
         child: Center(
           child: widget.isLoading
-              ? const LoadingIndicator(size: 25)
+              ? LoadingIndicator(size: 25, color: context.cs.onPrimary)
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
