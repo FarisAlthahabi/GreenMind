@@ -1,9 +1,12 @@
+import 'package:animated_size_and_fade/animated_size_and_fade.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/choose_image_widget.dart';
@@ -43,14 +46,23 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
       body: SingleChildScrollView(
         padding: AppConstants.padding16,
         physics: const BouncingScrollPhysics(),
-        child: Column(
-          spacing: 20,
-          children: [
-            _buildHeaderDescription(),
-            _buildUploadImageWithDiagonseBtn(),
-            const SizedBox.shrink(),
-            _buildResaultView(),
-          ],
+        child: AnimationLimiter(
+          child: Column(
+            spacing: 20,
+            children: AnimationConfiguration.toStaggeredList(
+              duration: AppConstants.duration500ms,
+              childAnimationBuilder: (widget) => SlideAnimation(
+                horizontalOffset: 50.0,
+                child: FadeInAnimation(child: widget),
+              ),
+              children: [
+                _buildHeaderDescription(),
+                _buildUploadImageWithDiagonseBtn(),
+                const SizedBox.shrink(),
+                _buildResaultView(),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -87,14 +99,13 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(color: context.cs.primary, width: 0.5),
+        border: Border.all(color: context.cs.outline, width: 0.5),
       ),
       child: Column(
         spacing: 20,
         children: [
           Text("upload_image".tr(), style: context.tt.titleLarge),
-          ChooseImageWidget(),
-          // ChooseImageWidget(onSetImage: diagnosingDiseasesCubit.onSetImage),
+          ChooseImageWidget(onSetImage: diagnosingDiseasesCubit.onSetImage),
           BlocConsumer<DiagnosingDiseasesCubit, GeneralDiagnosingDiseasesState>(
             listener: (context, state) {
               if (state is DiagnosingDiseasesFail) {
@@ -120,12 +131,15 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
   Widget _buildResaultView() {
     return BlocBuilder<DiagnosingDiseasesCubit, GeneralDiagnosingDiseasesState>(
       builder: (context, state) {
+        Widget child;
         if (state is DiagnosingDiseasesLoading) {
-          return const SizedBox.shrink();
+          child = const SizedBox.shrink();
         } else if (state is DiagnosingDiseasesSuccess) {
-          return _buildResults();
+          child = _buildResults();
+        } else {
+          child = _buildPlaceHolderResualts();
         }
-        return _buildPlaceHolderResualts();
+        return AnimatedSizeAndFade(child: child);
       },
     );
   }
@@ -136,7 +150,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(color: context.cs.primary, width: 0.5),
+        border: Border.all(color: context.cs.outline, width: 0.5),
       ),
       child: Column(
         spacing: 5,
@@ -158,47 +172,168 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
   }
 
   Widget _buildResults() {
-    final trustPercent = 92.5;
+    final trustPercentage = 92.5;
     return Container(
       padding: AppConstants.padding16,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(color: context.cs.primary, width: 0.5),
+        border: Border.all(color: context.cs.outline, width: 0.5),
       ),
-      child: Column(
-        spacing: 10,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text("نتيجة المرض", style: context.tt.titleLarge),
-          Text("المرض المكتشف :"),
-          Text(
-            "لفحة متأخرة",
-            style: context.tt.headlineMedium?.copyWith(
-              color: context.cs.primary,
+      child: AnimationLimiter(
+        child: Column(
+          spacing: 15,
+          children: AnimationConfiguration.toStaggeredList(
+            duration: AppConstants.duration500ms,
+            childAnimationBuilder: (widget) => SlideAnimation(
+              horizontalOffset: 50.0,
+              child: FadeInAnimation(child: widget),
             ),
-          ),
-          Text("(Late Blight)"),
-          Row(
             children: [
-              Text("نسبة الثقة"),
-              Spacer(),
+              Text("نتيجة المرض", style: context.tt.titleLarge),
+              Text("المرض المكتشف :"),
+              Text(
+                "لفحة متأخرة",
+                style: context.tt.headlineMedium?.copyWith(
+                  color: context.cs.primary,
+                ),
+              ),
+              Text("(Late Blight)"),
+              Row(
+                children: [
+                  Text("نسبة الثقة"),
+                  Spacer(),
+                  DecoratedBox(
+                    decoration: BoxDecoration(
+                      color: context.cs.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.done, color: context.cs.onPrimary),
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    "${trustPercentage.toStringAsFixed(1)}%",
+                    style: context.tt.bodyLarge,
+                  ),
+                ],
+              ),
+              TweenAnimationBuilder<double>(
+                tween: Tween<double>(begin: 0, end: trustPercentage / 100),
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeInOut,
+                builder: (context, value, child) {
+                  return LinearProgressIndicator(
+                    minHeight: 14,
+                    value: value,
+                    borderRadius: AppConstants.borderRadius20,
+                    valueColor: AlwaysStoppedAnimation(context.cs.primary),
+                    backgroundColor: context.cs.surfaceContainerHigh,
+                  );
+                },
+              ),
+              Container(
+                padding: AppConstants.paddingH12V8,
+                decoration: BoxDecoration(
+                  color: context.cs.primaryContainer,
+                  borderRadius: AppConstants.borderRadius15,
+                ),
+                child: Row(
+                  mainAxisSize: .min,
+                  children: [
+                    Text(
+                      "دقة عالية",
+                      style: context.tt.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: AppConstants.paddingH16V12,
+                decoration: BoxDecoration(
+                  color: context.cs.surfaceContainer,
+                  borderRadius: AppConstants.borderRadius10,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(Icons.info_outline, size: 20),
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        "النموذج ركز على منطقة البقع البنية في الجزء العلوي الأيسر من الورقة",
+                        style: context.tt.bodyMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Text(
+                "توصيات العلاج:",
+                style: context.tt.titleMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               DecoratedBox(
                 decoration: BoxDecoration(
-                  color: context.cs.primary,
-                  shape: BoxShape.circle,
+                  color: context.cs.primaryContainer,
+                  borderRadius: AppConstants.borderRadius10,
                 ),
-                child: Icon(Icons.done, color: context.cs.onPrimary),
+                child: Padding(
+                  padding: AppConstants.padding16,
+                  child: Column(
+                    spacing: 10,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildRecommendationItem(
+                        context,
+                        "1.  إزالة الأوراق المصابة فوراً والتخلص منها",
+                      ),
+                      _buildRecommendationItem(
+                        context,
+                        "2.  رش النباتات بمبيد قطري يحتوي على مانكوزيب",
+                      ),
+                      _buildRecommendationItem(
+                        context,
+                        "3.  تحسين التهوية بين النباتات",
+                      ),
+                      _buildRecommendationItem(
+                        context,
+                        "4.  تجنب الري العلوي للحد من انتشار المرض",
+                      ),
+                      _buildRecommendationItem(
+                        context,
+                        "5.  مراقبة النباتات يومياً للكشف المبكر عن الإصابات الجديدة",
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              SizedBox(width: 10),
-              Text(
-                "${trustPercent.toStringAsFixed(1)}%",
-                style: context.tt.bodyLarge,
+              MainActionButton(
+                padding: AppConstants.padding16,
+                buttonColor: context.cs.surface,
+                border: Border.all(color: context.cs.primary, width: 1.5),
+                borderRadius: AppConstants.borderRadius20,
+                fontWeight: FontWeight.bold,
+                icon: Icon(Icons.chat, size: 20, color: context.cs.primary),
+                textColor: context.cs.primary,
+                onPressed: () {
+                  context.router.navigate(AiChatBotRoute());
+                },
+                text: "استشر الخبير الزراعي للمزيد",
               ),
             ],
           ),
-        ],
+        ),
       ),
+    );
+  }
+
+  Widget _buildRecommendationItem(BuildContext context, String text) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [Expanded(child: Text(text, style: context.tt.bodyMedium))],
     );
   }
 }

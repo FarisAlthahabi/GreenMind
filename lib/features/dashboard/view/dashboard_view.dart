@@ -41,7 +41,6 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage>
     implements DashboardViewCallbacks {
   late final UserModel user = context.read();
-  int currentIndex = 0;
 
   late final navItems = [
     PageTitleIconModel(AiChatBotRoute(), "ai_chat_bot".tr(), Icons.chat),
@@ -58,9 +57,6 @@ class _DashboardPageState extends State<DashboardPage>
   @override
   void onBottomTab(int currentIndex, TabsRouter tabsRouter) {
     tabsRouter.setActiveIndex(currentIndex);
-    setState(() {
-      this.currentIndex = currentIndex;
-    });
   }
 
   @override
@@ -83,25 +79,28 @@ class _DashboardPageState extends State<DashboardPage>
               ),
             ],
           ),
-          child: ClipRRect(
-            borderRadius: AppConstants.borderRadiusT25,
-            child: BottomNavigationBar(
-              backgroundColor: context.cs.surface,
-              selectedItemColor: context.cs.primary,
-              unselectedItemColor: context.cs.outlineVariant,
-              type: BottomNavigationBarType.shifting,
-              showSelectedLabels: true,
-              showUnselectedLabels: true,
-              currentIndex: tabsRouter.activeIndex,
-              onTap: (index) => onBottomTab(index, tabsRouter),
-              items: List.generate(navItems.length, (index) {
-                final item = navItems[index];
-                final isSelected = tabsRouter.activeIndex == index;
-                return BottomNavigationBarItem(
-                  icon: _getBottomBarIcon(item, isSelected: isSelected),
-                  label: item.title,
-                );
-              }),
+          child: Padding(
+            padding: AppConstants.paddingV8,
+            child: ClipRRect(
+              borderRadius: AppConstants.borderRadiusT25,
+              child: BottomNavigationBar(
+                backgroundColor: context.cs.surface,
+                selectedItemColor: context.cs.primary,
+                unselectedItemColor: context.cs.outlineVariant,
+                // type: BottomNavigationBarType.shifting,
+                showSelectedLabels: true,
+                showUnselectedLabels: true,
+                currentIndex: tabsRouter.activeIndex,
+                onTap: (index) => onBottomTab(index, tabsRouter),
+                items: List.generate(navItems.length, (index) {
+                  final item = navItems[index];
+                  final isSelected = tabsRouter.activeIndex == index;
+                  return BottomNavigationBarItem(
+                    icon: _getBottomBarIcon(item, isSelected: isSelected),
+                    label: item.title,
+                  );
+                }),
+              ),
             ),
           ),
         );

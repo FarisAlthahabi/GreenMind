@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:green_mind/global/gen/assets.gen.dart';
 import 'package:green_mind/global/utils/constants.dart';
+import 'package:green_mind/global/utils/utils.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
   const MainAppBar({
@@ -51,7 +51,7 @@ class _MainAppBarState extends State<MainAppBar> {
           children: [
             Padding(
               padding: AppConstants.padding8,
-              child: Assets.images.png.greenMindPng.image(),
+              child: Utils.appImage(context).image(width: 40, height: 40),
             ),
             const SizedBox(width: 10),
           ],

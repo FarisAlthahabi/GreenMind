@@ -6,16 +6,16 @@ sealed class UploadImageState{}
 final class UploadImageInitial extends UploadImageState {}
 
 final class UploadImageSuccess extends UploadImageState {
-  //UploadImageSuccess({
-    // required this.image,
-    //});
+  UploadImageSuccess({
+    required this.image,
+    });
 
-    // final XFile image;
+    final XFile image;
 }
 
 final class UploadImageFail extends UploadImageState {
-  UploadImageFail(this.message);
+  UploadImageFail(this.error);
 
-  final String message;
+  final String error;
 }
 

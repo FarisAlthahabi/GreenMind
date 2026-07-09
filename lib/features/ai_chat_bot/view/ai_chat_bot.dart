@@ -79,14 +79,14 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: AppConstants.borderRadius20,
-          border: Border.all(color: context.cs.primary, width: 0.5),
+          border: Border.all(color: context.cs.outline, width: 0.5),
         ),
         child: Column(
           children: [
             _buildRemainingMessages(),
-            Divider(height: 0, color: context.cs.primary, thickness: 0.5),
+            Divider(height: 0, color: context.cs.outline, thickness: 0.5),
             Expanded(child: _buildChatView()),
-            Divider(color: context.cs.primary, thickness: 0.5),
+            Divider(color: context.cs.outline, thickness: 0.5),
             Padding(padding: AppConstants.padding16, child: TextSenderWidget()),
           ],
         ),
@@ -373,8 +373,11 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
               child: MainTextField(
                 controller: textSenderController,
                 hintText: hintText,
+                hintColor: context.cs.outline,
                 borderRadius: AppConstants.borderRadius30,
-                fillColor: context.cs.surfaceDim,
+                fillColor: context.cs.surfaceContainer,
+                borderColor: context.cs.outline,
+                borderWidth: 0.3,
                 readOnly: readOnly,
               ),
             ),

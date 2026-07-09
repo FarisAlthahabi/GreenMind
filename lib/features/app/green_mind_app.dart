@@ -18,6 +18,7 @@ class GreenMindApp extends StatelessWidget {
         BlocProvider(create: (_) => get<AuthManagerBloc>()),
         BlocProvider(create: (_) => get<InternetConnectionCubit>()),
         BlocProvider(create: (_) => get<ThemeCubit>()),
+        // BlocProvider(create: (_) => get<LocalizationCubit>()),
       ],
       child: EasyLocalization(
         supportedLocales: SupportedLocales.locales,

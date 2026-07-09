@@ -7,6 +7,9 @@ abstract class AppConstants {
   static const duration10s = Duration(seconds: 10);
   static const duration3s = Duration(seconds: 3);
   static const duration2s = Duration(seconds: 2);
+  static const duration1s = Duration(seconds: 1);
+  static const duration100ms = Duration(milliseconds: 100);
+  static const duration200ms = Duration(milliseconds: 200);
   static const duration300ms = Duration(milliseconds: 300);
   static const duration500ms = Duration(milliseconds: 500);
   static const duration1500ms = Duration(milliseconds: 1500);
@@ -19,6 +22,12 @@ abstract class AppConstants {
   static const borderRadius10 = BorderRadius.all(Radius.circular(10));
   static const borderRadius8 = BorderRadius.all(Radius.circular(8));
   static const borderRadius5 = BorderRadius.all(Radius.circular(5));
+  static const borderRadiusT5 = BorderRadius.vertical(
+    top: Radius.circular(5),
+  );
+  static const borderRadiusT10 = BorderRadius.vertical(
+    top: Radius.circular(10),
+  );
   static const borderRadiusT20 = BorderRadius.vertical(
     top: Radius.circular(20),
   );

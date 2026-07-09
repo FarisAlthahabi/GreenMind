@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:green_mind/global/gen/assets.gen.dart';
 
 abstract class Utils {
   static Color? stringToColor(String color) {
@@ -46,6 +47,13 @@ abstract class Utils {
   static String capitalizeFirst(String input) {
     if (input.isEmpty) return input;
     return input[0].toUpperCase() + input.substring(1);
+  }
+
+  static AssetGenImage appImage(BuildContext context) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark
+        ? Assets.images.png.greenMindWhitePng
+        : Assets.images.png.greenMindDarkPng;
   }
 
   static String? validateInput(

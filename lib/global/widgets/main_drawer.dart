@@ -5,12 +5,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart';
 import 'package:green_mind/features/auth/model/user_model/user_model.dart';
 import 'package:green_mind/global/di/di.dart';
-import 'package:green_mind/global/gen/assets.gen.dart';
 import 'package:green_mind/global/localization/supported_locales.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/cubit/theme_cubit.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
+import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/restart_app_widget.dart';
@@ -45,8 +45,9 @@ class MainDrawerWidget extends StatefulWidget {
 class _MainDrawerWidgetState extends State<MainDrawerWidget> {
   late final UserModel user = context.read();
   late final ThemeCubit themeCubit = context.read();
+  // late final LocalizationCubit localizationCubit = context.read();
   late bool isArabic = context.locale == SupportedLocales.arabic;
-  late bool isDark = themeCubit.getIsDark();
+  late bool isDark = Theme.of(context).brightness == Brightness.dark;
 
   void onChangeLanguageTap() {
     setState(() {
@@ -57,6 +58,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
     } else {
       context.setLocale(SupportedLocales.english);
     }
+    // localizationCubit.emitLanguageChanged();
     RestartAppWidget.restartApp(context);
   }
 
@@ -72,57 +74,32 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
     double screenWidth = MediaQuery.of(context).size.width;
     bool isTablet = screenWidth > 600;
     return Drawer(
-      child: DecoratedBox(
-        decoration: BoxDecoration(color: context.cs.surface),
-        child: Column(children: [_buildHeader(isTablet), _buildMenuItems()]),
-      ),
+      backgroundColor: context.cs.surface,
+      child: Column(children: [_buildHeader(isTablet), _buildMenuItems()]),
     );
   }
 
   Widget _buildMenuItems() {
     List<DrawerTabModel> tabs = [
-      const DrawerTabModel(Icons.graphic_eq, "stats", StatsRoute()),
+      const DrawerTabModel(Icons.show_chart, "stats", StatsRoute()),
     ];
     List<Widget> tiles = [];
     final changeLanguageTile = SwitchListTile(
       value: isArabic,
       onChanged: (value) => onChangeLanguageTap(),
-      title: Text(
-        "current_language".tr(),
-        // style: const TextStyle(color: context.cs.onPrimaryFixed, fontSize: 16),
-      ),
-      secondary: Icon(
-        Icons.translate_outlined,
-        // color: context.cs.primary,
-        size: 26,
-      ),
-      // activeThumbColor: context.cs.primary,
-      // inactiveThumbColor: AppColors.mainColorSecondary,
-      // activeTrackColor: context.cs.primary.withAlpha((0.2 * 255).toInt()),
-      // inactiveTrackColor: AppColors.mainColorSecondary.withAlpha(
-      //   (0.2 * 255).toInt(),
-      // ),
+      title: Text("current_language".tr()),
+      secondary: Icon(Icons.translate_outlined, size: 26),
       visualDensity: VisualDensity.compact,
     );
 
     final changeThemeTile = SwitchListTile(
       value: isDark,
       onChanged: (value) => onChangeThemeTap(),
-      title: Text(
-        isDark ? "dark".tr() : "light".tr(),
-        // style: const TextStyle(color: context.cs.onPrimaryFixed, fontSize: 16),
-      ),
+      title: Text(isDark ? "dark".tr() : "light".tr()),
       secondary: Icon(
         isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-        // color: context.cs.primary,
         size: 26,
       ),
-      // activeThumbColor: context.cs.primary,
-      // inactiveThumbColor: AppColors.mainColorSecondary,
-      // activeTrackColor: context.cs.primary.withAlpha((0.2 * 255).toInt()),
-      // inactiveTrackColor: AppColors.mainColorSecondary.withAlpha(
-      //   (0.2 * 255).toInt(),
-      // ),
       visualDensity: VisualDensity.compact,
     );
 
@@ -139,17 +116,14 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
           Widget child = Icon(Icons.logout, color: context.cs.error, size: 26);
           if (state is SignInLoading) {
             child = SizedBox(
-              width: 20,
-              child: LoadingIndicator(size: 20, color: context.cs.error),
+              width: 26,
+              child: LoadingIndicator(size: 26, color: context.cs.error),
             );
           }
           return child;
         },
       ),
-      title: Text(
-        "logout",
-        // style: TextStyle(fontSize: 16, color: context.cs.onPrimaryFixed),
-      ).tr(),
+      title: Text("logout").tr(),
       onTap: () => context.read<AuthCubit>().signOut(),
     );
     tiles = List.generate(tabs.length, (index) {
@@ -157,10 +131,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
       return ListTile(
         dense: true,
         leading: Icon(item.icon, size: 26),
-        title: Text(
-          item.title,
-          // style: TextStyle(fontSize: 16, color: context.cs.onPrimaryFixed),
-        ).tr(),
+        title: Text(item.title).tr(),
         onTap: () => context.router.push(item.route),
       );
     });
@@ -175,15 +146,27 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
   Widget _buildHeader(bool isTablet) {
     return DrawerHeader(
       decoration: const BoxDecoration(color: Colors.transparent),
-      child: Center(
-        child: SizedBox(
-          width: isTablet ? 220 : 170,
-          height: isTablet ? 160 : 140,
-          child: FittedBox(
-            fit: BoxFit.contain,
-            child: Assets.images.png.greenMindPng.image(),
+      child: Column(
+        crossAxisAlignment: .stretch,
+        children: [
+          Expanded(child: Utils.appImage(context).image()),
+          SizedBox(height: 5),
+          Text(
+            "Green Mind",
+            style: context.tt.headlineSmall?.copyWith(
+              color: context.cs.primary,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: .center,
           ),
-        ),
+          SizedBox(height: 5),
+          Text(
+            "smart_plant_care_system".tr(),
+            style: context.tt.bodyMedium,
+            textAlign: .center,
+          ),
+          SizedBox(height: 10),
+        ],
       ),
     );
   }

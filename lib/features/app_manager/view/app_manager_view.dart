@@ -35,6 +35,12 @@ class _AppManagerPageState extends State<AppManagerPage> {
   Widget build(BuildContext context) {
     return BlocListener<AppManagerCubit, AppManagerState>(
       listener: (context, state) {},
+      // child: BlocBuilder<LocalizationCubit, LocalizationState>(
+      //   builder: (context, state) {
+      //     print("object");
+      //     return const AutoRouter();
+      //   },
+      // ),
       child: const RestartAppWidget(child: AutoRouter()),
     );
   }

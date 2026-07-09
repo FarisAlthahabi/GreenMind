@@ -46,5 +46,7 @@
     "upload_image" : "تحميل الصورة",
     "diagonse_disease" : "تشخيص المرض",
     "resaults_appear_here" : "النتائج ستظهر هنا",
-    "upload_clear_image_and_press_diagnose" : "قم بتحميل صورة واضحة لورقة النبات واضفط على تشخيص المرض"
+    "upload_clear_image_and_press_diagnose" : "قم بتحميل صورة واضحة لورقة النبات واضفط على تشخيص المرض",
+    "no_image_chosen" : "لا يوجد صورة مختارة",
+    "smart_plant_care_system" : "نظام العناية الذكية بالنباتات"
 }

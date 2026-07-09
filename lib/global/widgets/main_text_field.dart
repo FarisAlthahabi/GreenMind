@@ -41,6 +41,7 @@ class MainTextField extends StatefulWidget {
     this.titleHeight = 10,
     this.boxShadow = const [],
     this.isPassword = false,
+    this.borderColor,
   });
 
   final String? hintText;
@@ -63,6 +64,7 @@ class MainTextField extends StatefulWidget {
   final Color? floatingLabelColor;
   final double borderWidth;
   final Color? fillColor;
+  final Color? borderColor;
   final TextStyle? hintStyle;
   final Color? hintColor;
   final BorderRadius? borderRadius;
@@ -152,7 +154,9 @@ class _MainTextFieldState extends State<MainTextField> {
               labelText: widget.labelText,
               alignLabelWithHint: true,
               hintText: widget.hintText,
-              hintStyle: widget.hintStyle ?? TextStyle(fontSize: 16),
+              hintStyle:
+                  widget.hintStyle ??
+                  context.tt.bodyMedium?.copyWith(color: widget.hintColor),
               errorStyle: const TextStyle(fontSize: 16),
               errorText: widget.errorText,
               border: widget.outlineInputBorder ?? outlineInputBorder(),
@@ -190,6 +194,7 @@ class _MainTextFieldState extends State<MainTextField> {
               ),
               prefixIcon: prefixIcon,
               filled: widget.filled,
+              fillColor: widget.fillColor,
             ),
             validator: widget.validator,
           ),
@@ -201,7 +206,10 @@ class _MainTextFieldState extends State<MainTextField> {
   OutlineInputBorder outlineInputBorder() {
     return OutlineInputBorder(
       borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
-      borderSide: BorderSide(width: widget.borderWidth , color: context.cs.primary),
+      borderSide: BorderSide(
+        width: widget.borderWidth,
+        color: widget.borderColor ?? context.cs.primary,
+      ),
     );
   }
 }

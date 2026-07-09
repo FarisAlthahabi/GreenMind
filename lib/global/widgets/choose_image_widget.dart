@@ -9,15 +9,15 @@ import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChooseImageWidget extends StatelessWidget {
   const ChooseImageWidget({
     super.key,
-    // required this.onSetImage,
+    required this.onSetImage,
     this.initialImage,
   });
-  // final void Function(XFile? image) onSetImage;
+  final void Function(XFile? image) onSetImage;
   final String? initialImage;
 
   @override
@@ -27,42 +27,40 @@ class ChooseImageWidget extends StatelessWidget {
       child: BlocConsumer<UploadImageCubit, UploadImageState>(
         listener: (context, state) {
           if (state is UploadImageSuccess) {
-            // onSetImage(state.image);
+            onSetImage(state.image);
           } else if (state is UploadImageFail) {
-            MainSnackBar.showErrorMessage(context, state.message);
-            // onSetImage(null);
+            MainSnackBar.showErrorMessage(context, state.error);
+            onSetImage(null);
           }
         },
         builder: (context, state) {
           String? imagePath;
           if (state is UploadImageSuccess) {
-            // imagePath = state.image.path;
+            imagePath = state.image.path;
           }
-          return Column(
-            spacing: 30,
-            children: [
-              InkWell(
-                onTap: () => onTap(context),
-                child: DottedBorder(
-                  options: RoundedRectDottedBorderOptions(
-                    radius: Radius.circular(20),
-                    // TODO fix this color
-                    color: context.cs.primary,
-                    strokeWidth: 2,
-                    dashPattern: [6, 4],
-                    padding: AppConstants.padding1,
-                  ),
-                  child: Container(
+          return InkWell(
+            onTap: () => onTap(context),
+            child: DottedBorder(
+              options: RoundedRectDottedBorderOptions(
+                radius: Radius.circular(20),
+                color: context.cs.outline,
+                strokeWidth: 2,
+                dashPattern: [6, 4],
+                padding: AppConstants.padding1,
+              ),
+              child:
+                  _buildImageChosen(imagePath, initialImage) ??
+                  Container(
                     padding: AppConstants.padding20,
                     child: Column(
+                      mainAxisSize: .min,
                       crossAxisAlignment: .stretch,
                       spacing: 10,
                       children: [
-                        // TODO fix color
                         Icon(
                           Icons.cloud_upload,
                           size: 50,
-                          color: context.cs.onSurface,
+                          color: context.cs.outline,
                         ),
                         Text(
                           "press_to_upload_image".tr(),
@@ -72,10 +70,7 @@ class ChooseImageWidget extends StatelessWidget {
                       ],
                     ),
                   ),
-                ),
-              ),
-              ?_buildImageChosen(imagePath, initialImage),
-            ],
+            ),
           );
         },
       ),
@@ -83,7 +78,7 @@ class ChooseImageWidget extends StatelessWidget {
   }
 
   void onTap(BuildContext context) {
-    // final cubit = context.read<UploadImageCubit>();
+    final cubit = context.read<UploadImageCubit>();
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -108,21 +103,27 @@ class ChooseImageWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       TextButton(
-                        onPressed: () {},
-                        // onPressed: () => cubit.uploadImage(ImageSource.gallery),
+                        // onPressed: () {},
+                        onPressed: () => cubit.uploadImage(ImageSource.gallery),
                         style: const ButtonStyle(
                           alignment: AlignmentDirectional.centerStart,
                         ),
-                        child: Text('gallery'..tr(),style: context.tt.bodyMedium),
+                        child: Text(
+                          'gallery'.tr(),
+                          style: context.tt.bodyMedium,
+                        ),
                       ),
                       const SizedBox(height: 10),
                       TextButton(
-                        onPressed: () {},
-                        // onPressed: () => cubit.uploadImage(ImageSource.camera),
+                        // onPressed: () {},
+                        onPressed: () => cubit.uploadImage(ImageSource.camera),
                         style: const ButtonStyle(
                           alignment: AlignmentDirectional.centerStart,
                         ),
-                        child: Text('camera'..tr() , style: context.tt.bodyMedium),
+                        child: Text(
+                          'camera'.tr(),
+                          style: context.tt.bodyMedium,
+                        ),
                       ),
                     ],
                   ),
@@ -137,7 +138,7 @@ class ChooseImageWidget extends StatelessWidget {
 
   Widget? _buildImageChosen(String? imagePath, String? initialImage) {
     final image = imagePath ?? initialImage;
-    if (image == null)return null;
+    if (image == null) return null;
     return ClipRRect(
       borderRadius: AppConstants.borderRadius20,
       child: Image.file(File(image), fit: BoxFit.cover),

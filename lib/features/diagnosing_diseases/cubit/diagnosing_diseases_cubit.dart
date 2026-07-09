@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:green_mind/features/diagnosing_diseases/service/diagnosing_diseases_service.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 
@@ -13,11 +13,12 @@ class DiagnosingDiseasesCubit extends Cubit<GeneralDiagnosingDiseasesState> {
     : super(GeneralDiagnosingDiseasesInitial());
   final DiagnosingDiseasesService diagnosingDiseasesService;
 
-  // XFile? image;
+  XFile? image;
 
-  // void onSetImage(XFile? image)=> this.image = image;
+  void onSetImage(XFile? image) => this.image = image;
 
   Future<void> diagnose() async {
+    if (image == null) return;
     emit(DiagnosingDiseasesLoading());
     try {
       if (isClosed) return;

@@ -38,7 +38,6 @@ class _GreenMindMaterialAppState extends State<GreenMindMaterialApp> {
         if (state is ThemeChanged) {
           themeMode = state.themeMode;
         }
-
         return MaterialApp.router(
           routerConfig: appRouter.config(),
           debugShowCheckedModeBanner: false,

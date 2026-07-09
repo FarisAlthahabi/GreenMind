@@ -46,5 +46,7 @@
     "upload_image" : "Upload Image",
     "diagonse_disease" : "Diagonse Disease",
     "resaults_appear_here" : "Resaults will appear here",
-    "upload_clear_image_and_press_diagnose" : "Upload a clear image for the plant leaf and press on diagnose disease"
+    "upload_clear_image_and_press_diagnose" : "Upload a clear image for the plant leaf and press on diagnose disease",
+    "no_image_chosen" : "No image chosen",
+    "smart_plant_care_system" : "Smart plant care system"
 }
