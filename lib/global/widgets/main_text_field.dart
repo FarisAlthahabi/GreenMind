@@ -108,18 +108,15 @@ class _MainTextFieldState extends State<MainTextField> {
     final title = widget.title;
     final subTitle = widget.subTitle;
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
       children: [
         if (title != null) ...[
           Padding(
             padding: widget.titlePadding,
             child: Text(
               title,
-              style: TextStyle(
-                fontSize: widget.titleSize,
-                fontWeight: FontWeight.w700,
-              ),
+              style: TextStyle(fontSize: widget.titleSize, fontWeight: .w700),
             ),
           ),
           if (subTitle == null) SizedBox(height: widget.titleHeight),
@@ -147,8 +144,9 @@ class _MainTextFieldState extends State<MainTextField> {
             maxLines: widget.maxLines,
             onFieldSubmitted: widget.onSubmitted,
             focusNode: widget.focusNode,
-            keyboardType: widget.textInputType ?? TextInputType.name,
+            keyboardType: widget.textInputType ?? .name,
             inputFormatters: widget.inputFormatters,
+            style: context.tt.bodyMedium,
             decoration: InputDecoration(
               contentPadding: widget.padding ?? AppConstants.padding16,
               labelText: widget.labelText,
@@ -163,8 +161,8 @@ class _MainTextFieldState extends State<MainTextField> {
               focusedBorder: widget.outlineInputBorder ?? outlineInputBorder(),
               enabledBorder: widget.outlineInputBorder ?? outlineInputBorder(),
               suffixIcon: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: .end,
+                mainAxisSize: .min,
                 children: [
                   ?suffixIcon,
                   if (widget.isPassword)

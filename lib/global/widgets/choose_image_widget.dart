@@ -42,37 +42,37 @@ class ChooseImageWidget extends StatelessWidget {
             onTap: () => onTap(context),
             child: DottedBorder(
               options: RoundedRectDottedBorderOptions(
-                radius: Radius.circular(20),
+                radius:const Radius.circular(20),
                 color: context.cs.outline,
                 strokeWidth: 2,
                 dashPattern: [6, 4],
                 padding: AppConstants.padding1,
               ),
               child:
-                  _buildImageChosen(imagePath, initialImage) ??
-                  Container(
-                    padding: AppConstants.padding20,
-                    child: Column(
-                      mainAxisSize: .min,
-                      crossAxisAlignment: .stretch,
-                      spacing: 10,
-                      children: [
-                        Icon(
-                          Icons.cloud_upload,
-                          size: 50,
-                          color: context.cs.outline,
-                        ),
-                        Text(
-                          "press_to_upload_image".tr(),
-                          textAlign: TextAlign.center,
-                          style: context.tt.titleLarge,
-                        ),
-                      ],
-                    ),
-                  ),
+                  _buildImage(imagePath, initialImage) ??
+                  _buildPlaceHolder(context),
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildPlaceHolder(BuildContext context) {
+    return Container(
+      padding: AppConstants.padding20,
+      child: Column(
+        mainAxisSize: .min,
+        crossAxisAlignment: .stretch,
+        spacing: 10,
+        children: [
+          Icon(Icons.cloud_upload, size: 50, color: context.cs.outline),
+          Text(
+            "press_to_upload_image".tr(),
+            textAlign: .center,
+            style: context.tt.titleLarge,
+          ),
+        ],
       ),
     );
   }
@@ -84,51 +84,42 @@ class ChooseImageWidget extends StatelessWidget {
       builder: (context) {
         return SafeArea(
           top: false,
-          child: Padding(
+          child: SingleChildScrollView(
             padding: AppConstants.padding16,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Text(
-                      'choose_image_source'.tr(),
-                      style: context.tt.titleLarge,
+            physics: const BouncingScrollPhysics(),
+            child: Column(
+              mainAxisSize: .min,
+              crossAxisAlignment: .start,
+              children: [
+                Center(
+                  child: Text(
+                    'choose_image_source'.tr(),
+                    style: context.tt.titleLarge,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Column(
+                  mainAxisSize: .min,
+                  crossAxisAlignment: .stretch,
+                  children: [
+                    TextButton(
+                      onPressed: () => cubit.uploadImage(.gallery),
+                      style: const ButtonStyle(
+                        alignment: AlignmentDirectional.centerStart,
+                      ),
+                      child: Text('gallery'.tr(), style: context.tt.bodyMedium),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      TextButton(
-                        // onPressed: () {},
-                        onPressed: () => cubit.uploadImage(ImageSource.gallery),
-                        style: const ButtonStyle(
-                          alignment: AlignmentDirectional.centerStart,
-                        ),
-                        child: Text(
-                          'gallery'.tr(),
-                          style: context.tt.bodyMedium,
-                        ),
+                    const SizedBox(height: 10),
+                    TextButton(
+                      onPressed: () => cubit.uploadImage(.camera),
+                      style: const ButtonStyle(
+                        alignment: AlignmentDirectional.centerStart,
                       ),
-                      const SizedBox(height: 10),
-                      TextButton(
-                        // onPressed: () {},
-                        onPressed: () => cubit.uploadImage(ImageSource.camera),
-                        style: const ButtonStyle(
-                          alignment: AlignmentDirectional.centerStart,
-                        ),
-                        child: Text(
-                          'camera'.tr(),
-                          style: context.tt.bodyMedium,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                      child: Text('camera'.tr(), style: context.tt.bodyMedium),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         );
@@ -136,7 +127,7 @@ class ChooseImageWidget extends StatelessWidget {
     );
   }
 
-  Widget? _buildImageChosen(String? imagePath, String? initialImage) {
+  Widget? _buildImage(String? imagePath, String? initialImage) {
     final image = imagePath ?? initialImage;
     if (image == null) return null;
     return ClipRRect(

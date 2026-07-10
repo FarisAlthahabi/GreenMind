@@ -22,8 +22,7 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage>
-    with SingleTickerProviderStateMixin, PostFrameMixin {
+class _SplashPageState extends State<SplashPage> with PostFrameMixin {
   @override
   Future<void> onPostFrame() async {
     await Future.delayed(AppConstants.duration3s);

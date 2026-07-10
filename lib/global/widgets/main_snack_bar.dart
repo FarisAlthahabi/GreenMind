@@ -68,9 +68,9 @@ abstract class MainSnackBar {
       backgroundColor: bgColor ?? Colors.grey,
       onTap: (flushbar) => flushbar.dismiss(),
       margin: AppConstants.padding8,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: AppConstants.borderRadius12,
       duration: duration ?? AppConstants.duration1500ms,
-      flushbarPosition: FlushbarPosition.TOP,
+      flushbarPosition: .TOP,
       icon: Icon(icon, color: messageColor ?? Colors.black),
       messageText: Text(
         message,

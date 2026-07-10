@@ -59,8 +59,8 @@ class _MainActionButtonState extends State<MainActionButton> {
         fontSize: widget.fontSize,
         fontWeight: widget.fontWeight,
       ),
-      textAlign: TextAlign.center,
-      overflow: TextOverflow.ellipsis,
+      textAlign: .center,
+      overflow: .ellipsis,
     );
     final buildText = widget.isExpandText
         ? Expanded(child: textWidget)
@@ -83,7 +83,7 @@ class _MainActionButtonState extends State<MainActionButton> {
           child: widget.isLoading
               ? LoadingIndicator(size: 25, color: context.cs.onPrimary)
               : Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisSize: .min,
                   children: [
                     if (icon != null) ...[icon, const SizedBox(width: 5)],
                     widget.child ?? buildText,

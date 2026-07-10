@@ -67,7 +67,7 @@ class _SignInPageState extends State<SignInPage>
           key: _formKey,
           child: Column(
             spacing: 5,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: .center,
             children: [
               const SizedBox(height: 40),
               _buildImage(),
@@ -76,7 +76,7 @@ class _SignInPageState extends State<SignInPage>
               _buildEmailTextField(),
               const SizedBox(height: 5),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: .end,
                 children: [
                   _buildPasswordTextField(),
                   _buildForgetPasswordButton(),
@@ -97,13 +97,13 @@ class _SignInPageState extends State<SignInPage>
   }
 
   Widget _buildImage() {
-    return Assets.images.png.greenMindPng.image(width: 150,height: 150);
+    return Assets.images.png.greenMindPng.image(width: 150, height: 150);
   }
 
   Widget _buildTitle() {
     return Text(
       "sign_in".tr(),
-      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      style: const TextStyle(fontSize: 24, fontWeight: .bold),
     );
   }
 
@@ -112,8 +112,8 @@ class _SignInPageState extends State<SignInPage>
       prefixIcon: const Icon(Icons.email_outlined),
       hintText: "email".tr(),
       onChanged: authCubit.setEmail,
-      textInputType: TextInputType.emailAddress,
-      validator: (val) => Utils.validateInput(val, InputTextType.none),
+      textInputType: .emailAddress,
+      validator: (val) => Utils.validateInput(val, .email),
     );
   }
 
@@ -122,7 +122,7 @@ class _SignInPageState extends State<SignInPage>
       hintText: "password".tr(),
       onChanged: authCubit.setPassword,
       prefixIcon: const Icon(Icons.lock_outline),
-      validator: (val) => Utils.validateInput(val, InputTextType.password),
+      validator: (val) => Utils.validateInput(val, .password),
       maxLines: 1,
       isPassword: true,
     );
@@ -167,11 +167,7 @@ class _SignInPageState extends State<SignInPage>
   Widget _buildOrText() {
     return Text(
       "or".tr(),
-      style: const TextStyle(
-        color: Color(0xFF1E1E1E),
-        fontSize: 14,
-        fontFamily: "Alkatra",
-      ),
+      style: const TextStyle(color: Color(0xFF1E1E1E), fontSize: 14),
     );
   }
 
@@ -187,13 +183,13 @@ class _SignInPageState extends State<SignInPage>
 
   Widget _buildGoSignUp() {
     return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
+      scrollDirection: .horizontal,
       child: Row(
-        spacing:5,
-        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 5,
+        mainAxisAlignment: .center,
         children: [
-          Text("not_have_account".tr()),
-          GestureDetector(onTap: onGoToSignUp, child: Text("sign_up".tr())),
+          const Text("not_have_account").tr(),
+          GestureDetector(onTap: onGoToSignUp, child: Text("sign_up").tr()),
         ],
       ),
     );

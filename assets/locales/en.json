@@ -1,5 +1,7 @@
 {
     "green_mind": "Green Mind",
+    "manager" : "Manager",
+    "farmer" : "Farmer",
     "unauthorized": "Unauthorized, you have to login please",
     "connection_out": "The connection has timed out, please check your internet connection then try again.",
     "something_went_wrong": "Something went wrong",

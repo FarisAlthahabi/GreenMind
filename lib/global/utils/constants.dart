@@ -13,18 +13,16 @@ abstract class AppConstants {
   static const duration300ms = Duration(milliseconds: 300);
   static const duration500ms = Duration(milliseconds: 500);
   static const duration1500ms = Duration(milliseconds: 1500);
-
   static const borderRadiusCircle = BorderRadius.all(Radius.circular(300));
   static const borderRadius30 = BorderRadius.all(Radius.circular(30));
   static const borderRadius20 = BorderRadius.all(Radius.circular(20));
   static const borderRadius15 = BorderRadius.all(Radius.circular(15));
   static const borderRadius16 = BorderRadius.all(Radius.circular(16));
+  static const borderRadius12 = BorderRadius.all(Radius.circular(12));
   static const borderRadius10 = BorderRadius.all(Radius.circular(10));
   static const borderRadius8 = BorderRadius.all(Radius.circular(8));
   static const borderRadius5 = BorderRadius.all(Radius.circular(5));
-  static const borderRadiusT5 = BorderRadius.vertical(
-    top: Radius.circular(5),
-  );
+  static const borderRadiusT5 = BorderRadius.vertical(top: Radius.circular(5));
   static const borderRadiusT10 = BorderRadius.vertical(
     top: Radius.circular(10),
   );
@@ -46,7 +44,20 @@ abstract class AppConstants {
   static const borderRadiusB40 = BorderRadius.vertical(
     bottom: Radius.circular(40),
   );
-  
+  static const borderRadius15TE5 = BorderRadiusDirectional.only(
+    topEnd: Radius.circular(5),
+    bottomEnd: Radius.circular(15),
+    bottomStart: Radius.circular(15),
+    topStart: Radius.circular(15),
+  );
+
+  static const borderRadius15TS5 = BorderRadiusDirectional.only(
+    topEnd: Radius.circular(15),
+    bottomEnd: Radius.circular(15),
+    bottomStart: Radius.circular(15),
+    topStart: Radius.circular(5),
+  );
+
   static const paddingB10 = EdgeInsets.only(bottom: 10);
   static const paddingR5 = EdgeInsets.only(right: 5);
   static const paddingH4V5 = EdgeInsets.symmetric(horizontal: 4, vertical: 5);
@@ -84,6 +95,7 @@ abstract class AppConstants {
     horizontal: 16,
     vertical: 32,
   );
+  static const paddingH12V4 = EdgeInsets.symmetric(horizontal: 12, vertical: 4);
   static const paddingH12V8 = EdgeInsets.symmetric(horizontal: 12, vertical: 8);
   static const paddingH32V4 = EdgeInsets.symmetric(horizontal: 32, vertical: 4);
   static const paddingH16V8 = EdgeInsets.symmetric(horizontal: 16, vertical: 8);

@@ -67,7 +67,12 @@ class AuthCubit extends Cubit<AuthState> {
     emit(SignInLoading());
     try {
       // final user = await signInService.signIn(signInPostModel);
-      final user = UserModel(id: 1);
+      final user = UserModel(
+        id: 1,
+        email: "faris@gmail.com",
+        username: "Faris Golden",
+        name: "Faris",
+      );
       emit(SignInSuccess("login_success".tr(), user));
       authManagerBloc?.add(SignInRequested(user, onSuccess: onSuccess));
     } catch (e) {
@@ -94,10 +99,12 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signOut() async {
     emit(SignInLoading());
     try {
+      if (isClosed) return;
       await signInService.signOut();
       emit(SignOutSuccess("logout_success".tr()));
       authManagerBloc?.add(SignOutRequested());
     } catch (e) {
+      if (isClosed) return;
       if (e is UnauthorizedException ||
           e.toString().contains("Token has expired")) {
         emit(SignOutSuccess("logout_success".tr()));

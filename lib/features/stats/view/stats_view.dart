@@ -5,6 +5,8 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
+import 'package:green_mind/global/widgets/main_app_bar.dart';
+import 'package:green_mind/global/widgets/main_drawer.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class IconTitleValueColor {
@@ -13,7 +15,7 @@ class IconTitleValueColor {
   final IconData icon;
   final Color color;
 
-  IconTitleValueColor(this.text, this.value, this.icon, this.color);
+  const IconTitleValueColor(this.text, this.value, this.icon, this.color);
 }
 
 class ChartModel {
@@ -21,7 +23,7 @@ class ChartModel {
   final double percentage;
   final Color color;
 
-  ChartModel(this.text, this.percentage, this.color);
+  const ChartModel(this.text, this.percentage, this.color);
 }
 
 class DiagnoseModel {
@@ -31,7 +33,7 @@ class DiagnoseModel {
   final bool hasDisease;
   final double percentage;
 
-  DiagnoseModel(
+  const DiagnoseModel(
     this.date,
     this.plant,
     this.disease,
@@ -47,7 +49,7 @@ class IrrigationModel {
   final String status;
   final Color color;
 
-  IrrigationModel(
+  const IrrigationModel(
     this.name,
     this.plantName,
     this.date,
@@ -57,7 +59,7 @@ class IrrigationModel {
 }
 
 class WeaklyDiagnosisModel {
-  WeaklyDiagnosisModel(this.day, this.value);
+  const WeaklyDiagnosisModel(this.day, this.value);
   final String day;
   final double value;
 }
@@ -84,6 +86,49 @@ class _StatsPageState extends State<StatsPage> {
 
   @override
   Widget build(BuildContext context) {
+    const diseases = [
+      ChartModel("لفحة متأخرة", 30.0, Colors.red),
+      ChartModel("تبقع الأوراق", 20.0, Colors.blue),
+      ChartModel("صدأ الأوراق", 15.0, Colors.yellow),
+      ChartModel("عفن رمادي", 15.0, Colors.pink),
+      ChartModel("بياض دقيقي", 10.0, Colors.purple),
+      ChartModel("أخرى", 10.0, Colors.cyan),
+    ];
+    return Scaffold(
+      appBar: const MainAppBar(),
+      drawer: const MainDrawer(),
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: AppConstants.padding16,
+        child: Column(
+          spacing: 20,
+          crossAxisAlignment: .start,
+          children: [
+            _buildExportPdfBtn(),
+            _buildStatsTiles(),
+            const DiseasesDistributionPieChartWidget(diseases: diseases),
+            const TrustPercentageDistributionBarChartWidget(
+              trustPercentags: diseases,
+            ),
+            const WeaklyDiagnosis(),
+            const LastDiagnosisCard(),
+            const IncommingIrrigation(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExportPdfBtn() {
+    return MainActionButton(
+      padding: AppConstants.padding16,
+      borderRadius: AppConstants.borderRadius20,
+      onPressed: () {},
+      text: "تصدير التقرير PDF",
+    );
+  }
+
+  Widget _buildStatsTiles() {
     final stats = [
       IconTitleValueColor(
         "إجمالي النباتات",
@@ -117,79 +162,32 @@ class _StatsPageState extends State<StatsPage> {
         context.cs.primary,
       ),
     ];
-    final diseases = [
-      ChartModel("لفحة متأخرة", 30.0, Colors.red),
-      ChartModel("تبقع الأوراق", 20.0, Colors.blue),
-      ChartModel("صدأ الأوراق", 15.0, Colors.yellow),
-      ChartModel("عفن رمادي", 15.0, Colors.pink),
-      ChartModel("بياض دقيقي", 10.0, Colors.purple),
-      ChartModel("أخرى", 10.0, Colors.cyan),
-    ];
-    return Scaffold(
-      // appBar: MainAppBar(),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: AppConstants.padding16,
-        child: Column(
-          spacing: 20,
-          crossAxisAlignment: .start,
-          children: [
-            MainActionButton(
-              padding: AppConstants.padding16,
-              borderRadius: AppConstants.borderRadius20,
-              onPressed: () {},
-              text: "تصدير التقرير PDF",
+    return AnimationLimiter(
+      child: GridView.count(
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 30,
+        shrinkWrap: true,
+        childAspectRatio: 1.2,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: columnCount,
+        children: List.generate(6, (int index) {
+          final stat = stats[index];
+          return AnimationConfiguration.staggeredGrid(
+            delay: AppConstants.duration200ms,
+            position: index,
+            duration: AppConstants.duration500ms,
+            columnCount: columnCount,
+            child: ScaleAnimation(
+              child: FadeInAnimation(child: _buildStatsTile(stat)),
             ),
-            AnimationLimiter(
-              child: GridView.count(
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 30,
-                shrinkWrap: true,
-                childAspectRatio: 1.2,
-                physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: columnCount,
-                children: List.generate(6, (int index) {
-                  final stat = stats[index];
-                  return AnimationConfiguration.staggeredGrid(
-                    delay: AppConstants.duration200ms,
-                    position: index,
-                    duration: AppConstants.duration500ms,
-                    columnCount: columnCount,
-                    child: ScaleAnimation(
-                      child: FadeInAnimation(child: _buildStatsTile(stat)),
-                    ),
-                  );
-                }),
-              ),
-            ),
-            DiseasesDistributionPieChartWidget(diseases: diseases),
-            TrustPercentageDistributionBarChartWidget(
-              trustPercentags: diseases,
-            ),
-            WeaklyDiagnosis(),
-            LastDiagnosisCard(),
-            IncommingIrrigation(),
-          ],
-        ),
+          );
+        }),
       ),
     );
   }
 
   Widget _buildStatsTile(IconTitleValueColor stat) {
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: Column(
         crossAxisAlignment: .start,
         children: [
@@ -226,21 +224,8 @@ class DiseasesDistributionPieChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return MainTile(
       height: 400,
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
       child: SfCircularChart(
         title: ChartTitle(
           text: "توزيع الأمراض".tr(),
@@ -282,20 +267,7 @@ class TrustPercentageDistributionBarChartWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: SfCartesianChart(
         title: ChartTitle(
           text: "توزيع نسبة الثقة".tr(),
@@ -344,20 +316,7 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
   @override
   Widget build(BuildContext context) {
     final headerTitles = ["التاريخ", "النبات", "المرض", "الدقة"];
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: Column(
         spacing: 10,
         children: [
@@ -480,20 +439,7 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
         Colors.orange,
       ),
     ];
-    return Container(
-      padding: AppConstants.padding20,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: Column(
         crossAxisAlignment: .start,
         spacing: 16,
@@ -523,20 +469,7 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
     BuildContext context,
     IrrigationModel irrigation,
   ) {
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: Row(
         mainAxisAlignment: .spaceBetween,
         crossAxisAlignment: .start,
@@ -589,20 +522,7 @@ class WeaklyDiagnosis extends StatelessWidget {
       WeaklyDiagnosisModel('Fri', 30),
       WeaklyDiagnosisModel('Sat', 40),
     ];
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: SfCartesianChart(
         title: ChartTitle(
           text: "التشخيصات الأسبوعية".tr(),
@@ -632,10 +552,36 @@ class WeaklyDiagnosis extends StatelessWidget {
               isVisible: true,
               labelAlignment: ChartDataLabelAlignment.top,
             ),
-            animationDuration: 800,
           ),
         ],
       ),
+    );
+  }
+}
+
+class MainTile extends StatelessWidget {
+  const MainTile({super.key, required this.child, this.height});
+  final Widget child;
+  final double? height;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      padding: AppConstants.padding16,
+      decoration: BoxDecoration(
+        color: context.cs.surface,
+        borderRadius: AppConstants.borderRadius20,
+        border: Border.all(width: 0.2, color: context.cs.onSurface),
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 4),
+            blurRadius: 4,
+            color: context.cs.surfaceContainerLow,
+          ),
+        ],
+      ),
+      child: child,
     );
   }
 }
