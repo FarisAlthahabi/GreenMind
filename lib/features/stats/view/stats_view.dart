@@ -95,7 +95,7 @@ class _StatsPageState extends State<StatsPage> {
       ChartModel("أخرى", 10.0, Colors.cyan),
     ];
     return Scaffold(
-      appBar: const MainAppBar(),
+      appBar: const MainAppBar(title: "stats"),
       drawer: const MainDrawer(),
       body: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),

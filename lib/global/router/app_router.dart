@@ -17,7 +17,7 @@ class AppRouter extends RootStackRouter {
           page: AuthRouter.page,
           children: [
             AutoRoute(page: SignInRoute.page, initial: true),
-            AutoRoute(page: SignUpRoute.page),
+            // AutoRoute(page: SignUpRoute.page),
             // AutoRoute(page: VerifyRoute.page),
             // AutoRoute(page: ForgetPasswordRoute.page),
             // AutoRoute(page: ResetPasswordRoute.page),
@@ -34,6 +34,7 @@ class AppRouter extends RootStackRouter {
                 AutoRoute(page: DiagnosingDiseasesRoute.page),
               ],
             ),
+            AutoRoute(page: CropsRoute.page),
             AutoRoute(page: StatsRoute.page),
           ],
         ),

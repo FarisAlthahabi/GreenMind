@@ -7,7 +7,6 @@ import 'package:green_mind/global/dio/exceptions.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 import 'package:green_mind/features/auth/model/sign_in_post_model/sign_in_post_model.dart';
-import 'package:green_mind/features/auth/model/sign_up_post_model/sign_up_post_model.dart';
 import 'package:green_mind/features/auth/service/auth_service.dart';
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart';
 
@@ -21,29 +20,43 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthManagerBloc? authManagerBloc;
 
   SignInPostModel signInPostModel = const SignInPostModel();
-  SignUpPostModel signUpPostModel = const SignUpPostModel();
+  // SignUpPostModel signUpPostModel = const SignUpPostModel();
   // VerifyModel verifyModel = const VerifyModel();
   // ResetPasswordModel resetPasswordModel = const ResetPasswordModel();
 
-  void setEmail(String email) {
-    signInPostModel = signInPostModel.copyWith(email: () => email);
-  }
+  // void setEmail(String email) {
+  //   signInPostModel = signInPostModel.copyWith(email: () => email);
+  // }
 
   void setPassword(String password) {
     signInPostModel = signInPostModel.copyWith(password: () => password);
   }
-
-  void setName(String name) {
-    signUpPostModel = signUpPostModel.copyWith(name: () => name);
+  
+  void setUsernameSignIn(String username) {
+    signInPostModel = signInPostModel.copyWith(username: () => username);
   }
 
-  void setEmailSignUp(String email) {
-    signUpPostModel = signUpPostModel.copyWith(email: () => email);
-  }
+  // void setUsernameSignUp(String username) {
+  //   signUpPostModel = signUpPostModel.copyWith(username: () => username);
+  // }
 
-  void setPasswordSignUp(String password) {
-    signUpPostModel = signUpPostModel.copyWith(password: () => password);
-  }
+
+  // void setName(String name) {
+  //   signUpPostModel = signUpPostModel.copyWith(name: () => name);
+  // }
+
+  // void setRole(UserRoleEnum role) {
+  //   signUpPostModel = signUpPostModel.copyWith(role: () => role);
+  // }
+
+  // void setPasswordSignUp(String password) {
+  //   signUpPostModel = signUpPostModel.copyWith(password: () => password);
+  // }
+
+  // void setEmailSignUp(String email) {
+  //   signUpPostModel = signUpPostModel.copyWith(email: () => email);
+  // }
+
 
   // void setEmailVerify(String email) {
   //   verifyModel = verifyModel.copyWith(email: () => email);
@@ -66,13 +79,7 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> signIn({VoidCallback? onSuccess}) async {
     emit(SignInLoading());
     try {
-      // final user = await signInService.signIn(signInPostModel);
-      final user = UserModel(
-        id: 1,
-        email: "faris@gmail.com",
-        username: "Faris Golden",
-        name: "Faris",
-      );
+      final user = await signInService.signIn(signInPostModel);
       emit(SignInSuccess("login_success".tr(), user));
       authManagerBloc?.add(SignInRequested(user, onSuccess: onSuccess));
     } catch (e) {
@@ -84,17 +91,17 @@ class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<void> signUp() async {
-    emit(SignInLoading());
-    try {
-      await signInService.signUp(signUpPostModel);
-      // setEmailVerify(signUpPostModel.email);
-      signUpPostModel = const SignUpPostModel();
-      emit(SignUpSuccess("signup_success".tr()));
-    } catch (e) {
-      emit(SignInFail(e.toString()));
-    }
-  }
+  // Future<void> signUp() async {
+  //   emit(SignInLoading());
+  //   try {
+  //     await signInService.signUp(signUpPostModel);
+  //     // setEmailVerify(signUpPostModel.email);
+  //     signUpPostModel = const SignUpPostModel();
+  //     emit(SignUpSuccess("signup_success".tr()));
+  //   } catch (e) {
+  //     emit(SignInFail(e.toString()));
+  //   }
+  // }
 
   Future<void> signOut() async {
     emit(SignInLoading());

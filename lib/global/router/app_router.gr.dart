@@ -17,13 +17,13 @@ import 'package:green_mind/features/app_manager/view/app_manager_view.dart'
 import 'package:green_mind/features/auth/model/user_model/user_model.dart'
     as _i13;
 import 'package:green_mind/features/auth/view/auth_router.dart' as _i4;
-import 'package:green_mind/features/auth/view/sign_in_view.dart' as _i7;
-import 'package:green_mind/features/auth/view/sign_up_view.dart' as _i8;
+import 'package:green_mind/features/auth/view/sign_in_view.dart' as _i8;
 import 'package:green_mind/features/auth_manager/view/auth_manager_view.dart'
     as _i3;
-import 'package:green_mind/features/dashboard/view/dashboard_view.dart' as _i5;
+import 'package:green_mind/features/crops/view/crop_view.dart' as _i5;
+import 'package:green_mind/features/dashboard/view/dashboard_view.dart' as _i6;
 import 'package:green_mind/features/diagnosing_diseases/view/diagnosing_diseases_view.dart'
-    as _i6;
+    as _i7;
 import 'package:green_mind/features/splash/view/splash_view.dart' as _i9;
 import 'package:green_mind/features/stats/view/stats_view.dart' as _i10;
 
@@ -123,7 +123,23 @@ class AuthRouter extends _i11.PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [_i5.DashboardView]
+/// [_i5.CropsView]
+class CropsRoute extends _i11.PageRouteInfo<void> {
+  const CropsRoute({List<_i11.PageRouteInfo>? children})
+    : super(CropsRoute.name, initialChildren: children);
+
+  static const String name = 'CropsRoute';
+
+  static _i11.PageInfo page = _i11.PageInfo(
+    name,
+    builder: (data) {
+      return const _i5.CropsView();
+    },
+  );
+}
+
+/// generated route for
+/// [_i6.DashboardView]
 class DashboardRoute extends _i11.PageRouteInfo<void> {
   const DashboardRoute({List<_i11.PageRouteInfo>? children})
     : super(DashboardRoute.name, initialChildren: children);
@@ -133,13 +149,13 @@ class DashboardRoute extends _i11.PageRouteInfo<void> {
   static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i5.DashboardView();
+      return const _i6.DashboardView();
     },
   );
 }
 
 /// generated route for
-/// [_i6.DiagnosingDiseasesView]
+/// [_i7.DiagnosingDiseasesView]
 class DiagnosingDiseasesRoute extends _i11.PageRouteInfo<void> {
   const DiagnosingDiseasesRoute({List<_i11.PageRouteInfo>? children})
     : super(DiagnosingDiseasesRoute.name, initialChildren: children);
@@ -149,13 +165,13 @@ class DiagnosingDiseasesRoute extends _i11.PageRouteInfo<void> {
   static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i6.DiagnosingDiseasesView();
+      return const _i7.DiagnosingDiseasesView();
     },
   );
 }
 
 /// generated route for
-/// [_i7.SignInView]
+/// [_i8.SignInView]
 class SignInRoute extends _i11.PageRouteInfo<void> {
   const SignInRoute({List<_i11.PageRouteInfo>? children})
     : super(SignInRoute.name, initialChildren: children);
@@ -165,23 +181,7 @@ class SignInRoute extends _i11.PageRouteInfo<void> {
   static _i11.PageInfo page = _i11.PageInfo(
     name,
     builder: (data) {
-      return const _i7.SignInView();
-    },
-  );
-}
-
-/// generated route for
-/// [_i8.SignUpView]
-class SignUpRoute extends _i11.PageRouteInfo<void> {
-  const SignUpRoute({List<_i11.PageRouteInfo>? children})
-    : super(SignUpRoute.name, initialChildren: children);
-
-  static const String name = 'SignUpRoute';
-
-  static _i11.PageInfo page = _i11.PageInfo(
-    name,
-    builder: (data) {
-      return const _i8.SignUpView();
+      return const _i8.SignInView();
     },
   );
 }

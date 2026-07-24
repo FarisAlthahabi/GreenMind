@@ -12,14 +12,15 @@ class SignInServiceImp implements SignInService {
       signInPostModel = signInPostModel.copyWith(fcmToken: () => fcmToken);
       final map = signInPostModel.toJson();
       // final response = await dio.post("/api/auth/login", data: map);
-       final response = await dio.post("/customer/login", data: map);
+      final response = await dio.post("auth/login", data: map);
 
-      final data = response.data as Map<String, dynamic>;
+      final data = response.data["data"] as Map<String, dynamic>;
       final token = data["token"] as String;
+      final user = data["user"] as Map<String, dynamic>;
       prefs.setString("token", token);
 
       //refreshToken();
-      return UserModel.fromJson(data);
+      return UserModel.fromJson(user);
     } catch (e, stackTrace) {
       if (kDebugMode) print("stackTrace of signin : $stackTrace");
       rethrow;
@@ -29,33 +30,29 @@ class SignInServiceImp implements SignInService {
   @override
   Future<void> signOut() async {
     try {
-      await dio.post("/customer/logout");
+      await dio.post("auth/logout");
     } catch (e, stackTrace) {
       if (kDebugMode) print("stackTrace of signOut $stackTrace");
       rethrow;
     }
   }
 
-  @override
-  Future<void> signUp(SignUpPostModel signUpPostModel) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final fcmToken = prefs.getString("fcm_token");
-      signUpPostModel = signUpPostModel.copyWith(fcmToken: () => fcmToken);
+  // @override
+  // Future<void> signUp(SignUpPostModel signUpPostModel) async {
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final fcmToken = prefs.getString("fcm_token");
+  //     signUpPostModel = signUpPostModel.copyWith(fcmToken: () => fcmToken);
 
-      final data = signUpPostModel.toJson();
-      const duration = AppConstants.duration1m;
-      final resposne = await dio.post(
-        "/customer/register",
-        data: data,
-        duration: duration,
-      );
-      prefs.setString("token", resposne.data["token"]);
-    } catch (e, stackTrace) {
-      if (kDebugMode) print("stackTrace of signUp is $stackTrace");
-      rethrow;
-    }
-  }
+  //     final data = signUpPostModel.toJson();
+  //     const duration = AppConstants.duration1m;
+  //     final resposne = await dio.post("/users", data: data, duration: duration);
+  //     prefs.setString("token", resposne.data["token"]);
+  //   } catch (e, stackTrace) {
+  //     if (kDebugMode) print("stackTrace of signUp is $stackTrace");
+  //     rethrow;
+  //   }
+  // }
 
   // @override
   // Future<UserModel> verify(VerifyModel verifyModel) async {

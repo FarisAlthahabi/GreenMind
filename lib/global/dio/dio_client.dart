@@ -5,7 +5,8 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:green_mind/global/dio/app_interceptor.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
-const baseUrl = "http://192.168.1.222:8000";
+// const baseUrl = "http://127.0.0.1:8000";
+const baseUrl = "http://192.168.1.36:8000";
 const apiUrl = '$baseUrl/api/';
 // const apiUrl = '$baseUrl/';
 
@@ -18,9 +19,9 @@ class DioClient {
   DioClient._() {
     final baseOptions = BaseOptions(
       baseUrl: apiUrl,
-      receiveTimeout: AppConstants.duration25s,
-      connectTimeout: AppConstants.duration25s,
-      sendTimeout: AppConstants.duration25s,
+      receiveTimeout: AppConstants.duration15s,
+      connectTimeout: AppConstants.duration15s,
+      sendTimeout: AppConstants.duration15s,
     );
 
     _dio = Dio(baseOptions);

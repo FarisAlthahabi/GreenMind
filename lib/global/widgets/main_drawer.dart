@@ -14,6 +14,7 @@ import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/restart_app_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @immutable
 class DrawerTabModel {
@@ -53,11 +54,12 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
     setState(() {
       isArabic = !isArabic;
     });
-    if (isArabic) {
-      context.setLocale(SupportedLocales.arabic);
-    } else {
-      context.setLocale(SupportedLocales.english);
-    }
+    final newLocale = isArabic
+        ? SupportedLocales.arabic
+        : SupportedLocales.english;
+    context.setLocale(newLocale);
+    final prefs = get<SharedPreferences>();
+    prefs.setString('locale', newLocale.languageCode);
     // localizationCubit.emitLanguageChanged();
     RestartAppWidget.restartApp(context);
   }
@@ -101,6 +103,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
         "diagnosing_diseases",
         DiagnosingDiseasesRoute(),
       ),
+      const DrawerTabModel(Icons.local_florist_outlined, "crops", CropsRoute()),
       const DrawerTabModel(Icons.show_chart_outlined, "stats", StatsRoute()),
     ];
     List<Widget> tiles = [];
@@ -211,7 +214,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
   Widget _buildRole() {
     return Padding(
       padding: AppConstants.padding16,
-      child: Text("${user.role.displayName}: ${user.username ?? "---"}"),
+      child: Text("${user.role.displayName}: ${user.username}"),
     );
   }
 }

@@ -21,7 +21,10 @@ class AppInterceptor extends Interceptor {
     options.headers['Accept'] = 'application/json';
 
     final prefs = await SharedPreferences.getInstance();
+    final locale = prefs.getString('locale') ?? 'ar';
     final token = prefs.getString("token");
+
+    options.headers['Accept-Language'] = locale;
 
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';

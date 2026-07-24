@@ -22,7 +22,7 @@ class DiagnosingDiseasesCubit extends Cubit<GeneralDiagnosingDiseasesState> {
     emit(DiagnosingDiseasesLoading());
     try {
       if (isClosed) return;
-      await Future.delayed(Duration(seconds: 2));
+      await diagnosingDiseasesService.diagnoiseDesease(image!);
       emit(DiagnosingDiseasesSuccess());
     } catch (e) {
       if (isClosed) return;
