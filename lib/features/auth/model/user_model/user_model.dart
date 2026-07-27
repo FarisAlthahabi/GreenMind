@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
+import 'package:green_mind/global/widgets/insure_delete_widget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
 @immutable
-class UserModel {
+class UserModel implements DeleteModel {
   const UserModel({
     required this.id,
     required this.username,
@@ -53,4 +54,7 @@ class UserModel {
   factory UserModel.fromString(String jsonString) {
     return UserModel.fromJson(json.decode(jsonString));
   }
+
+  @override
+  String get apiDeleteUrl => "users/$id";
 }

@@ -1,22 +1,24 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
+import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'crop_model.g.dart';
 
 @JsonSerializable()
 @immutable
-class CropModel implements DeleteModel {
+class CropModel implements DeleteModel ,DropDownItemModel{
   const CropModel({
     required this.id,
     required this.nameAr,
     required this.nameEn,
-    required this.baseIrrigationDays,
+    this.baseIrrigationDays,
     this.createdAt,
     this.updatedAt,
   });
 
+  @override
   final int id;
 
   @JsonKey(name: "name_ar")
@@ -26,7 +28,7 @@ class CropModel implements DeleteModel {
   final String nameEn;
 
   @JsonKey(name: "base_irrigation_days")
-  final int baseIrrigationDays;
+  final int? baseIrrigationDays;
 
   @JsonKey(name: "created_at")
   final String? createdAt;
@@ -68,4 +70,10 @@ class CropModel implements DeleteModel {
 
   @override
   String get apiDeleteUrl => "crops/$id";
+  
+  @override
+  String? get description => null;
+  
+  @override
+  String get displayName => nameEn;
 }

@@ -104,6 +104,8 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
         DiagnosingDiseasesRoute(),
       ),
       const DrawerTabModel(Icons.local_florist_outlined, "crops", CropsRoute()),
+      const DrawerTabModel(Icons.eco_outlined, "plants", PlantsRoute()),
+      const DrawerTabModel(Icons.person_outlined, "users", UsersRoute()),
       const DrawerTabModel(Icons.show_chart_outlined, "stats", StatsRoute()),
     ];
     List<Widget> tiles = [];

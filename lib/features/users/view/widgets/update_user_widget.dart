@@ -1,68 +1,67 @@
+import 'package:collection/collection.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:green_mind/features/crops/cubit/crops_cubit.dart';
-import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
+import 'package:green_mind/features/auth/model/user_model/user_model.dart';
+import 'package:green_mind/features/users/cubit/users_cubit.dart';
+import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
-import 'package:green_mind/global/widgets/main_counter_widget.dart';
+import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
 
-class UpdateCropView extends StatelessWidget {
-  const UpdateCropView({
-    super.key,
-    this.crop,
-    this.onSuccess,
-    required this.cropsCubit,
-  });
-  final CropsCubit cropsCubit;
-
-  final CropModel? crop;
-  final VoidCallback? onSuccess;
+class UpdateUserView extends StatelessWidget {
+  const UpdateUserView({super.key, this.user, required this.usersCubit});
+  final UsersCubit usersCubit;
+  final UserModel? user;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider.value(
-      value: cropsCubit,
-      child: UpdateCropWidget(crop: crop, onSuccess: onSuccess),
+      value: usersCubit,
+      child: UpdateUserWidget(user: user),
     );
   }
 }
 
-class UpdateCropWidget extends StatefulWidget {
-  const UpdateCropWidget({super.key, this.crop, this.onSuccess});
+class UpdateUserWidget extends StatefulWidget {
+  const UpdateUserWidget({super.key, this.user});
 
-  final CropModel? crop;
-  final VoidCallback? onSuccess;
+  final UserModel? user;
 
   @override
-  State<UpdateCropWidget> createState() => _UpdateCropWidgetState();
+  State<UpdateUserWidget> createState() => _UpdateUserWidgetState();
 }
 
-class _UpdateCropWidgetState extends State<UpdateCropWidget> {
-  late final CropsCubit cropsCubit = context.read();
+class _UpdateUserWidgetState extends State<UpdateUserWidget> {
+  late final UsersCubit usersCubit = context.read();
 
   @override
   void initState() {
     super.initState();
-    cropsCubit.setModel(widget.crop);
+    usersCubit.setModel(widget.user);
   }
 
   void onCancelTap(BuildContext context) => Navigator.pop(context);
 
   @override
   void dispose() {
-    cropsCubit.clearModel();
+    usersCubit.clearModel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final crop = widget.crop;
-    final title = crop == null ? "add_crop".tr() : "update_crop".tr();
+    final user = widget.user;
+    final title = user == null ? "add_user".tr() : "update_user".tr();
+    final isEdit = user != null;
+    final selectedValue = UserRoleEnum.values.firstWhereOrNull(
+      (role) => role.id == user?.role.id,
+    );
+
     return AlertDialog(
       shape: RoundedRectangleBorder(
         borderRadius: AppConstants.borderRadius20,
@@ -71,37 +70,47 @@ class _UpdateCropWidgetState extends State<UpdateCropWidget> {
       backgroundColor: context.cs.surface,
       contentPadding: AppConstants.padding30,
       title: Row(
-        mainAxisAlignment: .spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [Text(title), _buildCloseIcon()],
       ),
       content: SingleChildScrollView(
         child: Column(
           spacing: 10,
-          crossAxisAlignment: .center,
-          mainAxisSize: .min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
           children: [
             MainTextField(
-              initialText: crop?.nameEn,
-              title: "name_en".tr(),
-              hintText: "${"example".tr()}: Tomato Crop",
-              onChanged: cropsCubit.setNameEn,
+              initialText: user?.name,
+              title: "name".tr(),
+              hintText: "${"example".tr()}: John Doe",
+              onChanged: usersCubit.setName,
             ),
             MainTextField(
-              initialText: crop?.nameAr,
-              title: "name_ar".tr(),
-              hintText: "${"example".tr()}: حقل بطاطا",
-              onChanged: cropsCubit.setNameAr,
+              initialText: user?.username,
+              title: "username".tr(),
+              hintText: "${"example".tr()}: john_doe",
+              onChanged: usersCubit.setUsername,
             ),
-            MainCounterWidget(
-              initialCount: crop?.baseIrrigationDays,
-              title: "irrigation_days".tr(),
-              hint: "${"example".tr()}: 1",
-              onChanged: cropsCubit.setIrrigarionDays,
+            MainTextField(
+              title: isEdit ? "new_password_optional".tr() : "password".tr(),
+              hintText: isEdit
+                  ? "leave_blank_to_keep".tr()
+                  : "${"example".tr()}: ********",
+              isPassword: true,
+              onChanged: usersCubit.setPassword,
             ),
+            MainDropDownWidget(
+              label: "role".tr(),
+              selectedValue: selectedValue,
+              items: UserRoleEnum.values,
+              text: "select_role".tr(),
+              onChanged: usersCubit.setRole,
+            ),
+            // _buildRoleDropdown(),
             const SizedBox.shrink(),
             Row(
               spacing: 10,
-              mainAxisAlignment: .end,
+              mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Expanded(
                   child: MainActionButton(
@@ -109,29 +118,27 @@ class _UpdateCropWidgetState extends State<UpdateCropWidget> {
                     buttonColor: Colors.transparent,
                     border: Border.all(width: 0.3, color: context.cs.outline),
                     textColor: context.cs.onSurface,
-                    fontWeight: .bold,
+                    fontWeight: FontWeight.bold,
                     text: "cancel".tr(),
                     onPressed: () => onCancelTap(context),
                   ),
                 ),
                 Expanded(
-                  child: BlocConsumer<CropsCubit, GeneralCropsState>(
-                    buildWhen: (_, current) => current is UpdateCropState,
+                  child: BlocConsumer<UsersCubit, GeneralUsersState>(
+                    buildWhen: (_, current) => current is UpdateUserState,
                     listener: (context, state) {
-                      if (state is UpdateCropSuccess) {
-                        widget.onSuccess?.call();
+                      if (state is UpdateUserSuccess) {
                         onCancelTap(context);
                         MainSnackBar.showSuccessMessage(context, state.message);
-                      } else if (state is UpdateCropFail) {
+                      } else if (state is UpdateUserFail) {
                         MainSnackBar.showErrorMessage(context, state.error);
                       }
                     },
                     builder: (context, state) {
-                      var onTap = () => cropsCubit.updateCrop(id: crop?.id);
+                      var onTap = () => usersCubit.updateUser(id: user?.id);
                       Widget? child;
-                      if (state is UpdateCropLoading) {
+                      if (state is UpdateUserLoading) {
                         onTap = () async {};
-                        // TODO use color from theme
                         child = LoadingIndicator(
                           isInBtn: true,
                           color: Colors.white,
@@ -140,7 +147,7 @@ class _UpdateCropWidgetState extends State<UpdateCropWidget> {
                       return MainActionButton(
                         padding: AppConstants.padding16,
                         textColor: Colors.white,
-                        fontWeight: .bold,
+                        fontWeight: FontWeight.bold,
                         onPressed: () => onTap(),
                         text: "save".tr(),
                         child: child,

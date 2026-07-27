@@ -1,13 +1,12 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
-import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
-import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
-import 'package:green_mind/features/plants/view/widgets/update_plant_view.dart';
+import 'package:green_mind/features/auth/model/user_model/user_model.dart';
+import 'package:green_mind/features/users/cubit/users_cubit.dart';
+import 'package:green_mind/features/users/view/widgets/update_user_widget.dart';
 import 'package:green_mind/global/di/di.dart';
-import 'package:green_mind/global/extensions/string_x.dart';
+import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
@@ -18,86 +17,84 @@ import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_fab.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
 
-abstract class PlantsViewCallBacks {}
+abstract class UsersViewCallBacks {}
 
 @RoutePage()
-class PlantsView extends StatelessWidget {
-  const PlantsView({super.key});
+class UsersView extends StatelessWidget {
+  const UsersView({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => get<PlantsCubit>(),
-      child: const PlantsPage(),
+      create: (context) => get<UsersCubit>(),
+      child: const UsersPage(),
     );
   }
 }
 
-class PlantsPage extends StatefulWidget {
-  const PlantsPage({super.key});
+class UsersPage extends StatefulWidget {
+  const UsersPage({super.key});
 
   @override
-  State<PlantsPage> createState() => _PlantsPageState();
+  State<UsersPage> createState() => _UsersPageState();
 }
 
-class _PlantsPageState extends State<PlantsPage>
-    implements PlantsViewCallBacks {
-  late final PlantsCubit plantsCubit = context.read();
+class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
+  late final UsersCubit usersCubit = context.read();
 
   @override
   void initState() {
     super.initState();
-    fetchPlants();
+    fetchUsers();
   }
 
-  void onDeletePlant(PlantModel plant) {
+  void onDeleteUser(UserModel user) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => InsureDeleteWidget(
-        item: plant,
-        onSuccess: () => plantsCubit.deleteLocalPlant(plant),
+        item: user,
+        onSuccess: () => usersCubit.deleteLocalUser(user.id),
       ),
     );
   }
 
-  void onUpdatePlant(PlantModel? plant) {
+  void onUpdateUser(UserModel? user) {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) =>
-          UpdatePlantView(plantsCubit: plantsCubit, plant: plant),
+      builder: (context) => UpdateUserView(usersCubit: usersCubit, user: user),
     );
   }
 
-  void fetchPlants() => plantsCubit.getPlants();
+  void fetchUsers() => usersCubit.getUsers();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(title: "plants"),
+      appBar: const MainAppBar(title: "users"),
       drawer: const MainDrawer(),
       body: Padding(
         padding: AppConstants.padding16,
         child: Column(
           spacing: 20,
-          crossAxisAlignment: .start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             MainTextField(
-              hintText: "search_for_plant",
+              hintText: "search_for_user",
               prefixIcon: Icon(Icons.search),
-              onChanged: plantsCubit.setSearchQuery,
+              onChanged: usersCubit.setSearchQuery,
             ),
             Expanded(
-              child: BlocBuilder<PlantsCubit, GeneralPlantsState>(
-                buildWhen: (_, current) => current is PlantsState,
+              child: BlocBuilder<UsersCubit, GeneralUsersState>(
+                buildWhen: (_, current) => current is UsersState,
                 builder: (context, state) {
-                  if (state is PlantsLoading) {
+                  if (state is UsersLoading) {
                     return Align(child: LoadingIndicator());
-                  } else if (state is PlantsSuccess) {
-                    final plants = state.plants;
+                  } else if (state is UsersSuccess) {
+                    final users = state.users;
                     return RefreshIndicator(
-                      onRefresh: () async => fetchPlants(),
+                      onRefresh: () async => fetchUsers(),
                       child: SingleChildScrollView(
                         physics: const BouncingScrollPhysics(),
                         child: Column(
@@ -109,23 +106,23 @@ class _PlantsPageState extends State<PlantsPage>
                               child: FadeInAnimation(child: widget),
                             ),
                             children: [
-                              ...plants.map(_buildPlantTile),
+                              ...users.map(_buildUserTile),
                               const SizedBox(height: 50),
                             ],
                           ),
                         ),
                       ),
                     );
-                  } else if (state is PlantsEmpty) {
+                  } else if (state is UsersEmpty) {
                     return MainErrorWidget(
                       error: state.message,
-                      isRefresh: true,
-                      onTryAgainTap: fetchPlants,
+                      onTryAgainTap: fetchUsers,
                     );
-                  } else if (state is PlantsFail) {
+                  } else if (state is UsersFail) {
                     return MainErrorWidget(
                       error: state.error,
-                      onTryAgainTap: fetchPlants,
+                      isRefresh: true,
+                      onTryAgainTap: fetchUsers,
                     );
                   } else {
                     return const SizedBox.shrink();
@@ -136,11 +133,11 @@ class _PlantsPageState extends State<PlantsPage>
           ],
         ),
       ),
-      floatingActionButton: MainFab(onTap: () => onUpdatePlant(null)),
+      floatingActionButton: MainFab(onTap: () => onUpdateUser(null)),
     );
   }
 
-  Widget _buildPlantTile(PlantModel plant) {
+  Widget _buildUserTile(UserModel user) {
     return Container(
       padding: AppConstants.padding16,
       decoration: BoxDecoration(
@@ -157,81 +154,79 @@ class _PlantsPageState extends State<PlantsPage>
       ),
       child: Column(
         spacing: 16,
-        crossAxisAlignment: .start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            crossAxisAlignment: .start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             spacing: 10,
             children: [
               Expanded(
                 child: Column(
-                  mainAxisSize: .min,
-                  crossAxisAlignment: .start,
-                  spacing: 10,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      plant.name,
-                      style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
-                    ),
-                    DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: AppConstants.borderRadius20,
-                        color: context.cs.primaryContainer,
+                      user.name,
+                      style: context.tt.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
                       ),
-                      child: Padding(
-                        padding: AppConstants.paddingH12V4,
-                        child: Text(plant.healthStatus ?? "---"),
+                    ),
+                    Text(
+                      "@${user.username}",
+                      style: context.tt.bodyMedium?.copyWith(
+                        color: context.cs.onSurfaceVariant,
                       ),
                     ),
                   ],
                 ),
               ),
+              _buildRoleChip(user.role.displayName, user.role),
               _buildIconBtn(
                 Icons.edit,
                 context.cs.secondaryContainer,
                 context.cs.secondary,
-                () => onUpdatePlant(plant),
+                () => onUpdateUser(user),
               ),
               _buildIconBtn(
                 Icons.delete,
                 context.cs.errorContainer,
                 context.cs.error,
-                () => onDeletePlant(plant),
+                () => onDeleteUser(user),
               ),
             ],
           ),
-          Row(
-            crossAxisAlignment: .start,
-            spacing: 10,
-            children: [
-              Expanded(
-                child: Text("${"type".tr()}: ${plant.crop?.nameAr ?? "---"}"),
-              ),
-              Expanded(child: Text("${"quantity".tr()}: ${plant.quantity}")),
-            ],
-          ),
-          Row(
-            crossAxisAlignment: .start,
-            spacing: 10,
-            children: [
-              Expanded(
-                child: Text(
-                  "${"planting_date".tr()}: ${plant.plantingDate?.formatYYYYMMDD}",
-                ),
-              ),
-              Expanded(
-                child: Text(
-                  "${"harvest_date".tr()}: ${plant.harvestDate?.formatYYYYMMDD ?? "unknown".tr()}",
-                ),
-              ),
-              // Expanded(child: Text("${"notes".tr()}: ${plant.notes}")),
-            ],
-          ),
-          if (plant.notes != null) ...[
-            const Divider(height: 0),
-            Center(child: Text("${"notes".tr()}: ${plant.notes}")),
-          ],
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Text(
+          //       "${"created_at".tr()}: ${user.createdAt?.formatYYYYMMDD ?? "-"}",
+          //       style: context.tt.bodySmall,
+          //     ),
+          //     if (user.updatedAt != null)
+          //       Text(
+          //         "${"updated_at".tr()}: ${user.updatedAt?.formatYYYYMMDD ?? "-"}",
+          //         style: context.tt.bodySmall,
+          //       ),
+          //   ],
+          // ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildRoleChip(String label, UserRoleEnum role) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: role.color.withOpacity(0.1),
+        borderRadius: AppConstants.borderRadius10,
+        border: Border.all(color: role.color.withOpacity(0.3)),
+      ),
+      child: Text(
+        label,
+        style: context.tt.labelSmall?.copyWith(
+          color: role.color,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

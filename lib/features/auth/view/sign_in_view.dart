@@ -132,7 +132,6 @@ class _SignInPageState extends State<SignInPage>
       onChanged: authCubit.setPassword,
       prefixIcon: const Icon(Icons.lock_outline),
       validator: (val) => Utils.validateInput(val, .password),
-      maxLines: 1,
       isPassword: true,
     );
   }

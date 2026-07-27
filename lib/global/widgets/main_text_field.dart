@@ -139,7 +139,7 @@ class _MainTextFieldState extends State<MainTextField> {
               setState(() {});
             },
             minLines: widget.minLines,
-            maxLines: widget.maxLines,
+            maxLines: widget.isPassword ? 1 : widget.maxLines,
             onFieldSubmitted: widget.onSubmitted,
             focusNode: widget.focusNode,
             keyboardType: widget.textInputType ?? .name,
@@ -190,7 +190,7 @@ class _MainTextFieldState extends State<MainTextField> {
               ),
               prefixIcon: prefixIcon,
               filled: widget.filled,
-              fillColor: widget.fillColor,
+              fillColor: widget.fillColor ?? context.cs.surfaceContainer,
             ),
             validator: widget.validator,
           ),

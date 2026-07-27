@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:green_mind/global/theme/theme_x.dart';
 
 class MainErrorWidget extends StatelessWidget {
   const MainErrorWidget({
@@ -25,13 +26,16 @@ class MainErrorWidget extends StatelessWidget {
           SizedBox(height: height),
           Text(
             error,
-            style: const TextStyle(fontSize: 20),
+            style: context.tt.titleMedium,
             textAlign: TextAlign.center,
           ),
           if (onTryAgainTap != null)
             InkWell(
               onTap: onTryAgainTap,
-              child: Text(isRefresh ? "refresh".tr() : "try_again".tr()),
+              child: Text(
+                isRefresh ? "refresh".tr() : "try_again".tr(),
+                style: context.tt.titleLarge,
+              ),
             ),
         ],
       ),

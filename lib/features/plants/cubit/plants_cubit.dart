@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
 import 'package:green_mind/features/plants/model/add_plant_model/add_plant_model.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/features/plants/service/plants_service.dart';
@@ -8,7 +9,7 @@ import 'package:meta/meta.dart';
 
 part 'states/plants_state.dart';
 part 'states/update_plant_state.dart';
-part 'states/general_plants_state.dart' ;
+part 'states/general_plants_state.dart';
 
 @injectable
 class PlantsCubit extends Cubit<GeneralPlantsState> {
@@ -20,17 +21,19 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   AddPlantModel model = AddPlantModel();
 
   void setModel(PlantModel? plant) {
-    setCropId(plant?.cropId);
+    setCrop(plant?.crop);
     setName(plant?.name);
     setPlantingDate(plant?.plantingDate);
+    setHarvestDate(plant?.harvestDate);
     setQuantity(plant?.quantity);
+    setHealthStatus(plant?.healthStatus);
     setNotes(plant?.notes);
   }
 
   void clearModel() => model = AddPlantModel();
 
-  void setCropId(int? cropId) {
-    model = model.copyWith(cropId: () => cropId);
+  void setCrop(CropModel? crop) {
+    model = model.copyWith(cropId: () => crop?.id);
   }
 
   void setName(String? name) {
@@ -39,6 +42,14 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
 
   void setPlantingDate(String? plantingDate) {
     model = model.copyWith(plantingDate: () => plantingDate);
+  }
+
+  void setHarvestDate(String? harvestDate) {
+    model = model.copyWith(harvestDate: () => harvestDate);
+  }
+
+  void setHealthStatus(String? healthStatus) {
+    model = model.copyWith(healthStatus: () => healthStatus);
   }
 
   void setQuantity(int? quantity) {
@@ -104,8 +115,14 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
         .where(
           (plant) =>
               plant.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-              (plant.crop?.nameEn.toLowerCase().contains(searchQuery.toLowerCase()) ?? false) ||
-              (plant.crop?.nameAr.toLowerCase().contains(searchQuery.toLowerCase()) ?? false),
+              (plant.crop?.nameEn.toLowerCase().contains(
+                    searchQuery.toLowerCase(),
+                  ) ??
+                  false) ||
+              (plant.crop?.nameAr.toLowerCase().contains(
+                    searchQuery.toLowerCase(),
+                  ) ??
+                  false),
         )
         .toList();
     if (filtered.isEmpty) {

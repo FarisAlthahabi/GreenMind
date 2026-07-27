@@ -35,6 +35,8 @@ class AppRouter extends RootStackRouter {
               ],
             ),
             AutoRoute(page: CropsRoute.page),
+            AutoRoute(page: PlantsRoute.page),
+            AutoRoute(page: UsersRoute.page),
             AutoRoute(page: StatsRoute.page),
           ],
         ),

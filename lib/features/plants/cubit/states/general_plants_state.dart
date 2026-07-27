@@ -1,4 +1,4 @@
-part of 'general_plants_state.dart';
+part of '../plants_cubit.dart';
 
 abstract class GeneralPlantsState {}
 

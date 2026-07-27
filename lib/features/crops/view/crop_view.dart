@@ -106,7 +106,10 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
                               horizontalOffset: 50.0,
                               child: FadeInAnimation(child: widget),
                             ),
-                            children: [...crops.map(_buildCropTile)],
+                            children: [
+                              ...crops.map(_buildCropTile),
+                              const SizedBox(height: 50),
+                            ],
                           ),
                         ),
                       ),
