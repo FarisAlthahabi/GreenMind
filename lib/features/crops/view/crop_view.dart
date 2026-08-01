@@ -117,6 +117,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
                   } else if (state is CropsEmpty) {
                     return MainErrorWidget(
                       error: state.message,
+                      isRefresh: true,
                       onTryAgainTap: fetchCrops,
                     );
                   } else if (state is CropsFail) {

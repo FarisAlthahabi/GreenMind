@@ -26,6 +26,10 @@ import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_disease
     as _i105;
 import 'package:green_mind/features/diagnosing_diseases/service/diagnosing_diseases_service.dart'
     as _i593;
+import 'package:green_mind/features/irrigation_schedule/cubit/irrigation_schedule_cubit.dart'
+    as _i1008;
+import 'package:green_mind/features/irrigation_schedule/service/irrigation_schedule_service.dart'
+    as _i1010;
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart' as _i29;
 import 'package:green_mind/features/plants/service/plants_service.dart'
     as _i574;
@@ -71,6 +75,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i593.DiagnosingDiseasesService>(
       () => _i593.DiagnosingDiseasesServiceImp(),
     );
+    gh.factory<_i1010.IrrigationScheduleService>(
+      () => _i1010.IrrigationScheduleServiceImp(),
+    );
     gh.factory<_i814.UsersCubit>(
       () => _i814.UsersCubit(usersService: gh<_i671.UsersService>()),
     );
@@ -83,6 +90,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i105.DiagnosingDiseasesCubit>(
       () => _i105.DiagnosingDiseasesCubit(
         diagnosingDiseasesService: gh<_i593.DiagnosingDiseasesService>(),
+      ),
+    );
+    gh.factory<_i1008.IrrigationScheduleCubit>(
+      () => _i1008.IrrigationScheduleCubit(
+        service: gh<_i1010.IrrigationScheduleService>(),
       ),
     );
     gh.factory<_i696.ThemeCubit>(

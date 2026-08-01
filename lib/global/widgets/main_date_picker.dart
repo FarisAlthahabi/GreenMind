@@ -20,6 +20,7 @@ class MainDatePicker extends StatefulWidget {
     this.contentPadding = AppConstants.padding16,
     this.onDateInitialSelected,
     this.title,
+    this.lastDate,
   });
 
   final String? title;
@@ -29,6 +30,7 @@ class MainDatePicker extends StatefulWidget {
   final bool isEnd;
   final DateTime? selectedDate;
   final DateTime? firstDate;
+  final DateTime? lastDate;
   final void Function(DateTime? date) onDateSelected;
   final void Function(DateTime? date)? onDateInitialSelected;
   final String? initialDate;
@@ -66,7 +68,7 @@ class _MainDatePickerState extends State<MainDatePicker> {
     final date = await showDatePicker(
       context: context,
       firstDate: widget.firstDate ?? DateTime(2000),
-      lastDate: DateTime(3000),
+      lastDate: widget.lastDate ?? DateTime(3000),
     );
     setState(() {
       selectedDate = date;

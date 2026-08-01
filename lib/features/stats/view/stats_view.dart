@@ -316,91 +316,94 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
   @override
   Widget build(BuildContext context) {
     final headerTitles = ["التاريخ", "النبات", "المرض", "الدقة"];
-    return MainTile(
-      child: Column(
-        spacing: 10,
-        children: [
-          Text("اخر التشخيصات".tr(), style: context.tt.titleLarge),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingRowHeight: 50,
-              dataRowMinHeight: 50,
-              dataRowMaxHeight: 60,
-              columnSpacing: 10,
-              horizontalMargin: 20,
-              dividerThickness: .4,
-              headingTextStyle: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Color(0xff344054),
-              ),
-              columns: headerTitles
-                  .map(
-                    (header) => DataColumn(
-                      label: Text(header.tr()),
-                      headingRowAlignment: MainAxisAlignment.center,
-                    ),
-                  )
-                  .toList(),
-              rows: List.generate(items.length, (index) {
-                final item = items[index];
-                final color = item.hasDisease
-                    ? context.cs.error
-                    : context.cs.primary;
-                final bgColor = item.hasDisease
-                    ? context.cs.errorContainer
-                    : context.cs.primaryContainer;
-                return DataRow(
-                  cells: [
-                    DataCell(Text(item.date)),
-                    DataCell(Text(item.plant)),
-                    DataCell(
-                      Center(
-                        child: Container(
-                          padding: AppConstants.paddingH8V4,
-                          decoration: BoxDecoration(
-                            color: bgColor,
-                            borderRadius: AppConstants.borderRadius15,
-                          ),
-                          child: Text(
-                            item.disease,
-                            style: context.tt.bodyMedium?.copyWith(
-                              color: color,
-                            ),
-                          ),
-                        ),
+    return Center(
+      child: MainTile(
+        width: double.maxFinite,
+        child: Column(
+          spacing: 10,
+          children: [
+            Text("اخر التشخيصات".tr(), style: context.tt.titleLarge),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: DataTable(
+                headingRowHeight: 50,
+                dataRowMinHeight: 50,
+                dataRowMaxHeight: 60,
+                columnSpacing: 10,
+                horizontalMargin: 20,
+                dividerThickness: .4,
+                headingTextStyle: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff344054),
+                ),
+                columns: headerTitles
+                    .map(
+                      (header) => DataColumn(
+                        label: Text(header.tr()),
+                        headingRowAlignment: MainAxisAlignment.center,
                       ),
-                    ),
-                    DataCell(
-                      SizedBox(
-                        width: 70,
-                        child: Row(
-                          spacing: 5,
-                          children: [
-                            Expanded(
-                              child: LinearProgressIndicator(
-                                minHeight: 12,
-                                value: item.percentage / 100,
-                                backgroundColor: const Color(0xffe5e7eb),
-                                valueColor: AlwaysStoppedAnimation(color),
-                                borderRadius: BorderRadius.circular(12),
+                    )
+                    .toList(),
+                rows: List.generate(items.length, (index) {
+                  final item = items[index];
+                  final color = item.hasDisease
+                      ? context.cs.error
+                      : context.cs.primary;
+                  final bgColor = item.hasDisease
+                      ? context.cs.errorContainer
+                      : context.cs.primaryContainer;
+                  return DataRow(
+                    cells: [
+                      DataCell(Text(item.date)),
+                      DataCell(Text(item.plant)),
+                      DataCell(
+                        Center(
+                          child: Container(
+                            padding: AppConstants.paddingH8V4,
+                            decoration: BoxDecoration(
+                              color: bgColor,
+                              borderRadius: AppConstants.borderRadius15,
+                            ),
+                            child: Text(
+                              item.disease,
+                              style: context.tt.bodyMedium?.copyWith(
+                                color: color,
                               ),
                             ),
-                            Text(
-                              "${item.percentage.toStringAsFixed(0)}%",
-                              style: TextStyle(color: color),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                );
-              }),
+                      DataCell(
+                        SizedBox(
+                          width: 70,
+                          child: Row(
+                            spacing: 5,
+                            children: [
+                              Expanded(
+                                child: LinearProgressIndicator(
+                                  minHeight: 12,
+                                  value: item.percentage / 100,
+                                  backgroundColor: const Color(0xffe5e7eb),
+                                  valueColor: AlwaysStoppedAnimation(color),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              Text(
+                                "${item.percentage.toStringAsFixed(0)}%",
+                                style: TextStyle(color: color),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -478,7 +481,25 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
             spacing: 10,
             crossAxisAlignment: .start,
             children: [
-              Text(irrigation.name),
+              Row(
+                mainAxisAlignment: .spaceBetween,
+                children: [
+                  Text(irrigation.name),
+                  Container(
+                    padding: AppConstants.paddingH8V4,
+                    decoration: BoxDecoration(
+                      color: irrigation.color.withAlpha(15),
+                      borderRadius: AppConstants.borderRadius15,
+                    ),
+                    child: Text(
+                      irrigation.status,
+                      style: context.tt.bodySmall?.copyWith(
+                        color: irrigation.color,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               Row(
                 spacing: 5,
                 mainAxisSize: .min,
@@ -490,17 +511,6 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
                 ],
               ),
             ],
-          ),
-          Container(
-            padding: AppConstants.paddingH8V4,
-            decoration: BoxDecoration(
-              color: irrigation.color.withAlpha(15),
-              borderRadius: AppConstants.borderRadius15,
-            ),
-            child: Text(
-              irrigation.status,
-              style: context.tt.bodySmall?.copyWith(color: irrigation.color),
-            ),
           ),
         ],
       ),
@@ -560,13 +570,15 @@ class WeaklyDiagnosis extends StatelessWidget {
 }
 
 class MainTile extends StatelessWidget {
-  const MainTile({super.key, required this.child, this.height});
+  const MainTile({super.key, required this.child, this.height, this.width});
   final Widget child;
+  final double? width;
   final double? height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: width,
       height: height,
       padding: AppConstants.padding16,
       decoration: BoxDecoration(

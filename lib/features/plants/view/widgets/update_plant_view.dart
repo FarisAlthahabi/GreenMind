@@ -132,6 +132,7 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
             ),
             MainDatePicker(
               title: "planting_date".tr(),
+              lastDate: DateTime.now(),
               initialDate: plant?.plantingDate,
               onDateSelected: (date) =>
                   plantsCubit.setPlantingDate(date?.formatDDMMYYYY),
