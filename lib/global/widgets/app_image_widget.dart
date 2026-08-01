@@ -32,14 +32,7 @@ class AppImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget errorWidget =
-        this.errorWidget ??
-        const Center(
-          child: Text(
-            "Failed to load image",
-            style: TextStyle(color: Colors.black, fontSize: 20),
-            textAlign: TextAlign.center,
-          ),
-        );
+        this.errorWidget ?? const Center(child: Icon(Icons.error, size: 40));
     return Container(
       padding: padding,
       width: width,

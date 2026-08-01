@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:green_mind/features/ai_chat_bot/cubit/ai_chat_bot_cubit.dart';
 import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
@@ -70,7 +71,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
 
   Widget _buildHeaderDescription() {
     return Container(
-      width: double.infinity,
+      width: .infinity,
       padding: AppConstants.paddingH16V12,
       decoration: BoxDecoration(
         color: context.cs.errorContainer,
@@ -96,7 +97,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
   Widget _buildUploadImageWithDiagonseBtn() {
     return Container(
       padding: AppConstants.padding20,
-      clipBehavior: Clip.antiAlias,
+      clipBehavior: .antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
         border: Border.all(color: context.cs.outline, width: 0.5),
@@ -147,41 +148,42 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
   Widget _buildPlaceHolderResualts() {
     return Container(
       padding: AppConstants.padding30,
-      clipBehavior: Clip.antiAlias,
+      clipBehavior: .antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
         border: Border.all(color: context.cs.outline, width: 0.5),
       ),
       child: Column(
         spacing: 5,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: .stretch,
         children: [
-          Icon(Icons.search, size: 50),
+          const Icon(Icons.search, size: 50),
           Text(
             "resaults_appear_here".tr(),
             style: context.tt.titleLarge,
-            textAlign: TextAlign.center,
+            textAlign: .center,
           ),
-          Text(
-            "upload_clear_image_and_press_diagnose".tr(),
-            textAlign: TextAlign.center,
-          ),
+          const Text(
+            "upload_clear_image_and_press_diagnose",
+            textAlign: .center,
+          ).tr(),
         ],
       ),
     );
   }
 
   Widget _buildResults() {
-    final trustPercentage = 92.5;
+    const trustPercentage = 92.5;
     return Container(
       padding: AppConstants.padding16,
-      clipBehavior: Clip.antiAlias,
+      clipBehavior: .antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
         border: Border.all(color: context.cs.outline, width: 0.5),
       ),
       child: AnimationLimiter(
         child: Column(
+          crossAxisAlignment: .start,
           spacing: 15,
           children: AnimationConfiguration.toStaggeredList(
             duration: AppConstants.duration500ms,
@@ -191,26 +193,26 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
             ),
             children: [
               Text("نتيجة المرض", style: context.tt.titleLarge),
-              Text("المرض المكتشف :"),
+              const Text("المرض المكتشف :"),
               Text(
                 "لفحة متأخرة",
                 style: context.tt.headlineMedium?.copyWith(
                   color: context.cs.primary,
                 ),
               ),
-              Text("(Late Blight)"),
+              const Text("(Late Blight)"),
               Row(
                 children: [
-                  Text("نسبة الثقة"),
-                  Spacer(),
+                  const Text("نسبة الثقة"),
+                  const Spacer(),
                   DecoratedBox(
                     decoration: BoxDecoration(
                       color: context.cs.primary,
-                      shape: BoxShape.circle,
+                      shape: .circle,
                     ),
                     child: Icon(Icons.done, color: context.cs.onPrimary),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     "${trustPercentage.toStringAsFixed(1)}%",
                     style: context.tt.bodyLarge,
@@ -237,17 +239,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                   color: context.cs.primaryContainer,
                   borderRadius: AppConstants.borderRadius15,
                 ),
-                child: Row(
-                  mainAxisSize: .min,
-                  children: [
-                    Text(
-                      "دقة عالية",
-                      style: context.tt.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
+                child: const Text("دقة عالية"),
               ),
               Container(
                 padding: AppConstants.paddingH16V12,
@@ -256,10 +248,10 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                   borderRadius: AppConstants.borderRadius10,
                 ),
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: .start,
                   children: [
-                    Icon(Icons.info_outline, size: 20),
-                    SizedBox(width: 10),
+                    const Icon(Icons.info_outline, size: 20),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         "النموذج ركز على منطقة البقع البنية في الجزء العلوي الأيسر من الورقة",
@@ -271,9 +263,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
               ),
               Text(
                 "توصيات العلاج:",
-                style: context.tt.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: context.tt.titleMedium?.copyWith(fontWeight: .bold),
               ),
               DecoratedBox(
                 decoration: BoxDecoration(
@@ -284,7 +274,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                   padding: AppConstants.padding16,
                   child: Column(
                     spacing: 10,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: .start,
                     children: [
                       _buildRecommendationItem(
                         context,
@@ -315,11 +305,14 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                 buttonColor: context.cs.surface,
                 border: Border.all(color: context.cs.primary, width: 1.5),
                 borderRadius: AppConstants.borderRadius20,
-                fontWeight: FontWeight.bold,
+                fontWeight: .bold,
                 icon: Icon(Icons.chat, size: 20, color: context.cs.primary),
                 textColor: context.cs.primary,
                 onPressed: () {
                   context.router.navigate(AiChatBotRoute());
+                  context.read<AiChatBotCubit>().getAiResponse(
+                    "أريد معرفة المزيد عن مرض اللفحة المتأخرة",
+                  );
                 },
                 text: "استشر الخبير الزراعي للمزيد",
               ),
@@ -332,7 +325,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
 
   Widget _buildRecommendationItem(BuildContext context, String text) {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: .start,
       children: [Expanded(child: Text(text, style: context.tt.bodyMedium))],
     );
   }

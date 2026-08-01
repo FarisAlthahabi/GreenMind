@@ -14,6 +14,7 @@ import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/restart_app_widget.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @immutable
 class DrawerTabModel {
@@ -53,11 +54,12 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
     setState(() {
       isArabic = !isArabic;
     });
-    if (isArabic) {
-      context.setLocale(SupportedLocales.arabic);
-    } else {
-      context.setLocale(SupportedLocales.english);
-    }
+    final newLocale = isArabic
+        ? SupportedLocales.arabic
+        : SupportedLocales.english;
+    context.setLocale(newLocale);
+    final prefs = get<SharedPreferences>();
+    prefs.setString('locale', newLocale.languageCode);
     // localizationCubit.emitLanguageChanged();
     RestartAppWidget.restartApp(context);
   }
@@ -75,21 +77,44 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
     bool isTablet = screenWidth > 600;
     return Drawer(
       backgroundColor: context.cs.surface,
-      child: Column(children: [_buildHeader(isTablet), _buildMenuItems()]),
+      child: Column(
+        crossAxisAlignment: .start,
+        spacing: 10,
+        children: [
+          _buildHeader(isTablet),
+          _buildMenuItems(),
+          const Divider(height: 0),
+          _buildRole(),
+          const SizedBox(height: 10),
+        ],
+      ),
     );
   }
 
   Widget _buildMenuItems() {
     List<DrawerTabModel> tabs = [
-      const DrawerTabModel(Icons.show_chart, "stats", StatsRoute()),
+      const DrawerTabModel(
+        Icons.chat_outlined,
+        "ai_chat_bot",
+        AiChatBotRoute(),
+      ),
+      const DrawerTabModel(
+        Icons.medical_services_outlined,
+        "diagnosing_diseases",
+        DiagnosingDiseasesRoute(),
+      ),
+      const DrawerTabModel(Icons.local_florist_outlined, "crops", CropsRoute()),
+      const DrawerTabModel(Icons.eco_outlined, "plants", PlantsRoute()),
+      const DrawerTabModel(Icons.person_outlined, "users", UsersRoute()),
+      const DrawerTabModel(Icons.show_chart_outlined, "stats", StatsRoute()),
     ];
     List<Widget> tiles = [];
     final changeLanguageTile = SwitchListTile(
       value: isArabic,
       onChanged: (value) => onChangeLanguageTap(),
-      title: Text("current_language".tr()),
-      secondary: Icon(Icons.translate_outlined, size: 26),
-      visualDensity: VisualDensity.compact,
+      title: const Text("current_language").tr(),
+      secondary: const Icon(Icons.translate_outlined, size: 26),
+      visualDensity: .compact,
     );
 
     final changeThemeTile = SwitchListTile(
@@ -100,7 +125,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
         isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
         size: 26,
       ),
-      visualDensity: VisualDensity.compact,
+      visualDensity: .compact,
     );
 
     final logoutTile = ListTile(
@@ -123,23 +148,40 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
           return child;
         },
       ),
-      title: Text("logout").tr(),
+      title: const Text("logout").tr(),
       onTap: () => context.read<AuthCubit>().signOut(),
     );
     tiles = List.generate(tabs.length, (index) {
       final item = tabs[index];
+      bool isActive = false;
+      if (context.router.current.name == DashboardRoute.name) {
+        isActive = context.tabsRouter.current.name == item.route.routeName;
+      } else {
+        isActive = context.router.current.name == item.route.routeName;
+      }
       return ListTile(
-        dense: true,
+        style: .drawer,
+        tileColor: isActive ? context.cs.primaryContainer : context.cs.surface,
+        shape: const RoundedRectangleBorder(
+          borderRadius: AppConstants.borderRadius10,
+        ),
         leading: Icon(item.icon, size: 26),
         title: Text(item.title).tr(),
-        onTap: () => context.router.push(item.route),
+        onTap: () {
+          Scaffold.maybeOf(context)?.closeDrawer();
+          context.router.navigate(item.route);
+        },
       );
     });
     tiles.add(changeLanguageTile);
     tiles.add(changeThemeTile);
     tiles.add(logoutTile);
     return Expanded(
-      child: ListView(padding: AppConstants.padding4, children: tiles),
+      child: ListView(
+        physics: const BouncingScrollPhysics(),
+        padding: AppConstants.paddingH12V4,
+        children: tiles,
+      ),
     );
   }
 
@@ -150,24 +192,31 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
         crossAxisAlignment: .stretch,
         children: [
           Expanded(child: Utils.appImage(context).image()),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             "Green Mind",
             style: context.tt.headlineSmall?.copyWith(
               color: context.cs.primary,
-              fontWeight: FontWeight.bold,
+              fontWeight: .bold,
             ),
             textAlign: .center,
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             "smart_plant_care_system".tr(),
             style: context.tt.bodyMedium,
             textAlign: .center,
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         ],
       ),
+    );
+  }
+
+  Widget _buildRole() {
+    return Padding(
+      padding: AppConstants.padding16,
+      child: Text("${user.role.displayName}: ${user.username}"),
     );
   }
 }

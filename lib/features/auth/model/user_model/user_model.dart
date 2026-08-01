@@ -1,40 +1,39 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
+import 'package:green_mind/global/widgets/insure_delete_widget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
 @immutable
-class UserModel {
+class UserModel implements DeleteModel {
   const UserModel({
     required this.id,
-    this.username,
-    this.email,
-    this.name,
-    this.phone,
-    this.fcmToken,
+    required this.username,
+    // this.email,
+    required this.name,
+    // this.phone,
+    // this.fcmToken,
     this.createdAt,
     this.updatedAt,
-    this.role = UserRoleEnum.farmer,
+    this.role = UserRoleEnum.engineer,
   });
 
   final int id;
-  final String? username;
-  final String? email;
+  final String username;
+  // final String? email;
+  final String name;
 
-  @JsonKey(name: "full_name")
-  final String? name;
-
-  @JsonKey(name: "phone_number")
-  final String? phone;
+  // @JsonKey(name: "phone_number")
+  // final String? phone;
 
   @JsonKey(fromJson: UserRoleEnum.fromJson, toJson: UserRoleEnum.toJson)
   final UserRoleEnum role;
 
-  @JsonKey(name: "fcm_token")
-  final String? fcmToken;
+  // @JsonKey(name: "fcm_token")
+  // final String? fcmToken;
 
   @JsonKey(name: "created_at")
   final String? createdAt;
@@ -55,4 +54,7 @@ class UserModel {
   factory UserModel.fromString(String jsonString) {
     return UserModel.fromJson(json.decode(jsonString));
   }
+
+  @override
+  String get apiDeleteUrl => "users/$id";
 }

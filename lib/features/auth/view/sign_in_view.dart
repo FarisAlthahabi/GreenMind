@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/auth/cubit/auth_cubit.dart';
 import 'package:green_mind/global/gen/assets.gen.dart';
-import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
@@ -14,7 +13,7 @@ import 'package:green_mind/global/widgets/main_text_field.dart';
 abstract class SignInViewCallBacks {
   void onForgetPasswordTap();
   void onSignInTap();
-  void onGoToSignUp();
+  // void onGoToSignUp();
 }
 
 @RoutePage()
@@ -45,10 +44,10 @@ class _SignInPageState extends State<SignInPage>
     //context.router.push(const ForgetPasswordRoute());
   }
 
-  @override
-  void onGoToSignUp() {
-    context.router.replace(const SignUpRoute());
-  }
+  // @override
+  // void onGoToSignUp() {
+  //   context.router.replace(const SignUpRoute());
+  // }
 
   @override
   void onSignInTap() {
@@ -67,16 +66,17 @@ class _SignInPageState extends State<SignInPage>
           key: _formKey,
           child: Column(
             spacing: 5,
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: .center,
             children: [
               const SizedBox(height: 40),
               _buildImage(),
               _buildTitle(),
               const SizedBox(height: 40),
-              _buildEmailTextField(),
+              _buildUserNameTextField(),
+              // _buildEmailTextField(),
               const SizedBox(height: 5),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+                crossAxisAlignment: .end,
                 children: [
                   _buildPasswordTextField(),
                   _buildForgetPasswordButton(),
@@ -84,10 +84,10 @@ class _SignInPageState extends State<SignInPage>
               ),
               const SizedBox(height: 20),
               _buildMainActionButton(),
-              const SizedBox(height: 20),
-              _buildOrText(),
-              const SizedBox(height: 20),
-              _buildGoSignUp(),
+              // const SizedBox(height: 20),
+              // _buildOrText(),
+              // const SizedBox(height: 20),
+              // _buildGoSignUp(),
               const SizedBox(height: 60),
             ],
           ),
@@ -97,23 +97,32 @@ class _SignInPageState extends State<SignInPage>
   }
 
   Widget _buildImage() {
-    return Assets.images.png.greenMindPng.image(width: 150,height: 150);
+    return Assets.images.png.greenMindPng.image(width: 150, height: 150);
   }
 
   Widget _buildTitle() {
-    return Text(
-      "sign_in".tr(),
-      style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    );
+    return const Text(
+      "sign_in",
+      style: TextStyle(fontSize: 24, fontWeight: .bold),
+    ).tr();
   }
 
-  Widget _buildEmailTextField() {
+  // Widget _buildEmailTextField() {
+  //   return MainTextField(
+  //     prefixIcon: const Icon(Icons.email_outlined),
+  //     hintText: "email".tr(),
+  //     onChanged: authCubit.setEmail,
+  //     textInputType: .emailAddress,
+  //     validator: (val) => Utils.validateInput(val, .email),
+  //   );
+  // }
+
+  Widget _buildUserNameTextField() {
     return MainTextField(
-      prefixIcon: const Icon(Icons.email_outlined),
-      hintText: "email".tr(),
-      onChanged: authCubit.setEmail,
-      textInputType: TextInputType.emailAddress,
-      validator: (val) => Utils.validateInput(val, InputTextType.none),
+      prefixIcon: const Icon(Icons.person_outline),
+      hintText: "username".tr(),
+      onChanged: authCubit.setUsernameSignIn,
+      validator: (val) => Utils.validateInput(val, .none),
     );
   }
 
@@ -122,8 +131,7 @@ class _SignInPageState extends State<SignInPage>
       hintText: "password".tr(),
       onChanged: authCubit.setPassword,
       prefixIcon: const Icon(Icons.lock_outline),
-      validator: (val) => Utils.validateInput(val, InputTextType.password),
-      maxLines: 1,
+      validator: (val) => Utils.validateInput(val, .password),
       isPassword: true,
     );
   }
@@ -164,16 +172,12 @@ class _SignInPageState extends State<SignInPage>
     );
   }
 
-  Widget _buildOrText() {
-    return Text(
-      "or".tr(),
-      style: const TextStyle(
-        color: Color(0xFF1E1E1E),
-        fontSize: 14,
-        fontFamily: "Alkatra",
-      ),
-    );
-  }
+  // Widget _buildOrText() {
+  //   return Text(
+  //     "or".tr(),
+  //     style: const TextStyle(color: Color(0xFF1E1E1E), fontSize: 14),
+  //   );
+  // }
 
   // Widget _buildAnotherLoginTypes() {
   //   return Row(
@@ -185,17 +189,17 @@ class _SignInPageState extends State<SignInPage>
   //   );
   // }
 
-  Widget _buildGoSignUp() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        spacing:5,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text("not_have_account".tr()),
-          GestureDetector(onTap: onGoToSignUp, child: Text("sign_up".tr())),
-        ],
-      ),
-    );
-  }
+  // Widget _buildGoSignUp() {
+  //   return SingleChildScrollView(
+  //     scrollDirection: .horizontal,
+  //     child: Row(
+  //       spacing: 5,
+  //       mainAxisAlignment: .center,
+  //       children: [
+  //         const Text("not_have_account").tr(),
+  //         GestureDetector(onTap: onGoToSignUp, child: Text("sign_up").tr()),
+  //       ],
+  //     ),
+  //   );
+  // }
 }

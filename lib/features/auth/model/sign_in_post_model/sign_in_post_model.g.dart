@@ -8,7 +8,7 @@ part of 'sign_in_post_model.dart';
 
 SignInPostModel _$SignInPostModelFromJson(Map<String, dynamic> json) =>
     SignInPostModel(
-      email: json['email'] as String?,
+      username: json['username'] as String?,
       password: json['password'] as String?,
       fcmToken: json['fcm_token'] as String?,
     );
@@ -16,6 +16,6 @@ SignInPostModel _$SignInPostModelFromJson(Map<String, dynamic> json) =>
 Map<String, dynamic> _$SignInPostModelToJson(SignInPostModel instance) =>
     <String, dynamic>{
       'fcm_token': instance.fcmToken,
-      'email': instance.email,
+      'username': instance.username,
       'password': instance.password,
     };

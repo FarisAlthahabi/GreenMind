@@ -24,8 +24,8 @@ class LoadingIndicator extends StatelessWidget {
     return Container(
       width: width,
       height: height,
-      alignment: Alignment.center,
-      child: SpinKitFadingCircle(size: isInBtn ? 20 : size ,color: color),
+      alignment: .center,
+      child: SpinKitFadingCircle(size: isInBtn ? 20 : size, color: color),
     );
   }
 }

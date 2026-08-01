@@ -2,7 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:green_mind/features/ai_chat_bot/cubit/ai_chat_bot_cubit.dart';
 import 'package:green_mind/features/auth/model/user_model/user_model.dart';
+import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
@@ -17,17 +19,16 @@ class PageTitleIconModel {
   PageTitleIconModel(this.page, this.title, this.icon);
 }
 
-abstract class DashboardViewCallbacks {
-  void onBottomTab(int currentIndex, TabsRouter tabsRouter);
-}
-
 @RoutePage()
 class DashboardView extends StatelessWidget {
   const DashboardView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const DashboardPage();
+    return BlocProvider(
+      create: (context) => get<AiChatBotCubit>(),
+      child: const DashboardPage(),
+    );
   }
 }
 
@@ -38,8 +39,7 @@ class DashboardPage extends StatefulWidget {
   State<DashboardPage> createState() => _DashboardPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage>
-    implements DashboardViewCallbacks {
+class _DashboardPageState extends State<DashboardPage> {
   late final UserModel user = context.read();
 
   late final navItems = [
@@ -47,17 +47,11 @@ class _DashboardPageState extends State<DashboardPage>
     PageTitleIconModel(
       DiagnosingDiseasesRoute(),
       "diagnosing_diseases".tr(),
-      Icons.abc,
+      Icons.medical_services,
     ),
-    PageTitleIconModel(const StatsRoute(), "stats".tr(), Icons.graphic_eq),
   ];
 
   late final List<PageRouteInfo> routes = navItems.map((e) => e.page).toList();
-
-  @override
-  void onBottomTab(int currentIndex, TabsRouter tabsRouter) {
-    tabsRouter.setActiveIndex(currentIndex);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +85,7 @@ class _DashboardPageState extends State<DashboardPage>
                 showSelectedLabels: true,
                 showUnselectedLabels: true,
                 currentIndex: tabsRouter.activeIndex,
-                onTap: (index) => onBottomTab(index, tabsRouter),
+                onTap: tabsRouter.setActiveIndex,
                 items: List.generate(navItems.length, (index) {
                   final item = navItems[index];
                   final isSelected = tabsRouter.activeIndex == index;

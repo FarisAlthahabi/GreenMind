@@ -20,16 +20,27 @@ import 'package:green_mind/features/auth/cubit/auth_cubit.dart' as _i886;
 import 'package:green_mind/features/auth/service/auth_service.dart' as _i766;
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart'
     as _i753;
+import 'package:green_mind/features/crops/cubit/crops_cubit.dart' as _i901;
+import 'package:green_mind/features/crops/service/crops_service.dart' as _i702;
 import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart'
     as _i105;
 import 'package:green_mind/features/diagnosing_diseases/service/diagnosing_diseases_service.dart'
     as _i593;
+import 'package:green_mind/features/plants/cubit/plants_cubit.dart' as _i29;
+import 'package:green_mind/features/plants/service/plants_service.dart'
+    as _i574;
+import 'package:green_mind/features/users/cubit/users_cubit.dart' as _i814;
+import 'package:green_mind/features/users/service/users_service.dart' as _i671;
+import 'package:green_mind/global/blocs/delete_cubit/cubit/delete_cubit.dart'
+    as _i804;
 import 'package:green_mind/global/blocs/internet_connection/cubit/internet_connection_cubit.dart'
     as _i749;
 import 'package:green_mind/global/blocs/upload_image_cubit/cubit/upload_image_cubit.dart'
     as _i872;
 import 'package:green_mind/global/di/app_module.dart' as _i807;
 import 'package:green_mind/global/dio/dio_client.dart' as _i645;
+import 'package:green_mind/global/services/delete_service/delete_service.dart'
+    as _i869;
 import 'package:green_mind/global/theme/cubit/theme_cubit.dart' as _i696;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -54,14 +65,21 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i645.DioClient>(() => _i645.DioClient());
     gh.factory<_i209.AiChatBotService>(() => _i209.AiChatBotServiceImp());
+    gh.factory<_i574.PlantsService>(() => _i574.PlantsServiceImp());
+    gh.factory<_i671.UsersService>(() => _i671.UsersServiceImp());
     gh.factory<_i766.SignInService>(() => _i766.SignInServiceImp());
     gh.factory<_i593.DiagnosingDiseasesService>(
       () => _i593.DiagnosingDiseasesServiceImp(),
+    );
+    gh.factory<_i814.UsersCubit>(
+      () => _i814.UsersCubit(usersService: gh<_i671.UsersService>()),
     );
     gh.factory<_i123.AiChatBotCubit>(
       () =>
           _i123.AiChatBotCubit(aiChatBotService: gh<_i209.AiChatBotService>()),
     );
+    gh.factory<_i702.CropsService>(() => _i702.CropsServiceImp());
+    gh.factory<_i869.DeleteService>(() => _i869.DeleteServiceImp());
     gh.factory<_i105.DiagnosingDiseasesCubit>(
       () => _i105.DiagnosingDiseasesCubit(
         diagnosingDiseasesService: gh<_i593.DiagnosingDiseasesService>(),
@@ -70,11 +88,20 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i696.ThemeCubit>(
       () => _i696.ThemeCubit(gh<_i460.SharedPreferences>()),
     );
+    gh.factory<_i901.CropsCubit>(
+      () => _i901.CropsCubit(cropsService: gh<_i702.CropsService>()),
+    );
+    gh.factory<_i804.DeleteCubit>(
+      () => _i804.DeleteCubit(gh<_i869.DeleteService>()),
+    );
     gh.factory<_i886.AuthCubit>(
       () => _i886.AuthCubit(
         gh<_i766.SignInService>(),
         gh<_i753.AuthManagerBloc>(),
       ),
+    );
+    gh.factory<_i29.PlantsCubit>(
+      () => _i29.PlantsCubit(plantService: gh<_i574.PlantsService>()),
     );
     return this;
   }

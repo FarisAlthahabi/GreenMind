@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
@@ -22,8 +23,8 @@ class MainTextField extends StatefulWidget {
     this.controller,
     this.floatingLabelColor,
     this.hintStyle,
-    this.borderRadius,
-    this.borderWidth = 1,
+    this.borderRadius = AppConstants.borderRadius10,
+    this.borderWidth = 0.5,
     this.outlineInputBorder,
     this.fillColor,
     this.filled = true,
@@ -38,7 +39,7 @@ class MainTextField extends StatefulWidget {
     this.minLines = 1,
     this.titleSize = 20,
     this.titlePadding = AppConstants.padding0,
-    this.titleHeight = 10,
+    this.titleHeight = 5,
     this.boxShadow = const [],
     this.isPassword = false,
     this.borderColor,
@@ -67,7 +68,7 @@ class MainTextField extends StatefulWidget {
   final Color? borderColor;
   final TextStyle? hintStyle;
   final Color? hintColor;
-  final BorderRadius? borderRadius;
+  final BorderRadius borderRadius;
   final InputBorder? outlineInputBorder;
   final bool? filled;
   final VoidCallback? onClearTap;
@@ -108,19 +109,13 @@ class _MainTextFieldState extends State<MainTextField> {
     final title = widget.title;
     final subTitle = widget.subTitle;
     return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
       children: [
         if (title != null) ...[
           Padding(
             padding: widget.titlePadding,
-            child: Text(
-              title,
-              style: TextStyle(
-                fontSize: widget.titleSize,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
+            child: Text(title, style: context.tt.titleMedium),
           ),
           if (subTitle == null) SizedBox(height: widget.titleHeight),
         ],
@@ -131,7 +126,7 @@ class _MainTextFieldState extends State<MainTextField> {
 
         DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
+            borderRadius: widget.borderRadius,
             boxShadow: widget.boxShadow,
           ),
           child: TextFormField(
@@ -144,29 +139,30 @@ class _MainTextFieldState extends State<MainTextField> {
               setState(() {});
             },
             minLines: widget.minLines,
-            maxLines: widget.maxLines,
+            maxLines: widget.isPassword ? 1 : widget.maxLines,
             onFieldSubmitted: widget.onSubmitted,
             focusNode: widget.focusNode,
-            keyboardType: widget.textInputType ?? TextInputType.name,
+            keyboardType: widget.textInputType ?? .name,
             inputFormatters: widget.inputFormatters,
+            style: context.tt.bodyMedium,
             decoration: InputDecoration(
               contentPadding: widget.padding ?? AppConstants.padding16,
               labelText: widget.labelText,
               alignLabelWithHint: true,
-              hintText: widget.hintText,
+              hintText: widget.hintText?.tr(),
               hintStyle:
                   widget.hintStyle ??
                   context.tt.bodyMedium?.copyWith(color: widget.hintColor),
               errorStyle: const TextStyle(fontSize: 16),
               errorText: widget.errorText,
               border: widget.outlineInputBorder ?? outlineInputBorder(),
-              focusedBorder: widget.outlineInputBorder ?? outlineInputBorder(),
+              focusedBorder: widget.outlineInputBorder ?? focusedInputBorder(),
               enabledBorder: widget.outlineInputBorder ?? outlineInputBorder(),
               suffixIcon: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: .end,
+                mainAxisSize: .min,
                 children: [
-                  ?suffixIcon,
+                  if (suffixIcon != null) ...[suffixIcon, SizedBox(width: 5)],
                   if (widget.isPassword)
                     IconButton(
                       icon: Icon(
@@ -194,7 +190,7 @@ class _MainTextFieldState extends State<MainTextField> {
               ),
               prefixIcon: prefixIcon,
               filled: widget.filled,
-              fillColor: widget.fillColor,
+              fillColor: widget.fillColor ?? context.cs.surfaceContainer,
             ),
             validator: widget.validator,
           ),
@@ -205,10 +201,20 @@ class _MainTextFieldState extends State<MainTextField> {
 
   OutlineInputBorder outlineInputBorder() {
     return OutlineInputBorder(
-      borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
+      borderRadius: widget.borderRadius,
       borderSide: BorderSide(
         width: widget.borderWidth,
-        color: widget.borderColor ?? context.cs.primary,
+        color: context.cs.outline,
+      ),
+    );
+  }
+
+  OutlineInputBorder focusedInputBorder() {
+    return OutlineInputBorder(
+      borderRadius: widget.borderRadius,
+      borderSide: BorderSide(
+        width: widget.borderWidth,
+        color: context.cs.primary,
       ),
     );
   }
