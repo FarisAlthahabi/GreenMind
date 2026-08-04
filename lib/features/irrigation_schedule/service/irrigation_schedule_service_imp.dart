@@ -73,7 +73,7 @@ class IrrigationScheduleServiceImp implements IrrigationScheduleService {
   @override
   Future<void> undoLastIrrigation(int plantId) async {
     try {
-      await dio.put("schedule/$plantId/undo");
+      await dio.post("schedule/$plantId/undo");
     } catch (e, stackTrace) {
       if (kDebugMode) {
         print("stackTrace of undoLastIrrigation is : $stackTrace");

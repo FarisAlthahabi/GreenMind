@@ -39,20 +39,13 @@ class _MainAppBarState extends State<MainAppBar> {
         widget.title.tr(),
         style: context.tt.headlineSmall?.copyWith(fontWeight: .bold),
       ),
-      flexibleSpace: Padding(
-        padding: const EdgeInsets.only(top: 30),
-        child: Row(
-          mainAxisAlignment: .end,
-          children: [
-            Padding(
-              padding: AppConstants.padding8,
-              child: Utils.appImage(context).image(width: 40, height: 40),
-            ),
-            const SizedBox(width: 10),
-          ],
+      actions: [
+        SizedBox(width: 24),
+        Padding(
+          padding: AppConstants.padding14,
+          child: Utils.appImage(context).image(),
         ),
-      ),
-      actions: const [SizedBox(width: 24)],
+      ],
     );
   }
 }

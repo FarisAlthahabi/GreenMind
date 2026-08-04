@@ -70,14 +70,14 @@ class _UpdateUserWidgetState extends State<UpdateUserWidget> {
       backgroundColor: context.cs.surface,
       contentPadding: AppConstants.padding30,
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: .spaceBetween,
         children: [Text(title), _buildCloseIcon()],
       ),
       content: SingleChildScrollView(
         child: Column(
           spacing: 10,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: .center,
+          mainAxisSize: .min,
           children: [
             MainTextField(
               initialText: user?.name,
@@ -102,7 +102,9 @@ class _UpdateUserWidgetState extends State<UpdateUserWidget> {
             MainDropDownWidget(
               label: "role".tr(),
               selectedValue: selectedValue,
-              items: UserRoleEnum.values,
+              items: UserRoleEnum.values
+                  .where((role) => !role.isAdmin)
+                  .toList(),
               text: "select_role".tr(),
               onChanged: usersCubit.setRole,
             ),
@@ -110,15 +112,15 @@ class _UpdateUserWidgetState extends State<UpdateUserWidget> {
             const SizedBox.shrink(),
             Row(
               spacing: 10,
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: .end,
               children: [
                 Expanded(
                   child: MainActionButton(
                     padding: AppConstants.padding16,
                     buttonColor: Colors.transparent,
-                    border: Border.all(width: 0.3, color: context.cs.outline),
+                    border: .all(width: 0.3, color: context.cs.outline),
                     textColor: context.cs.onSurface,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: .bold,
                     text: "cancel".tr(),
                     onPressed: () => onCancelTap(context),
                   ),
@@ -139,7 +141,7 @@ class _UpdateUserWidgetState extends State<UpdateUserWidget> {
                       Widget? child;
                       if (state is UpdateUserLoading) {
                         onTap = () async {};
-                        child = LoadingIndicator(
+                        child = const LoadingIndicator(
                           isInBtn: true,
                           color: Colors.white,
                         );
@@ -147,7 +149,7 @@ class _UpdateUserWidgetState extends State<UpdateUserWidget> {
                       return MainActionButton(
                         padding: AppConstants.padding16,
                         textColor: Colors.white,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: .bold,
                         onPressed: () => onTap(),
                         text: "save".tr(),
                         child: child,

@@ -1,10 +1,11 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
-abstract class DropDownItemModel {
+abstract class DropDownItemModel extends Equatable{
   String get displayName;
   int get id;
   String? get description;
@@ -93,7 +94,7 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
       focusNode: widget.focusNode,
       onFocusChange: (_) => setState(() {}),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           if (label != null)
             Padding(
@@ -107,7 +108,7 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
               // style: const TextStyle(
               //   color: AppColors.black,
               //   fontSize: 14,
-              //   fontWeight: FontWeight.w400,
+              //   fontWeight: .w400,
               //   height: 1.19,
               //   overflow: TextOverflow.ellipsis,
               // ),
@@ -133,7 +134,7 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
                 padding: AppConstants.padding16,
                 decoration: BoxDecoration(
                   color: widget.backgrounColor ?? context.cs.surfaceContainer,
-                  border: Border.all(color: context.cs.outline, width: 0.5),
+                  border: .all(color: context.cs.outline, width: 0.5),
                   borderRadius: borderRadius,
                 ),
                 child: Row(

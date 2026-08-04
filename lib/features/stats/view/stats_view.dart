@@ -1,12 +1,22 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:green_mind/features/diagnosing_diseases/model/diagnose_model/diagnose_model.dart';
+import 'package:green_mind/features/irrigation_schedule/model/irrigation_schedule_model/irrigation_schedule_model.dart';
+import 'package:green_mind/features/stats/cubit/stats_cubit.dart';
+import 'package:green_mind/features/stats/model/diagnose_count_model/diagnose_count_model.dart';
+import 'package:green_mind/features/stats/model/kpis_model/kpis_model.dart';
+import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/extensions/string_x.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
-import 'package:green_mind/global/widgets/main_action_button.dart';
+import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_app_bar.dart';
 import 'package:green_mind/global/widgets/main_drawer.dart';
+import 'package:green_mind/global/widgets/main_error_widget.dart';
+import 'package:green_mind/global/widgets/main_tile.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class IconTitleValueColor {
@@ -26,51 +36,16 @@ class ChartModel {
   const ChartModel(this.text, this.percentage, this.color);
 }
 
-class DiagnoseModel {
-  final String date;
-  final String plant;
-  final String disease;
-  final bool hasDisease;
-  final double percentage;
-
-  const DiagnoseModel(
-    this.date,
-    this.plant,
-    this.disease,
-    this.hasDisease,
-    this.percentage,
-  );
-}
-
-class IrrigationModel {
-  final String name;
-  final String plantName;
-  final String date;
-  final String status;
-  final Color color;
-
-  const IrrigationModel(
-    this.name,
-    this.plantName,
-    this.date,
-    this.status,
-    this.color,
-  );
-}
-
-class WeaklyDiagnosisModel {
-  const WeaklyDiagnosisModel(this.day, this.value);
-  final String day;
-  final double value;
-}
-
 @RoutePage()
 class StatsView extends StatelessWidget {
   const StatsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const StatsPage();
+    return BlocProvider(
+      create: (context) => get<StatsCubit>(),
+      child: const StatsPage(),
+    );
   }
 }
 
@@ -82,84 +57,160 @@ class StatsPage extends StatefulWidget {
 }
 
 class _StatsPageState extends State<StatsPage> {
+  late final StatsCubit statsCubit;
   final columnCount = 2;
+
+  final List<Color> diseaseColorPalette = [
+    Colors.blue.shade400,
+    Colors.red.shade400,
+    Colors.green.shade400,
+    Colors.orange.shade400,
+    Colors.purple.shade400,
+    Colors.cyan.shade400,
+    Colors.pink.shade400,
+    Colors.teal.shade400,
+    Colors.amber.shade400,
+    Colors.indigo.shade400,
+    Colors.lime.shade400,
+    Colors.deepOrange.shade400,
+    Colors.brown.shade400,
+    Colors.grey.shade600,
+    Colors.deepPurple.shade400,
+  ];
+
+  @override
+  void initState() {
+    statsCubit = context.read();
+    statsCubit.getStats();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    const diseases = [
-      ChartModel("لفحة متأخرة", 30.0, Colors.red),
-      ChartModel("تبقع الأوراق", 20.0, Colors.blue),
-      ChartModel("صدأ الأوراق", 15.0, Colors.yellow),
-      ChartModel("عفن رمادي", 15.0, Colors.pink),
-      ChartModel("بياض دقيقي", 10.0, Colors.purple),
-      ChartModel("أخرى", 10.0, Colors.cyan),
-    ];
     return Scaffold(
       appBar: const MainAppBar(title: "stats"),
       drawer: const MainDrawer(),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: AppConstants.padding16,
-        child: Column(
-          spacing: 20,
-          crossAxisAlignment: .start,
-          children: [
-            _buildExportPdfBtn(),
-            _buildStatsTiles(),
-            const DiseasesDistributionPieChartWidget(diseases: diseases),
-            const TrustPercentageDistributionBarChartWidget(
-              trustPercentags: diseases,
-            ),
-            const WeaklyDiagnosis(),
-            const LastDiagnosisCard(),
-            const IncommingIrrigation(),
-          ],
-        ),
+      body: BlocBuilder<StatsCubit, StatsState>(
+        builder: (context, state) {
+          if (state is StatsLoading) {
+            return const LoadingIndicator();
+          } else if (state is StatsSuccess) {
+            final stats = state.stats;
+            final kpis = stats.kpis;
+            final confidenceRanges = stats.confidenceRanges;
+            final confidenceRangesColumns = [
+              ChartModel(
+                "less_than_40",
+                confidenceRanges.lessThan40.toDouble(),
+                Colors.red.shade400, // Low confidence - Red
+              ),
+              ChartModel(
+                "from_40_to_59",
+                confidenceRanges.from40To59.toDouble(),
+                Colors.orange.shade400, // Below average - Orange
+              ),
+              ChartModel(
+                "from_60_to_79",
+                confidenceRanges.from60To79.toDouble(),
+                Colors.amber.shade400, // Average - Amber/Yellow
+              ),
+              ChartModel(
+                "from_80_to_89",
+                confidenceRanges.from80To89.toDouble(),
+                Colors.green.shade400, // Good - Light Green
+              ),
+              ChartModel(
+                "from_90_to_100",
+                confidenceRanges.from90To100.toDouble(),
+                Colors.teal.shade400, // Excellent - Teal/Green
+              ),
+            ];
+
+            final diseasesAppearance = stats.diseaseDistribution
+                .asMap()
+                .map(
+                  (index, e) => MapEntry(
+                    index,
+                    ChartModel(
+                      e.name,
+                      e.count.toDouble(),
+                      diseaseColorPalette[index % diseaseColorPalette.length],
+                    ),
+                  ),
+                )
+                .values
+                .toList();
+            return RefreshIndicator(
+              onRefresh: () async => statsCubit.getStats(),
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                padding: AppConstants.padding16,
+                child: Column(
+                  spacing: 20,
+                  crossAxisAlignment: .start,
+                  children: [
+                    // _buildExportPdfBtn(),
+                    _buildStatsTiles(kpis),
+                    DiseasesDistributionPieChartWidget(
+                      diseases: diseasesAppearance,
+                    ),
+                    TrustPercentageDistributionBarChartWidget(
+                      trustPercentags: confidenceRangesColumns,
+                    ),
+                    WeaklyDiagnosis(diagnosis: stats.weeklyDiagnoses),
+                    LastDiagnosisCard(diagnosis: stats.recentDiagnoses),
+                    IncommingIrrigation(irrigations: stats.upcomingSchedules),
+                  ],
+                ),
+              ),
+            );
+          } else if (state is StatsFail) {
+            return MainErrorWidget(
+              error: state.error,
+              onTryAgainTap: statsCubit.getStats,
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
       ),
     );
   }
 
-  Widget _buildExportPdfBtn() {
-    return MainActionButton(
-      padding: AppConstants.padding16,
-      borderRadius: AppConstants.borderRadius20,
-      onPressed: () {},
-      text: "تصدير التقرير PDF",
-    );
-  }
+  // Widget _buildExportPdfBtn() {
+  //   return MainActionButton(
+  //     padding: AppConstants.padding16,
+  //     borderRadius: AppConstants.borderRadius20,
+  //     onPressed: () {},
+  //     text: "تصدير التقرير PDF",
+  //   );
+  // }
 
-  Widget _buildStatsTiles() {
+  Widget _buildStatsTiles(KpisModel kpis) {
     final stats = [
       IconTitleValueColor(
-        "إجمالي النباتات",
-        "1700",
-        Icons.flood,
-        context.cs.primary,
-      ),
-      IconTitleValueColor(
-        "نباتات سليمة",
-        "1200",
-        Icons.done,
-        context.cs.primaryFixedDim,
-      ),
-      IconTitleValueColor("نباتات مصابة", "350", Icons.error, context.cs.error),
-      IconTitleValueColor(
-        "تحت المراقبة",
-        "150",
-        Icons.warning,
-        context.cs.tertiaryFixedDim,
-      ),
-      IconTitleValueColor(
-        "إجمالي التشخيصات",
-        "89",
-        Icons.show_chart,
+        "total_plants",
+        kpis.totalPlants.toString(),
+        Icons.local_florist_outlined,
         context.cs.secondary,
       ),
       IconTitleValueColor(
-        "متوسط الدقة",
-        "91.5%",
-        Icons.done,
+        "healthy_plants",
+        kpis.healthyPlants.toString(),
+        Icons.health_and_safety,
         context.cs.primary,
+      ),
+      IconTitleValueColor(
+        "diseased_plants",
+        kpis.diseasedPlants.toString(),
+        Icons.error,
+        context.cs.error,
+      ),
+      IconTitleValueColor(
+        "total_quantity",
+        kpis.totalQuantity.toString(),
+        Icons.storage,
+        context.cs.tertiaryFixedDim,
       ),
     ];
     return AnimationLimiter(
@@ -170,7 +221,7 @@ class _StatsPageState extends State<StatsPage> {
         childAspectRatio: 1.2,
         physics: const NeverScrollableScrollPhysics(),
         crossAxisCount: columnCount,
-        children: List.generate(6, (int index) {
+        children: List.generate(stats.length, (int index) {
           final stat = stats[index];
           return AnimationConfiguration.staggeredGrid(
             delay: AppConstants.duration200ms,
@@ -202,13 +253,13 @@ class _StatsPageState extends State<StatsPage> {
             ),
           ),
           Spacer(),
-          Text(stat.text),
+          Text(stat.text.tr()),
           Spacer(),
           Text(
             stat.value,
             style: context.tt.headlineMedium?.copyWith(
               color: stat.color,
-              fontWeight: FontWeight.bold,
+              fontWeight: .bold,
             ),
           ),
         ],
@@ -228,13 +279,10 @@ class DiseasesDistributionPieChartWidget extends StatelessWidget {
       height: 400,
       child: SfCircularChart(
         title: ChartTitle(
-          text: "توزيع الأمراض".tr(),
-          textStyle: const TextStyle(fontSize: 20),
+          text: "disease_distribution".tr(),
+          textStyle: context.tt.titleLarge,
         ),
-        legend: const Legend(
-          isVisible: true,
-          overflowMode: LegendItemOverflowMode.wrap,
-        ),
+        legend: const Legend(isVisible: true, overflowMode: .wrap),
         series: <DoughnutSeries<ChartModel, String>>[
           DoughnutSeries<ChartModel, String>(
             explode: true,
@@ -243,9 +291,10 @@ class DiseasesDistributionPieChartWidget extends StatelessWidget {
             dataSource: diseases,
             xValueMapper: (ChartModel t, _) => t.text,
             yValueMapper: (ChartModel t, _) => t.percentage,
-            dataLabelSettings: const DataLabelSettings(
+            dataLabelSettings: DataLabelSettings(
+              textStyle: context.tt.bodyLarge?.copyWith(fontWeight: .bold),
               isVisible: true,
-              labelPosition: ChartDataLabelPosition.inside,
+              labelPosition: .inside,
             ),
             pointColorMapper: (ChartModel item, index) {
               return item.color;
@@ -270,20 +319,20 @@ class TrustPercentageDistributionBarChartWidget extends StatelessWidget {
     return MainTile(
       child: SfCartesianChart(
         title: ChartTitle(
-          text: "توزيع نسبة الثقة".tr(),
-          textStyle: const TextStyle(fontSize: 20),
+          text: "confidence_distributions".tr(),
+          textStyle: context.tt.titleLarge,
         ),
         primaryXAxis: const CategoryAxis(labelRotation: 90),
         primaryYAxis: const NumericAxis(
           minimum: 0,
           maximum: 100,
           interval: 25,
-          labelFormat: '{value}%',
+          // labelFormat: '{value}%',
         ),
         series: <ColumnSeries<ChartModel, String>>[
           ColumnSeries<ChartModel, String>(
             dataSource: trustPercentags,
-            xValueMapper: (ChartModel template, _) => template.text,
+            xValueMapper: (ChartModel template, _) => template.text.tr(),
             yValueMapper: (ChartModel template, _) => template.percentage,
             pointColorMapper: (ChartModel item, _) {
               return item.color;
@@ -299,32 +348,27 @@ class TrustPercentageDistributionBarChartWidget extends StatelessWidget {
 }
 
 class LastDiagnosisCard extends StatefulWidget {
-  const LastDiagnosisCard({super.key});
+  const LastDiagnosisCard({super.key, required this.diagnosis});
+  final List<DiagnoseModel> diagnosis;
 
   @override
   State<LastDiagnosisCard> createState() => _LastDiagnosisCardState();
 }
 
 class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
-  final items = [
-    DiagnoseModel("2026-06-14", "طماطم", "لفحة متأخرة", true, 94),
-    DiagnoseModel("2026-06-14", "تفاح", "تبقع الأوراق", true, 88),
-    DiagnoseModel("2026-06-13", "بطاطا", "لفحة متأخرة", true, 91),
-    DiagnoseModel("2026-06-13", "طماطم", "سليم", false, 97),
-    DiagnoseModel("2026-06-12", "تفاح", "صدأ الأوراق", true, 76),
-  ];
   @override
   Widget build(BuildContext context) {
-    final headerTitles = ["التاريخ", "النبات", "المرض", "الدقة"];
+    final items = widget.diagnosis;
+    final headerTitles = ["date", "plant", "disease", "accuracy"];
     return Center(
       child: MainTile(
-        width: double.maxFinite,
+        width: .maxFinite,
         child: Column(
           spacing: 10,
           children: [
-            Text("اخر التشخيصات".tr(), style: context.tt.titleLarge),
+            Text("recent_diagnoses".tr(), style: context.tt.titleLarge),
             SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
+              scrollDirection: .horizontal,
               child: DataTable(
                 headingRowHeight: 50,
                 dataRowMinHeight: 50,
@@ -332,31 +376,33 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
                 columnSpacing: 10,
                 horizontalMargin: 20,
                 dividerThickness: .4,
-                headingTextStyle: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                headingTextStyle: context.tt.titleMedium?.copyWith(
+                  //TODO color from theme
+                  fontWeight: .bold,
                   color: Color(0xff344054),
                 ),
                 columns: headerTitles
                     .map(
                       (header) => DataColumn(
                         label: Text(header.tr()),
-                        headingRowAlignment: MainAxisAlignment.center,
+                        headingRowAlignment: .center,
                       ),
                     )
                     .toList(),
                 rows: List.generate(items.length, (index) {
                   final item = items[index];
-                  final color = item.hasDisease
-                      ? context.cs.error
-                      : context.cs.primary;
-                  final bgColor = item.hasDisease
-                      ? context.cs.errorContainer
-                      : context.cs.primaryContainer;
+                  // final color = item.hasDisease
+                  //     ? context.cs.error
+                  //     : context.cs.primary;
+                  // final bgColor = item.hasDisease
+                  //     ? context.cs.errorContainer
+                  //     : context.cs.primaryContainer;
+                  final color = context.cs.error;
+                  final bgColor = context.cs.errorContainer;
                   return DataRow(
                     cells: [
-                      DataCell(Text(item.date)),
-                      DataCell(Text(item.plant)),
+                      DataCell(Text(item.createdAt.formatYYYYMMDD)),
+                      DataCell(Text(item.plant?.name ?? "---")),
                       DataCell(
                         Center(
                           child: Container(
@@ -366,7 +412,7 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
                               borderRadius: AppConstants.borderRadius15,
                             ),
                             child: Text(
-                              item.disease,
+                              item.diseaseNameArabic,
                               style: context.tt.bodyMedium?.copyWith(
                                 color: color,
                               ),
@@ -383,15 +429,18 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
                               Expanded(
                                 child: LinearProgressIndicator(
                                   minHeight: 12,
-                                  value: item.percentage / 100,
+                                  value: .tryParse(item.confidencePercentage),
+                                  // TODO color from theme
                                   backgroundColor: const Color(0xffe5e7eb),
                                   valueColor: AlwaysStoppedAnimation(color),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: AppConstants.borderRadius12,
                                 ),
                               ),
                               Text(
-                                "${item.percentage.toStringAsFixed(0)}%",
-                                style: TextStyle(color: color),
+                                "${item.confidencePercentage}%",
+                                style: context.tt.bodyMedium?.copyWith(
+                                  color: color,
+                                ),
                               ),
                             ],
                           ),
@@ -410,7 +459,8 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
 }
 
 class IncommingIrrigation extends StatefulWidget {
-  const IncommingIrrigation({super.key});
+  const IncommingIrrigation({super.key, required this.irrigations});
+  final List<IrrigationScheduleModel> irrigations;
 
   @override
   State<IncommingIrrigation> createState() => _IncommingIrrigationState();
@@ -419,29 +469,6 @@ class IncommingIrrigation extends StatefulWidget {
 class _IncommingIrrigationState extends State<IncommingIrrigation> {
   @override
   Widget build(BuildContext context) {
-    final items = [
-      IrrigationModel(
-        "حقل طماطم 1",
-        "طماطم",
-        "2026-06-15",
-        "مجدد",
-        Colors.green,
-      ),
-      IrrigationModel(
-        "بستان تفاح",
-        "تفاح",
-        "2026-06-16",
-        "بانتظار الموافقة",
-        Colors.orange,
-      ),
-      IrrigationModel(
-        "حقل بطاطا",
-        "بطاطا",
-        "2026-06-17",
-        "تعديل يدوي",
-        Colors.orange,
-      ),
-    ];
     return MainTile(
       child: Column(
         crossAxisAlignment: .start,
@@ -453,14 +480,12 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
             children: [
               Icon(Icons.water_drop, size: 20),
               Text(
-                "الري القادم",
-                style: context.tt.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+                "upcoming_irrigation".tr(),
+                style: context.tt.titleMedium?.copyWith(fontWeight: .bold),
               ),
             ],
           ),
-          ...items.map(
+          ...widget.irrigations.map(
             (irrigation) => _buildIrrigationTile(context, irrigation),
           ),
         ],
@@ -470,7 +495,7 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
 
   Widget _buildIrrigationTile(
     BuildContext context,
-    IrrigationModel irrigation,
+    IrrigationScheduleModel irrigation,
   ) {
     return MainTile(
       child: Row(
@@ -484,19 +509,15 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
               Row(
                 mainAxisAlignment: .spaceBetween,
                 children: [
-                  Text(irrigation.name),
+                  Text(irrigation.plant?.name ?? "---"),
                   Container(
                     padding: AppConstants.paddingH8V4,
                     decoration: BoxDecoration(
-                      color: irrigation.color.withAlpha(15),
+                      color: Colors.yellow,
+                      // color: irrigation.color.withAlpha(15),
                       borderRadius: AppConstants.borderRadius15,
                     ),
-                    child: Text(
-                      irrigation.status,
-                      style: context.tt.bodySmall?.copyWith(
-                        color: irrigation.color,
-                      ),
-                    ),
+                    child: Text("incomming".tr(), style: context.tt.bodySmall),
                   ),
                 ],
               ),
@@ -505,9 +526,9 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
                 mainAxisSize: .min,
                 children: [
                   Icon(Icons.date_range),
-                  Text(irrigation.date),
-                  Text("•", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text(irrigation.plantName),
+                  Text(irrigation.recommendedDate.formatYYYYMMDD),
+                  // Text("•", style: TextStyle(fontWeight: .bold)),
+                  // Text(irrigation.plant?.name ?? "---"),
                 ],
               ),
             ],
@@ -519,48 +540,38 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
 }
 
 class WeaklyDiagnosis extends StatelessWidget {
-  const WeaklyDiagnosis({super.key});
+  const WeaklyDiagnosis({super.key, required this.diagnosis});
+  final List<DiagnoseCountModel> diagnosis;
 
   @override
   Widget build(BuildContext context) {
-    final List<WeaklyDiagnosisModel> dataSource = [
-      WeaklyDiagnosisModel('Sun', 10),
-      WeaklyDiagnosisModel('Mon', 28),
-      WeaklyDiagnosisModel('Tus', 34),
-      WeaklyDiagnosisModel('Wen', 32),
-      WeaklyDiagnosisModel('Tur', 40),
-      WeaklyDiagnosisModel('Fri', 30),
-      WeaklyDiagnosisModel('Sat', 40),
-    ];
     return MainTile(
       child: SfCartesianChart(
         title: ChartTitle(
-          text: "التشخيصات الأسبوعية".tr(),
-          textStyle: const TextStyle(fontSize: 20),
+          text: "weekly_diagnoses".tr(),
+          textStyle: context.tt.titleLarge,
         ),
-        primaryXAxis: CategoryAxis(
-          labelStyle: TextStyle(color: context.cs.onSurface),
-        ),
+        primaryXAxis: CategoryAxis(labelStyle: context.tt.bodySmall),
         primaryYAxis: NumericAxis(maximum: 50, minimum: 0),
-        series: <LineSeries<WeaklyDiagnosisModel, String>>[
-          LineSeries<WeaklyDiagnosisModel, String>(
+        series: <LineSeries<DiagnoseCountModel, String>>[
+          LineSeries<DiagnoseCountModel, String>(
             color: context.cs.primary,
             width: 3,
             enableTrackball: true,
-            dataSource: dataSource,
-            xValueMapper: (WeaklyDiagnosisModel sales, _) => sales.day,
-            yValueMapper: (WeaklyDiagnosisModel sales, _) => sales.value,
+            dataSource: diagnosis,
+            xValueMapper: (DiagnoseCountModel data, _) => data.dayName,
+            yValueMapper: (DiagnoseCountModel data, _) => data.count,
             markerSettings: MarkerSettings(
               isVisible: true,
               color: context.cs.primary,
-              shape: DataMarkerType.circle,
+              shape: .circle,
               borderWidth: 2,
               height: 10,
               width: 10,
             ),
             dataLabelSettings: const DataLabelSettings(
               isVisible: true,
-              labelAlignment: ChartDataLabelAlignment.top,
+              labelAlignment: .top,
             ),
           ),
         ],
@@ -569,31 +580,4 @@ class WeaklyDiagnosis extends StatelessWidget {
   }
 }
 
-class MainTile extends StatelessWidget {
-  const MainTile({super.key, required this.child, this.height, this.width});
-  final Widget child;
-  final double? width;
-  final double? height;
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width,
-      height: height,
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
-      child: child,
-    );
-  }
-}

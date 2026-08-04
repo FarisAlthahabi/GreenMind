@@ -8,8 +8,10 @@ import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
 import 'package:green_mind/features/crops/view/widgets/update_crop_view.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
+import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
+import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_app_bar.dart';
@@ -72,6 +74,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
 
   @override
   Widget build(BuildContext context) {
+    final role = Utils.userRole;
     return Scaffold(
       appBar: const MainAppBar(title: "crops"),
       drawer: const MainDrawer(),
@@ -91,7 +94,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
                 buildWhen: (_, current) => current is CropsState,
                 builder: (context, state) {
                   if (state is CropsLoading) {
-                    return Align(child: LoadingIndicator());
+                    return const Align(child: LoadingIndicator());
                   } else if (state is CropsSuccess) {
                     final crops = state.crops;
                     return RefreshIndicator(
@@ -107,7 +110,9 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
                               child: FadeInAnimation(child: widget),
                             ),
                             children: [
-                              ...crops.map(_buildCropTile),
+                              ...crops.map(
+                                (crop) => _buildCropTile(crop, role),
+                              ),
                               const SizedBox(height: 50),
                             ],
                           ),
@@ -139,16 +144,16 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
     );
   }
 
-  Widget _buildCropTile(CropModel crop) {
+  Widget _buildCropTile(CropModel crop, UserRoleEnum role) {
     return Container(
       padding: AppConstants.padding16,
       decoration: BoxDecoration(
         color: context.cs.surface,
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
+        border: .all(width: 0.2, color: context.cs.onSurface),
         boxShadow: [
           BoxShadow(
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
             blurRadius: 4,
             color: context.cs.surfaceContainerLow,
           ),
@@ -166,19 +171,21 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
                 crop.nameEn,
                 style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
               ),
-              Spacer(),
-              _buildIconBtn(
-                Icons.edit,
-                context.cs.secondaryContainer,
-                context.cs.secondary,
-                () => onUpdateCrop(crop),
-              ),
-              _buildIconBtn(
-                Icons.delete,
-                context.cs.errorContainer,
-                context.cs.error,
-                () => onDeleteCrop(crop),
-              ),
+              if (!role.isFarmer) ...[
+                Spacer(),
+                _buildIconBtn(
+                  Icons.edit,
+                  context.cs.secondaryContainer,
+                  context.cs.secondary,
+                  () => onUpdateCrop(crop),
+                ),
+                _buildIconBtn(
+                  Icons.delete,
+                  context.cs.errorContainer,
+                  context.cs.error,
+                  () => onDeleteCrop(crop),
+                ),
+              ],
             ],
           ),
           Row(

@@ -5,17 +5,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
+import 'package:green_mind/features/plants/view/widgets/update_plant_disease_view.dart';
 import 'package:green_mind/features/plants/view/widgets/update_plant_view.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
+import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
+import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_app_bar.dart';
 import 'package:green_mind/global/widgets/main_drawer.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_fab.dart';
+import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
 
 abstract class PlantsViewCallBacks {}
@@ -50,6 +54,132 @@ class _PlantsPageState extends State<PlantsPage>
     fetchPlants();
   }
 
+  void onUpdatePlantDisease(PlantModel plant) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) =>
+          UpdatePlantDiseaseView(plant: plant, plantsCubit: plantsCubit),
+    );
+  }
+
+  void onMoreTap(PlantModel plant) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return BlocProvider.value(
+          value: plantsCubit,
+          child: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              padding: AppConstants.padding16,
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                mainAxisSize: .min,
+                crossAxisAlignment: .start,
+                children: [
+                  Center(
+                    child: Text(
+                      'more_options'.tr(),
+                      style: context.tt.titleLarge,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Column(
+                    spacing: 5,
+                    mainAxisSize: .min,
+                    crossAxisAlignment: .stretch,
+                    // spacing: 10,
+                    children: [
+                      TextButton(
+                        onPressed: () => onUpdatePlantDisease(plant),
+                        style: const ButtonStyle(
+                          alignment: AlignmentDirectional.centerStart,
+                        ),
+                        child: Row(
+                          spacing: 10,
+                          mainAxisSize: .min,
+                          children: [
+                            Icon(Icons.edit),
+                            Text(
+                              'update_disease_status'.tr(),
+                              style: context.tt.bodyMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                      BlocBuilder<PlantsCubit, GeneralPlantsState>(
+                        buildWhen: (_, current) =>
+                            current is MarkHarvestedState,
+                        builder: (context, state) {
+                          Widget? loadingIndicator;
+                          final bool isLoading = state is MarkHarvestedLoading;
+                          var onTap = plantsCubit.markAsHarvested;
+                          if (isLoading) {
+                            loadingIndicator = const LoadingIndicator(size: 20);
+                            onTap = (int id) async {};
+                          }
+                          return TextButton(
+                            onPressed: () => onTap(plant.id),
+                            style: const ButtonStyle(
+                              alignment: AlignmentDirectional.centerStart,
+                            ),
+                            child: Row(
+                              spacing: 10,
+                              mainAxisSize: .min,
+                              children: [
+                                Icon(Icons.agriculture),
+                                Text(
+                                  'mark_harvested'.tr(),
+                                  style: context.tt.bodyMedium,
+                                ),
+                                ?loadingIndicator,
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                      BlocBuilder<PlantsCubit, GeneralPlantsState>(
+                        buildWhen: (_, current) => current is UndoHarvestState,
+                        builder: (context, state) {
+                          Widget? loadingIndicator;
+                          final bool isLoading = state is UndoHarvestLoading;
+                          var onTap = plantsCubit.undoHarvest;
+                          if (isLoading) {
+                            loadingIndicator = const LoadingIndicator(size: 20);
+                            onTap = (int id) async {};
+                          }
+                          return TextButton(
+                            onPressed: () => onTap(plant.id),
+                            style: const ButtonStyle(
+                              alignment: AlignmentDirectional.centerStart,
+                            ),
+                            child: Row(
+                              spacing: 10,
+                              mainAxisSize: .min,
+                              children: [
+                                Icon(Icons.undo),
+                                Text(
+                                  'undo_harvest'.tr(),
+                                  style: context.tt.bodyMedium,
+                                ),
+                                ?loadingIndicator,
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   void onDeletePlant(PlantModel plant) {
     showDialog(
       context: context,
@@ -74,82 +204,106 @@ class _PlantsPageState extends State<PlantsPage>
 
   @override
   Widget build(BuildContext context) {
+    final role = Utils.userRole;
     return Scaffold(
       appBar: const MainAppBar(title: "plants"),
       drawer: const MainDrawer(),
-      body: Padding(
-        padding: AppConstants.padding16,
-        child: Column(
-          spacing: 20,
-          crossAxisAlignment: .start,
-          children: [
-            MainTextField(
-              hintText: "search_for_plant",
-              prefixIcon: Icon(Icons.search),
-              onChanged: plantsCubit.setSearchQuery,
-            ),
-            Expanded(
-              child: BlocBuilder<PlantsCubit, GeneralPlantsState>(
-                buildWhen: (_, current) => current is PlantsState,
-                builder: (context, state) {
-                  if (state is PlantsLoading) {
-                    return Align(child: LoadingIndicator());
-                  } else if (state is PlantsSuccess) {
-                    final plants = state.plants;
-                    return RefreshIndicator(
-                      onRefresh: () async => fetchPlants(),
-                      child: SingleChildScrollView(
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          spacing: 16,
-                          children: AnimationConfiguration.toStaggeredList(
-                            duration: AppConstants.duration500ms,
-                            childAnimationBuilder: (widget) => SlideAnimation(
-                              horizontalOffset: 50.0,
-                              child: FadeInAnimation(child: widget),
+      body: BlocListener<PlantsCubit, GeneralPlantsState>(
+        listener: (context, state) {
+          if (state is MarkHarvestedSuccess) {
+            MainSnackBar.showSuccessMessage(context, state.message);
+          } else if (state is MarkHarvestedFail) {
+            MainSnackBar.showErrorMessage(context, state.error);
+          } else if (state is UndoHarvestSuccess) {
+            MainSnackBar.showSuccessMessage(context, state.message);
+          } else if (state is UndoHarvestFail) {
+            MainSnackBar.showErrorMessage(context, state.error);
+          }
+        },
+        child: Padding(
+          padding: AppConstants.padding16,
+          child: Column(
+            spacing: 20,
+            crossAxisAlignment: .start,
+            children: [
+              MainTextField(
+                hintText: "search_for_plant",
+                prefixIcon: Icon(Icons.search),
+                onChanged: plantsCubit.setSearchQuery,
+              ),
+              Expanded(
+                child: BlocBuilder<PlantsCubit, GeneralPlantsState>(
+                  buildWhen: (_, current) => current is PlantsState,
+                  builder: (context, state) {
+                    if (state is PlantsLoading) {
+                      return Align(child: LoadingIndicator());
+                    } else if (state is PlantsSuccess) {
+                      final plants = state.plants;
+                      return RefreshIndicator(
+                        onRefresh: () async => fetchPlants(),
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            spacing: 16,
+                            children: AnimationConfiguration.toStaggeredList(
+                              duration: AppConstants.duration500ms,
+                              childAnimationBuilder: (widget) => SlideAnimation(
+                                horizontalOffset: 50.0,
+                                child: FadeInAnimation(child: widget),
+                              ),
+                              children: [
+                                ...plants.map(
+                                  (plant) => _buildPlantTile(plant, role),
+                                ),
+                                const SizedBox(height: 50),
+                              ],
                             ),
-                            children: [
-                              ...plants.map(_buildPlantTile),
-                              const SizedBox(height: 50),
-                            ],
                           ),
                         ),
-                      ),
-                    );
-                  } else if (state is PlantsEmpty) {
-                    return MainErrorWidget(
-                      error: state.message,
-                      isRefresh: true,
-                      onTryAgainTap: fetchPlants,
-                    );
-                  } else if (state is PlantsFail) {
-                    return MainErrorWidget(
-                      error: state.error,
-                      onTryAgainTap: fetchPlants,
-                    );
-                  } else {
-                    return const SizedBox.shrink();
-                  }
-                },
+                      );
+                    } else if (state is PlantsEmpty) {
+                      return MainErrorWidget(
+                        error: state.message,
+                        isRefresh: true,
+                        onTryAgainTap: fetchPlants,
+                      );
+                    } else if (state is PlantsFail) {
+                      return MainErrorWidget(
+                        error: state.error,
+                        onTryAgainTap: fetchPlants,
+                      );
+                    } else {
+                      return const SizedBox.shrink();
+                    }
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       floatingActionButton: MainFab(onTap: () => onUpdatePlant(null)),
     );
   }
 
-  Widget _buildPlantTile(PlantModel plant) {
+  Widget _buildPlantTile(PlantModel plant, UserRoleEnum role) {
+    final hasDisease = plant.disease != null;
+    final diseaseStatus = hasDisease
+        ? (plant.disease?.arName ?? "---")
+        : "healthy".tr();
+    final bgColor = hasDisease
+        ? context.cs.errorContainer
+        : context.cs.primaryContainer;
+    final textColor = hasDisease ? context.cs.error : context.cs.primary;
     return Container(
       padding: AppConstants.padding16,
       decoration: BoxDecoration(
         color: context.cs.surface,
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
+        border: .all(width: 0.2, color: context.cs.onSurface),
         boxShadow: [
           BoxShadow(
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
             blurRadius: 4,
             color: context.cs.surfaceContainerLow,
           ),
@@ -176,28 +330,41 @@ class _PlantsPageState extends State<PlantsPage>
                     DecoratedBox(
                       decoration: BoxDecoration(
                         borderRadius: AppConstants.borderRadius20,
-                        color: context.cs.primaryContainer,
+                        color: bgColor,
                       ),
                       child: Padding(
                         padding: AppConstants.paddingH12V4,
-                        child: Text(plant.healthStatus ?? "---"),
+                        child: Text(
+                          diseaseStatus,
+                          style: context.tt.bodyMedium?.copyWith(
+                            color: textColor,
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              _buildIconBtn(
-                Icons.edit,
-                context.cs.secondaryContainer,
-                context.cs.secondary,
-                () => onUpdatePlant(plant),
-              ),
-              _buildIconBtn(
-                Icons.delete,
-                context.cs.errorContainer,
-                context.cs.error,
-                () => onDeletePlant(plant),
-              ),
+              if (!role.isFarmer) ...[
+                _buildIconBtn(
+                  Icons.edit,
+                  context.cs.secondaryContainer,
+                  context.cs.secondary,
+                  () => onUpdatePlant(plant),
+                ),
+                _buildIconBtn(
+                  Icons.delete,
+                  context.cs.errorContainer,
+                  context.cs.error,
+                  () => onDeletePlant(plant),
+                ),
+                _buildIconBtn(
+                  Icons.more_vert_outlined,
+                  context.cs.tertiaryContainer,
+                  context.cs.tertiary,
+                  () => onMoreTap(plant),
+                ),
+              ],
             ],
           ),
           Row(
@@ -248,7 +415,7 @@ class _PlantsPageState extends State<PlantsPage>
         borderRadius: AppConstants.borderRadius10,
       ),
       child: Padding(
-        padding: AppConstants.padding10,
+        padding: AppConstants.padding8,
         child: InkWell(
           onTap: onTap,
           child: Icon(icon, color: color, size: 20),

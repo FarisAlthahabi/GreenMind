@@ -152,7 +152,9 @@ class _MainTextFieldState extends State<MainTextField> {
               hintText: widget.hintText?.tr(),
               hintStyle:
                   widget.hintStyle ??
-                  context.tt.bodyMedium?.copyWith(color: widget.hintColor),
+                  context.tt.bodyMedium?.copyWith(
+                    color: widget.hintColor ?? context.cs.onSurfaceVariant,
+                  ),
               errorStyle: const TextStyle(fontSize: 16),
               errorText: widget.errorText,
               border: widget.outlineInputBorder ?? outlineInputBorder(),

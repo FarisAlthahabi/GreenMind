@@ -12,11 +12,11 @@ enum UserRoleEnum implements DropDownItemModel {
 
   Color get color {
     switch (this) {
-      case UserRoleEnum.admin:
+      case admin:
         return Colors.purple;
-      case UserRoleEnum.engineer:
+      case engineer:
         return Colors.blue;
-      case UserRoleEnum.farmer:
+      case farmer:
         return Colors.green;
     }
   }
@@ -37,4 +37,10 @@ enum UserRoleEnum implements DropDownItemModel {
 
   @override
   int get id => index + 1;
+
+  @override
+  List<Object?> get props => [engineer, admin, farmer];
+
+  @override
+  bool? get stringify => null;
 }

@@ -107,7 +107,7 @@ class _UpdateCropWidgetState extends State<UpdateCropWidget> {
                   child: MainActionButton(
                     padding: AppConstants.padding16,
                     buttonColor: Colors.transparent,
-                    border: Border.all(width: 0.3, color: context.cs.outline),
+                    border: .all(width: 0.3, color: context.cs.outline),
                     textColor: context.cs.onSurface,
                     fontWeight: .bold,
                     text: "cancel".tr(),
@@ -132,7 +132,7 @@ class _UpdateCropWidgetState extends State<UpdateCropWidget> {
                       if (state is UpdateCropLoading) {
                         onTap = () async {};
                         // TODO use color from theme
-                        child = LoadingIndicator(
+                        child =const LoadingIndicator(
                           isInBtn: true,
                           color: Colors.white,
                         );

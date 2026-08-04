@@ -60,4 +60,47 @@ class PlantsServiceImp implements PlantsService {
       rethrow;
     }
   }
+
+  @override
+  Future<PlantModel> markAsHarvested(int id) async {
+    try {
+      final response = await dio.post("plants/$id/harvest");
+      final data = response.data["data"] as Map<String, dynamic>;
+      return PlantModel.fromJson(data);
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print("stackTrace of markAsHarvested $id is : $stackTrace");
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PlantModel> undoHarvest(int id) async {
+    try {
+      final response = await dio.post("plants/$id/undo-harvest");
+      final data = response.data["data"] as Map<String, dynamic>;
+      return PlantModel.fromJson(data);
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print("stackTrace of undoHarvest $id is : $stackTrace");
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PlantModel> updateDiseaseStatus(int id, {int? diseaseId}) async {
+    try {
+      final paylod = {"disease_id": diseaseId};
+      final response = await dio.put("plants/$id/disease", data: paylod);
+      final data = response.data["data"] as Map<String, dynamic>;
+      return PlantModel.fromJson(data);
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print("stackTrace of updateDiseaseStatus $id is : $stackTrace");
+      }
+      rethrow;
+    }
+  }
 }

@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/irrigation_schedule/cubit/irrigation_schedule_cubit.dart';
 import 'package:green_mind/features/irrigation_schedule/model/irrigation_schedule_model/irrigation_schedule_model.dart';
+import 'package:green_mind/features/irrigation_schedule/view/widgets/reschedule_irrigation_widget.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
@@ -13,6 +14,7 @@ import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_app_bar.dart';
 import 'package:green_mind/global/widgets/main_drawer.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
+import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
 
 abstract class IrrigationScheduleViewCallBacks {}
@@ -50,16 +52,23 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
   void fetchIrrigationSchedules() =>
       irrigationScheduleCubit.getIrrigationSchedules();
 
-  void onUpdateSchedule(IrrigationScheduleModel? schedule) {
-    // TODO
-    // showDialog(
-    //   context: context,
-    //   barrierDismissible: false,
-    //   builder: (context) => UpdateIrrigationScheduleView(
-    //     irrigationScheduleCubit: irrigationScheduleCubit,
-    //     schedule: schedule,
-    //   ),
-    // );
+  void onMarkCompleted(IrrigationScheduleModel schedule) {
+    irrigationScheduleCubit.markCompleted(schedule.id);
+  }
+
+  void onUndoLastIrrigation(IrrigationScheduleModel schedule) {
+    irrigationScheduleCubit.undoLastIrrigation(schedule.plantId);
+  }
+
+  void onUpdateSchedule(IrrigationScheduleModel schedule) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => RescheduleIrrigationView(
+        scheduleCubit: irrigationScheduleCubit,
+        schedule: schedule,
+      ),
+    );
   }
 
   @override
@@ -67,71 +76,91 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
     return Scaffold(
       appBar: const MainAppBar(title: "irrigation_schedules"),
       drawer: const MainDrawer(),
-      body: Padding(
-        padding: AppConstants.padding16,
-        child: Column(
-          spacing: 20,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            MainTextField(
-              hintText: "search_for_irrigation_schedule",
-              prefixIcon: const Icon(Icons.search),
-              onChanged: irrigationScheduleCubit.setSearchQuery,
-            ),
-            Expanded(
-              child:
-                  BlocBuilder<
-                    IrrigationScheduleCubit,
-                    GeneralIrrigationScheduleState
-                  >(
-                    buildWhen: (_, current) =>
-                        current is IrrigationScheduleState,
-                    builder: (context, state) {
-                      if (state is IrrigationScheduleLoading) {
-                        return const Align(child: LoadingIndicator());
-                      } else if (state is IrrigationScheduleSuccess) {
-                        final schedules = state.schedules;
-                        return RefreshIndicator(
-                          onRefresh: () async => fetchIrrigationSchedules(),
-                          child: SingleChildScrollView(
-                            physics: const BouncingScrollPhysics(),
-                            child: Column(
-                              spacing: 16,
-                              children: AnimationConfiguration.toStaggeredList(
-                                duration: AppConstants.duration500ms,
-                                childAnimationBuilder: (widget) =>
-                                    SlideAnimation(
-                                      horizontalOffset: 50.0,
-                                      child: FadeInAnimation(child: widget),
-                                    ),
-                                children: [
-                                  ...schedules.map(_buildScheduleTile),
-                                  const SizedBox(height: 50),
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      } else if (state is IrrigationScheduleEmpty) {
-                        return MainErrorWidget(
-                          error: state.message,
-                          isRefresh: true,
-                          onTryAgainTap: fetchIrrigationSchedules,
-                        );
-                      } else if (state is IrrigationScheduleFail) {
-                        return MainErrorWidget(
-                          error: state.error,
-                          onTryAgainTap: fetchIrrigationSchedules,
-                        );
-                      } else {
-                        return const SizedBox.shrink();
-                      }
-                    },
+      body:
+          BlocListener<IrrigationScheduleCubit, GeneralIrrigationScheduleState>(
+            listener: (context, state) {
+              if (state is MarkCompletedFail) {
+                MainSnackBar.showErrorMessage(context, state.error);
+              } else if (state is UndoIrrigationFail) {
+                MainSnackBar.showErrorMessage(context, state.error);
+              } else if (state is MarkCompletedSuccess) {
+                MainSnackBar.showSuccessMessage(context, state.message);
+              } else if (state is UndoIrrigationSuccess) {
+                MainSnackBar.showSuccessMessage(context, state.message);
+              }
+            },
+            child: Padding(
+              padding: AppConstants.padding16,
+              child: Column(
+                spacing: 20,
+                crossAxisAlignment: .start,
+                children: [
+                  MainTextField(
+                    hintText: "search_for_irrigation_schedule",
+                    prefixIcon: const Icon(Icons.search),
+                    onChanged: irrigationScheduleCubit.setSearchQuery,
                   ),
+                  Expanded(
+                    child:
+                        BlocBuilder<
+                          IrrigationScheduleCubit,
+                          GeneralIrrigationScheduleState
+                        >(
+                          buildWhen: (_, current) =>
+                              current is IrrigationScheduleState,
+                          builder: (context, state) {
+                            if (state is IrrigationScheduleLoading) {
+                              return const Align(child: LoadingIndicator());
+                            } else if (state is IrrigationScheduleSuccess) {
+                              final schedules = state.schedules;
+                              return RefreshIndicator(
+                                onRefresh: () async =>
+                                    fetchIrrigationSchedules(),
+                                child: SingleChildScrollView(
+                                  physics: const BouncingScrollPhysics(),
+                                  child: Column(
+                                    spacing: 16,
+                                    children:
+                                        AnimationConfiguration.toStaggeredList(
+                                          duration: AppConstants.duration500ms,
+                                          childAnimationBuilder: (widget) =>
+                                              SlideAnimation(
+                                                horizontalOffset: 50.0,
+                                                child: FadeInAnimation(
+                                                  child: widget,
+                                                ),
+                                              ),
+                                          children: [
+                                            ...schedules.map(
+                                              _buildScheduleTile,
+                                            ),
+                                            const SizedBox(height: 50),
+                                          ],
+                                        ),
+                                  ),
+                                ),
+                              );
+                            } else if (state is IrrigationScheduleEmpty) {
+                              return MainErrorWidget(
+                                error: state.message,
+                                isRefresh: true,
+                                onTryAgainTap: fetchIrrigationSchedules,
+                              );
+                            } else if (state is IrrigationScheduleFail) {
+                              return MainErrorWidget(
+                                error: state.error,
+                                onTryAgainTap: fetchIrrigationSchedules,
+                              );
+                            } else {
+                              return const SizedBox.shrink();
+                            }
+                          },
+                        ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
@@ -146,7 +175,7 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
       decoration: BoxDecoration(
         color: context.cs.surface,
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(
+        border: .all(
           width: 0.2,
           color: isOverridden ? context.cs.primary : context.cs.onSurface,
         ),
@@ -195,15 +224,10 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                   child: Text(status.tr(), style: context.tt.bodyMedium),
                 ),
               ),
-              _buildIconBtn(
-                Icons.edit,
-                context.cs.secondaryContainer,
-                context.cs.secondary,
-                () => onUpdateSchedule(schedule),
-              ),
             ],
           ),
           Row(
+            spacing: 5,
             children: [
               Icon(
                 Icons.calendar_today,
@@ -214,7 +238,7 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
               Spacer(),
               Text(
                 schedule.recommendedDate.formatYYYYMMDD,
-                style: context.tt.bodySmall,
+                style: context.tt.bodyMedium,
               ),
             ],
           ),
@@ -231,6 +255,52 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                 ),
               ],
             ),
+          Row(
+            spacing: 10,
+            mainAxisAlignment: .end,
+            children: [
+              if (!isCompleted)
+                BlocBuilder<
+                  IrrigationScheduleCubit,
+                  GeneralIrrigationScheduleState
+                >(
+                  buildWhen: (_, current) => current is MarkCompletedState,
+                  builder: (context, state) {
+                    final bool isLoading = state is MarkCompletedLoading;
+                    return _buildIconBtn(
+                      Icons.check_circle,
+                      context.cs.primaryContainer,
+                      context.cs.primary,
+                      () => onMarkCompleted(schedule),
+                      isLoading: isLoading,
+                    );
+                  },
+                ),
+              // if (isCompleted)
+              BlocBuilder<
+                IrrigationScheduleCubit,
+                GeneralIrrigationScheduleState
+              >(
+                buildWhen: (_, current) => current is UndoIrrigationState,
+                builder: (context, state) {
+                  final bool isLoading = state is UndoIrrigationLoading;
+                  return _buildIconBtn(
+                    Icons.undo,
+                    context.cs.tertiaryContainer,
+                    context.cs.tertiary,
+                    () => onUndoLastIrrigation(schedule),
+                    isLoading: isLoading,
+                  );
+                },
+              ),
+              _buildIconBtn(
+                Icons.edit,
+                context.cs.secondaryContainer,
+                context.cs.secondary,
+                () => onUpdateSchedule(schedule),
+              ),
+            ],
+          ),
           if (schedule.notes != null) ...[
             const Divider(height: 0),
             Row(
@@ -255,18 +325,21 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
     IconData icon,
     Color bgColor,
     Color color,
-    void Function() onTap,
-  ) {
+    void Function() onTap, {
+    bool isLoading = false,
+  }) {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: AppConstants.borderRadius10,
       ),
       child: Padding(
-        padding: AppConstants.padding10,
+        padding: AppConstants.padding8,
         child: InkWell(
-          onTap: onTap,
-          child: Icon(icon, color: color, size: 20),
+          onTap: isLoading ? null : onTap,
+          child: isLoading
+              ? const LoadingIndicator(size: 20)
+              : Icon(icon, color: color, size: 20),
         ),
       ),
     );

@@ -18,8 +18,8 @@ class MainActionButton extends StatefulWidget {
     this.fontSize,
     this.shadow,
     this.fontWeight,
-    this.borderRadius,
-    this.padding,
+    this.borderRadius = AppConstants.borderRadius15,
+    this.padding = AppConstants.paddingH36V8,
     this.child,
     this.icon,
     this.isLoading = false,
@@ -38,7 +38,7 @@ class MainActionButton extends StatefulWidget {
   final List<BoxShadow>? shadow;
   final FontWeight? fontWeight;
   final BorderRadiusGeometry? borderRadius;
-  final EdgeInsets? padding;
+  final EdgeInsets padding;
   final EdgeInsets? margin;
   final Widget? child;
   final Icon? icon;
@@ -72,11 +72,11 @@ class _MainActionButtonState extends State<MainActionButton> {
         height: widget.height,
         width: widget.width,
         margin: widget.margin,
-        padding: widget.padding ?? AppConstants.paddingH36V8,
+        padding: widget.padding,
         decoration: BoxDecoration(
           border: widget.border,
           color: widget.buttonColor ?? context.cs.primary,
-          borderRadius: widget.borderRadius ?? AppConstants.borderRadius15,
+          borderRadius: widget.borderRadius,
           boxShadow: widget.shadow,
         ),
         child: Center(

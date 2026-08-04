@@ -26,6 +26,10 @@ import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_disease
     as _i105;
 import 'package:green_mind/features/diagnosing_diseases/service/diagnosing_diseases_service.dart'
     as _i593;
+import 'package:green_mind/features/diseases/cubit/diseases_cubit.dart'
+    as _i812;
+import 'package:green_mind/features/diseases/service/diseases_service.dart'
+    as _i622;
 import 'package:green_mind/features/irrigation_schedule/cubit/irrigation_schedule_cubit.dart'
     as _i1008;
 import 'package:green_mind/features/irrigation_schedule/service/irrigation_schedule_service.dart'
@@ -33,6 +37,11 @@ import 'package:green_mind/features/irrigation_schedule/service/irrigation_sched
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart' as _i29;
 import 'package:green_mind/features/plants/service/plants_service.dart'
     as _i574;
+import 'package:green_mind/features/profile/cubit/profile_cubit.dart' as _i70;
+import 'package:green_mind/features/profile/service/profile_service.dart'
+    as _i344;
+import 'package:green_mind/features/stats/cubit/stats_cubit.dart' as _i214;
+import 'package:green_mind/features/stats/service/stats_service.dart' as _i529;
 import 'package:green_mind/features/users/cubit/users_cubit.dart' as _i814;
 import 'package:green_mind/features/users/service/users_service.dart' as _i671;
 import 'package:green_mind/global/blocs/delete_cubit/cubit/delete_cubit.dart'
@@ -69,6 +78,11 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i645.DioClient>(() => _i645.DioClient());
     gh.factory<_i209.AiChatBotService>(() => _i209.AiChatBotServiceImp());
+    gh.factory<_i622.DiseasesService>(() => _i622.DiseasesServiceImp());
+    gh.factory<_i529.StatsService>(() => _i529.StatsServiceImp());
+    gh.factory<_i214.StatsCubit>(
+      () => _i214.StatsCubit(gh<_i529.StatsService>()),
+    );
     gh.factory<_i574.PlantsService>(() => _i574.PlantsServiceImp());
     gh.factory<_i671.UsersService>(() => _i671.UsersServiceImp());
     gh.factory<_i766.SignInService>(() => _i766.SignInServiceImp());
@@ -85,6 +99,7 @@ extension GetItInjectableX on _i174.GetIt {
       () =>
           _i123.AiChatBotCubit(aiChatBotService: gh<_i209.AiChatBotService>()),
     );
+    gh.factory<_i344.ProfileService>(() => _i344.ProfileServiceImp());
     gh.factory<_i702.CropsService>(() => _i702.CropsServiceImp());
     gh.factory<_i869.DeleteService>(() => _i869.DeleteServiceImp());
     gh.factory<_i105.DiagnosingDiseasesCubit>(
@@ -103,6 +118,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i901.CropsCubit>(
       () => _i901.CropsCubit(cropsService: gh<_i702.CropsService>()),
     );
+    gh.factory<_i812.DiseasesCubit>(
+      () => _i812.DiseasesCubit(diseasesService: gh<_i622.DiseasesService>()),
+    );
     gh.factory<_i804.DeleteCubit>(
       () => _i804.DeleteCubit(gh<_i869.DeleteService>()),
     );
@@ -114,6 +132,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i29.PlantsCubit>(
       () => _i29.PlantsCubit(plantService: gh<_i574.PlantsService>()),
+    );
+    gh.factory<_i70.ProfileCubit>(
+      () => _i70.ProfileCubit(profileService: gh<_i344.ProfileService>()),
     );
     return this;
   }

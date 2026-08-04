@@ -14,7 +14,7 @@ class ImagePlaceHolderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(radius),
+      borderRadius: .circular(radius),
       child: Shimmer.fromColors(
         baseColor: Colors.grey.withValues(alpha: 0.5),
         highlightColor: const Color(0xFFF5F1FE),

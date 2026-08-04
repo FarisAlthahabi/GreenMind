@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/global/blocs/upload_image_cubit/cubit/upload_image_cubit.dart';
@@ -42,7 +43,7 @@ class ChooseImageWidget extends StatelessWidget {
             onTap: () => onTap(context),
             child: DottedBorder(
               options: RoundedRectDottedBorderOptions(
-                radius:const Radius.circular(20),
+                radius: const Radius.circular(20),
                 color: context.cs.outline,
                 strokeWidth: 2,
                 dashPattern: [6, 4],
@@ -130,9 +131,16 @@ class ChooseImageWidget extends StatelessWidget {
   Widget? _buildImage(String? imagePath, String? initialImage) {
     final image = imagePath ?? initialImage;
     if (image == null) return null;
+    Widget imageWidget;
+    if (kIsWeb) {
+      imageWidget = Image.network(image, fit: BoxFit.cover);
+    } else {
+      imageWidget = Image.file(File(image), fit: BoxFit.cover);
+    }
     return ClipRRect(
       borderRadius: AppConstants.borderRadius20,
-      child: Image.file(File(image), fit: BoxFit.cover),
+      child: imageWidget,
+      // child: Image.file(File(image), fit: BoxFit.cover),
     );
   }
 }

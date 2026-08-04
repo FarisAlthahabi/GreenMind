@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:green_mind/features/diagnosing_diseases/model/diagnose_model/diagnose_model.dart';
 import 'package:green_mind/features/diagnosing_diseases/service/diagnosing_diseases_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
@@ -22,8 +23,8 @@ class DiagnosingDiseasesCubit extends Cubit<GeneralDiagnosingDiseasesState> {
     emit(DiagnosingDiseasesLoading());
     try {
       if (isClosed) return;
-      await diagnosingDiseasesService.diagnoiseDesease(image!);
-      emit(DiagnosingDiseasesSuccess());
+      final diagnose = await diagnosingDiseasesService.diagnoiseDesease(image!);
+      emit(DiagnosingDiseasesSuccess(diagnose));
     } catch (e) {
       if (isClosed) return;
       emit(DiagnosingDiseasesFail(e.toString()));

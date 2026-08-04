@@ -102,7 +102,7 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
               buildWhen: (_, current) => current is CropsState,
               builder: (context, state) {
                 if (state is CropsLoading) {
-                  return LoadingIndicator();
+                  return const LoadingIndicator();
                 } else if (state is CropsSuccess) {
                   final selectedValue = state.crops.firstWhereOrNull(
                     (crop) => crop.id == plant?.cropId,
@@ -173,7 +173,7 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
                   child: MainActionButton(
                     padding: AppConstants.padding16,
                     buttonColor: Colors.transparent,
-                    border: Border.all(width: 0.3, color: context.cs.outline),
+                    border: .all(width: 0.3, color: context.cs.outline),
                     textColor: context.cs.onSurface,
                     fontWeight: .bold,
                     text: "cancel".tr(),
@@ -198,7 +198,7 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
                       if (state is UpdatePlantLoading) {
                         onTap = () async {};
                         // TODO use color from theme
-                        child = LoadingIndicator(
+                        child = const LoadingIndicator(
                           isInBtn: true,
                           color: Colors.white,
                         );

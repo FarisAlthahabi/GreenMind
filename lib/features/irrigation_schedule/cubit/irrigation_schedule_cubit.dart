@@ -52,9 +52,25 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
     try {
       final data = await service.markCompleted(id);
       emit(MarkCompletedSuccess("action_done".tr(), data));
+      updateLocalSchedule(data.completedSchedule);
+      addLocalSchedule(data.nextSchedule);
+      search();
     } catch (e) {
       if (isClosed) return;
       emit(MarkCompletedFail(e.toString()));
+    }
+  }
+
+  Future<void> undoLastIrrigation(int plantId) async {
+    emit(UndoIrrigationLoading());
+    if (isClosed) return;
+    try {
+      await service.undoLastIrrigation(plantId);
+      emit(UndoIrrigationSuccess("action_done".tr()));
+      getIrrigationSchedules();
+    } catch (e) {
+      if (isClosed) return;
+      emit(UndoIrrigationFail(e.toString()));
     }
   }
 
@@ -71,10 +87,21 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
         newScheduleDate!.formatYYYYMMDD,
       );
       emit(RescheduleIrrigationSuccess("action_done".tr(), data));
+      updateLocalSchedule(data);
+      search();
     } catch (e) {
       if (isClosed) return;
       emit(RescheduleIrrigationFail(e.toString()));
     }
+  }
+
+  void addLocalSchedule(IrrigationScheduleModel schedule) {
+    schedules.add(schedule);
+  }
+
+  void updateLocalSchedule(IrrigationScheduleModel schedule) {
+    int index = schedules.indexWhere((element) => element.id == schedule.id);
+    schedules[index] = schedule;
   }
 
   void search() {

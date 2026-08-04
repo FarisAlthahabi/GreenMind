@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
+import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';
 import 'package:green_mind/features/plants/model/add_plant_model/add_plant_model.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/features/plants/service/plants_service.dart';
@@ -9,6 +10,9 @@ import 'package:meta/meta.dart';
 
 part 'states/plants_state.dart';
 part 'states/update_plant_state.dart';
+part 'states/update_plant_disease_state.dart';
+part 'states/mark_harvested_state.dart';
+part 'states/undo_harvest_state.dart';
 part 'states/general_plants_state.dart';
 
 @injectable
@@ -19,6 +23,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   List<PlantModel> plants = [];
   String searchQuery = "";
   AddPlantModel model = AddPlantModel();
+  int? diseaseId;
 
   void setModel(PlantModel? plant) {
     setCrop(plant?.crop);
@@ -60,6 +65,10 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     model = model.copyWith(notes: () => notes);
   }
 
+  void setDiseaseId(DiseaseModel? disease) {
+    diseaseId = disease?.id;
+  }
+
   void setSearchQuery(String value) {
     searchQuery = value;
     search();
@@ -92,6 +101,49 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     } catch (e) {
       if (isClosed) return;
       emit(UpdatePlantFail(e.toString()));
+    }
+  }
+
+  Future<void> updateDiseaseStatus(int id) async {
+    emit(UpdatePlantDiseaseLoading());
+    if (isClosed) return;
+    try {
+      final plant = await plantService.updateDiseaseStatus(
+        id,
+        diseaseId: diseaseId,
+      );
+      emit(UpdatePlantDiseaseSuccess("action_done".tr(), plant));
+      diseaseId = null;
+      updateLocalPlant(plant);
+    } catch (e) {
+      if (isClosed) return;
+      emit(UpdatePlantDiseaseFail(e.toString()));
+    }
+  }
+
+  Future<void> markAsHarvested(int id) async {
+    emit(MarkHarvestedLoading());
+    if (isClosed) return;
+    try {
+      final plant = await plantService.markAsHarvested(id);
+      emit(MarkHarvestedSuccess("action_done".tr(), plant));
+      updateLocalPlant(plant);
+    } catch (e) {
+      if (isClosed) return;
+      emit(MarkHarvestedFail(e.toString()));
+    }
+  }
+
+  Future<void> undoHarvest(int id) async {
+    emit(UndoHarvestLoading());
+    if (isClosed) return;
+    try {
+      final plant = await plantService.undoHarvest(id);
+      emit(UndoHarvestSuccess("action_done".tr(), plant));
+      updateLocalPlant(plant);
+    } catch (e) {
+      if (isClosed) return;
+      emit(UndoHarvestFail(e.toString()));
     }
   }
 

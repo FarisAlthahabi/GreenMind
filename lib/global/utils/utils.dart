@@ -1,7 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:green_mind/features/auth/model/user_model/user_model.dart';
+import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart';
+import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/gen/assets.gen.dart';
+import 'package:green_mind/global/models/user_role_enum.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 abstract class Utils {
   static Color? stringToColor(String color) {
@@ -83,6 +88,20 @@ abstract class Utils {
       }
     }
     return null;
+  }
+
+  static UserModel? get user {
+    final prefs = get<SharedPreferences>();
+    final userString = prefs.getString("user");
+    if (userString == null) {
+      get<AuthManagerBloc>().add(SignOutRequested());
+      return null;
+    }
+    return UserModel.fromString(userString);
+  }
+
+  static UserRoleEnum get userRole {
+    return user?.role ?? UserRoleEnum.farmer;
   }
 }
 

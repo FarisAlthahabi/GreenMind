@@ -77,7 +77,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           borderRadius: AppConstants.borderRadius20,
-          border: Border.all(color: context.cs.outline, width: 0.5),
+          border: .all(color: context.cs.outline, width: 0.5),
         ),
         child: Column(
           children: [
@@ -257,7 +257,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
                             decoration: BoxDecoration(
                               color: context.cs.surface,
                               borderRadius: AppConstants.borderRadius20,
-                              border: Border.all(
+                              border: .all(
                                 width: 0.2,
                                 color: context.cs.onSurface,
                               ),

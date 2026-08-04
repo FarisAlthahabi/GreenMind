@@ -6,10 +6,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/ai_chat_bot/cubit/ai_chat_bot_cubit.dart';
 import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart';
+import 'package:green_mind/features/diagnosing_diseases/model/diagnose_model/diagnose_model.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/dio/dio_client.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
+import 'package:green_mind/global/widgets/app_image_widget.dart';
 import 'package:green_mind/global/widgets/choose_image_widget.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
@@ -100,7 +103,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
       clipBehavior: .antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(color: context.cs.outline, width: 0.5),
+        border: .all(color: context.cs.outline, width: 0.5),
       ),
       child: Column(
         spacing: 20,
@@ -136,7 +139,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
         if (state is DiagnosingDiseasesLoading) {
           child = const SizedBox.shrink();
         } else if (state is DiagnosingDiseasesSuccess) {
-          child = _buildResults();
+          child = _buildResults(state.diagnose);
         } else {
           child = _buildPlaceHolderResualts();
         }
@@ -151,7 +154,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
       clipBehavior: .antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(color: context.cs.outline, width: 0.5),
+        border: .all(color: context.cs.outline, width: 0.5),
       ),
       child: Column(
         spacing: 5,
@@ -172,14 +175,15 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
     );
   }
 
-  Widget _buildResults() {
-    const trustPercentage = 92.5;
+  Widget _buildResults(DiagnoseModel diagnose) {
+    final primary = context.cs.primary;
+    final percent = (double.tryParse(diagnose.confidencePercentage) ?? 0);
     return Container(
       padding: AppConstants.padding16,
       clipBehavior: .antiAlias,
       decoration: BoxDecoration(
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(color: context.cs.outline, width: 0.5),
+        border: .all(color: context.cs.outline, width: 0.5),
       ),
       child: AnimationLimiter(
         child: Column(
@@ -192,35 +196,34 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
               child: FadeInAnimation(child: widget),
             ),
             children: [
-              Text("نتيجة المرض", style: context.tt.titleLarge),
-              const Text("المرض المكتشف :"),
+              Text("diagnose_result".tr(), style: context.tt.titleLarge),
+              Text("${"discovered_disease".tr()}:"),
               Text(
-                "لفحة متأخرة",
-                style: context.tt.headlineMedium?.copyWith(
-                  color: context.cs.primary,
-                ),
+                diagnose.diseaseNameTechnical,
+                style: context.tt.headlineMedium?.copyWith(color: primary),
               ),
-              const Text("(Late Blight)"),
+              Text(diagnose.diseaseNameArabic),
+              // Image.network("$baseUrl/{$diagnose.gradCamImagePath}"),
+              AppImageWidget(
+                url: "$baseUrl/storage/{$diagnose.gradCamImagePath}",
+              ),
               Row(
                 children: [
-                  const Text("نسبة الثقة"),
+                  const Text("confidence_percentage").tr(),
                   const Spacer(),
                   DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: context.cs.primary,
-                      shape: .circle,
-                    ),
+                    decoration: BoxDecoration(color: primary, shape: .circle),
                     child: Icon(Icons.done, color: context.cs.onPrimary),
                   ),
                   const SizedBox(width: 10),
                   Text(
-                    "${trustPercentage.toStringAsFixed(1)}%",
+                    "${diagnose.confidencePercentage}%",
                     style: context.tt.bodyLarge,
                   ),
                 ],
               ),
               TweenAnimationBuilder<double>(
-                tween: Tween<double>(begin: 0, end: trustPercentage / 100),
+                tween: Tween<double>(begin: 0, end: percent / 100),
                 duration: const Duration(milliseconds: 800),
                 curve: Curves.easeInOut,
                 builder: (context, value, child) {
@@ -228,41 +231,42 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                     minHeight: 14,
                     value: value,
                     borderRadius: AppConstants.borderRadius20,
-                    valueColor: AlwaysStoppedAnimation(context.cs.primary),
+                    valueColor: AlwaysStoppedAnimation(primary),
                     backgroundColor: context.cs.surfaceContainerHigh,
                   );
                 },
               ),
-              Container(
-                padding: AppConstants.paddingH12V8,
-                decoration: BoxDecoration(
-                  color: context.cs.primaryContainer,
-                  borderRadius: AppConstants.borderRadius15,
+              if (percent > 80)
+                Container(
+                  padding: AppConstants.paddingH12V8,
+                  decoration: BoxDecoration(
+                    color: context.cs.primaryContainer,
+                    borderRadius: AppConstants.borderRadius15,
+                  ),
+                  child: const Text("high_accuracy").tr(),
                 ),
-                child: const Text("دقة عالية"),
-              ),
-              Container(
-                padding: AppConstants.paddingH16V12,
-                decoration: BoxDecoration(
-                  color: context.cs.surfaceContainer,
-                  borderRadius: AppConstants.borderRadius10,
-                ),
-                child: Row(
-                  crossAxisAlignment: .start,
-                  children: [
-                    const Icon(Icons.info_outline, size: 20),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        "النموذج ركز على منطقة البقع البنية في الجزء العلوي الأيسر من الورقة",
-                        style: context.tt.bodyMedium,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   padding: AppConstants.paddingH16V12,
+              //   decoration: BoxDecoration(
+              //     color: context.cs.surfaceContainer,
+              //     borderRadius: AppConstants.borderRadius10,
+              //   ),
+              //   child: Row(
+              //     crossAxisAlignment: .start,
+              //     children: [
+              //       const Icon(Icons.info_outline, size: 20),
+              //       const SizedBox(width: 10),
+              //       Expanded(
+              //         child: Text(
+              //           "النموذج ركز على منطقة البقع البنية في الجزء العلوي الأيسر من الورقة",
+              //           style: context.tt.bodyMedium,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Text(
-                "توصيات العلاج:",
+                "${"treatment_recommendations".tr()}:",
                 style: context.tt.titleMedium?.copyWith(fontWeight: .bold),
               ),
               DecoratedBox(
@@ -276,26 +280,27 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                     spacing: 10,
                     crossAxisAlignment: .start,
                     children: [
-                      _buildRecommendationItem(
-                        context,
-                        "1.  إزالة الأوراق المصابة فوراً والتخلص منها",
-                      ),
-                      _buildRecommendationItem(
-                        context,
-                        "2.  رش النباتات بمبيد قطري يحتوي على مانكوزيب",
-                      ),
-                      _buildRecommendationItem(
-                        context,
-                        "3.  تحسين التهوية بين النباتات",
-                      ),
-                      _buildRecommendationItem(
-                        context,
-                        "4.  تجنب الري العلوي للحد من انتشار المرض",
-                      ),
-                      _buildRecommendationItem(
-                        context,
-                        "5.  مراقبة النباتات يومياً للكشف المبكر عن الإصابات الجديدة",
-                      ),
+                      _buildRecommendationItem(context, diagnose.treatment),
+                      // _buildRecommendationItem(
+                      //   context,
+                      //   "1.  إزالة الأوراق المصابة فوراً والتخلص منها",
+                      // ),
+                      // _buildRecommendationItem(
+                      //   context,
+                      //   "2.  رش النباتات بمبيد قطري يحتوي على مانكوزيب",
+                      // ),
+                      // _buildRecommendationItem(
+                      //   context,
+                      //   "3.  تحسين التهوية بين النباتات",
+                      // ),
+                      // _buildRecommendationItem(
+                      //   context,
+                      //   "4.  تجنب الري العلوي للحد من انتشار المرض",
+                      // ),
+                      // _buildRecommendationItem(
+                      //   context,
+                      //   "5.  مراقبة النباتات يومياً للكشف المبكر عن الإصابات الجديدة",
+                      // ),
                     ],
                   ),
                 ),
@@ -303,18 +308,18 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
               MainActionButton(
                 padding: AppConstants.padding16,
                 buttonColor: context.cs.surface,
-                border: Border.all(color: context.cs.primary, width: 1.5),
+                border: .all(color: primary, width: 1.5),
                 borderRadius: AppConstants.borderRadius20,
                 fontWeight: .bold,
-                icon: Icon(Icons.chat, size: 20, color: context.cs.primary),
-                textColor: context.cs.primary,
+                icon: Icon(Icons.chat, size: 20, color: primary),
+                textColor: primary,
                 onPressed: () {
                   context.router.navigate(AiChatBotRoute());
                   context.read<AiChatBotCubit>().getAiResponse(
-                    "أريد معرفة المزيد عن مرض اللفحة المتأخرة",
+                    "${"want_know_more_about".tr()} ${diagnose.diseaseNameArabic}",
                   );
                 },
-                text: "استشر الخبير الزراعي للمزيد",
+                text: "ask_agricultural_expert_for_more".tr(),
               ),
             ],
           ),

@@ -8,7 +8,7 @@ part 'crop_model.g.dart';
 
 @JsonSerializable()
 @immutable
-class CropModel implements DeleteModel ,DropDownItemModel{
+class CropModel implements DeleteModel, DropDownItemModel {
   const CropModel({
     required this.id,
     required this.nameAr,
@@ -70,10 +70,23 @@ class CropModel implements DeleteModel ,DropDownItemModel{
 
   @override
   String get apiDeleteUrl => "crops/$id";
-  
+
   @override
   String? get description => null;
-  
+
   @override
   String get displayName => nameEn;
+
+  @override
+  List<Object?> get props => [
+    id,
+    nameAr,
+    nameEn,
+    baseIrrigationDays,
+    createdAt,
+    updatedAt,
+  ];
+
+  @override
+  bool? get stringify => null;
 }

@@ -1,13 +1,17 @@
 part of '../diagnosing_diseases_cubit.dart';
 
 @immutable
-class DiagnosingDiseasesState extends GeneralDiagnosingDiseasesState{}
+class DiagnosingDiseasesState extends GeneralDiagnosingDiseasesState {}
 
 final class DiagnosingDiseasesInitial extends DiagnosingDiseasesState {}
 
 final class DiagnosingDiseasesLoading extends DiagnosingDiseasesState {}
 
-final class DiagnosingDiseasesSuccess extends DiagnosingDiseasesState {}
+final class DiagnosingDiseasesSuccess extends DiagnosingDiseasesState {
+  final DiagnoseModel diagnose;
+
+  DiagnosingDiseasesSuccess(this.diagnose);
+}
 
 final class DiagnosingDiseasesFail extends DiagnosingDiseasesState {
   final String error;

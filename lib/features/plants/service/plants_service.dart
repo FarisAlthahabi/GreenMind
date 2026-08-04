@@ -14,4 +14,7 @@ abstract class PlantsService {
   Future<List<PlantModel>> getPlants();
   Future<PlantModel> getPlant(int id);
   Future<PlantModel> updatePlant(AddPlantModel plant, {int? id});
+  Future<PlantModel> updateDiseaseStatus(int id,{int? diseaseId});
+  Future<PlantModel> markAsHarvested(int id);
+  Future<PlantModel> undoHarvest(int id);
 }

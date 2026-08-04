@@ -95,7 +95,7 @@ class _InsureDeleteViewState<T extends DeleteModel>
                 child: MainActionButton(
                   padding: AppConstants.padding16,
                   buttonColor: Colors.transparent,
-                  border: Border.all(width: 0.3, color: context.cs.outline),
+                  border: .all(width: 0.3, color: context.cs.outline),
                   textColor: context.cs.onSurface,
                   fontWeight: .bold,
                   text: "cancel".tr(),

@@ -92,6 +92,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
   }
 
   Widget _buildMenuItems() {
+    final role = Utils.userRole;
     List<DrawerTabModel> tabs = [
       const DrawerTabModel(
         Icons.chat_outlined,
@@ -106,12 +107,19 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
       const DrawerTabModel(Icons.local_florist_outlined, "crops", CropsRoute()),
       const DrawerTabModel(Icons.eco_outlined, "plants", PlantsRoute()),
       const DrawerTabModel(
+        Icons.bug_report_outlined,
+        "diseases",
+        DiseasesRoute(),
+      ),
+      const DrawerTabModel(
         Icons.water_drop_outlined,
         "irrigation_schedules",
         IrrigationScheduleRoute(),
       ),
-      const DrawerTabModel(Icons.person_outlined, "users", UsersRoute()),
+      if (!role.isFarmer)
+        const DrawerTabModel(Icons.group_outlined, "users", UsersRoute()),
       const DrawerTabModel(Icons.show_chart_outlined, "stats", StatsRoute()),
+      const DrawerTabModel(Icons.person_outlined, "profile", ProfileRoute()),
     ];
     List<Widget> tiles = [];
     final changeLanguageTile = SwitchListTile(

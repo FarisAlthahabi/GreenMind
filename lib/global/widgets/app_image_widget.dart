@@ -7,7 +7,7 @@ class AppImageWidget extends StatelessWidget {
   const AppImageWidget({
     super.key,
     this.url,
-    this.borderRadius = BorderRadius.zero,
+    this.borderRadius = .zero,
     this.fit,
     this.width,
     this.height,

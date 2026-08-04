@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
+import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -11,27 +12,32 @@ part 'plant_model.g.dart';
 class PlantModel implements DeleteModel {
   const PlantModel({
     required this.id,
-    required this.userId,
+    this.userId,
     required this.cropId,
     required this.name,
     this.plantingDate,
     this.harvestDate,
-    required this.quantity,
+    this.quantity,
     this.healthStatus,
     this.notes,
     this.createdAt,
     this.updatedAt,
     this.deletedAt,
     this.crop,
+    this.diseaseId,
+    this.disease,
   });
 
   final int id;
 
   @JsonKey(name: "user_id")
-  final int userId;
+  final int? userId;
 
   @JsonKey(name: "crop_id")
   final int cropId;
+
+  @JsonKey(name: "disease_id")
+  final int? diseaseId;
 
   final String name;
 
@@ -41,7 +47,7 @@ class PlantModel implements DeleteModel {
   @JsonKey(name: "harvest_date")
   final String? harvestDate;
 
-  final int quantity;
+  final int? quantity;
 
   @JsonKey(name: "health_status")
   final String? healthStatus;
@@ -58,6 +64,7 @@ class PlantModel implements DeleteModel {
   final String? deletedAt;
 
   final CropModel? crop;
+  final DiseaseModel? disease;
 
   factory PlantModel.fromJson(Map<String, dynamic> json) =>
       _$PlantModelFromJson(json);

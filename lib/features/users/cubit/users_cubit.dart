@@ -4,6 +4,7 @@ import 'package:green_mind/features/auth/model/user_model/user_model.dart';
 import 'package:green_mind/features/users/model/add_user_model/add_user_model.dart';
 import 'package:green_mind/features/users/service/users_service.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
+import 'package:green_mind/global/utils/utils.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 
@@ -60,10 +61,12 @@ class UsersCubit extends Cubit<GeneralUsersState> {
   }
 
   Future<void> getUsers() async {
+    final authedUser = Utils.user;
     emit(UsersLoading());
     if (isClosed) return;
     try {
-      final users = await usersService.getUsers();
+      final users = await usersService.getUsers()
+        ..removeWhere((user) => user.role.isAdmin || authedUser?.id == user.id);
       this.users = users;
       search();
     } catch (e) {

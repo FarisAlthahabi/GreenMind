@@ -94,7 +94,7 @@ class _MainDatePickerState extends State<MainDatePicker> {
     return Padding(
       padding: widget.padding,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: .start,
         children: [
           if (title != null)
             Padding(
@@ -108,7 +108,7 @@ class _MainDatePickerState extends State<MainDatePicker> {
               decoration: BoxDecoration(
                 color: context.cs.surfaceContainer,
                 borderRadius: AppConstants.borderRadius10,
-                border: Border.all(color: context.cs.outline, width: 0.5),
+                border: .all(color: context.cs.outline, width: 0.5),
               ),
               child: Row(
                 children: [

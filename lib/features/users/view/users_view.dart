@@ -9,6 +9,7 @@ import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
+import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_app_bar.dart';
@@ -71,6 +72,7 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
 
   @override
   Widget build(BuildContext context) {
+    final role = Utils.userRole;
     return Scaffold(
       appBar: const MainAppBar(title: "users"),
       drawer: const MainDrawer(),
@@ -78,7 +80,7 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
         padding: AppConstants.padding16,
         child: Column(
           spacing: 20,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: .start,
           children: [
             MainTextField(
               hintText: "search_for_user",
@@ -90,7 +92,7 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
                 buildWhen: (_, current) => current is UsersState,
                 builder: (context, state) {
                   if (state is UsersLoading) {
-                    return Align(child: LoadingIndicator());
+                    return const Align(child: LoadingIndicator());
                   } else if (state is UsersSuccess) {
                     final users = state.users;
                     return RefreshIndicator(
@@ -106,7 +108,9 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
                               child: FadeInAnimation(child: widget),
                             ),
                             children: [
-                              ...users.map(_buildUserTile),
+                              ...users.map(
+                                (user) => _buildUserTile(user, role),
+                              ),
                               const SizedBox(height: 50),
                             ],
                           ),
@@ -137,77 +141,67 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
     );
   }
 
-  Widget _buildUserTile(UserModel user) {
+  Widget _buildUserTile(UserModel user, UserRoleEnum role) {
     return Container(
       padding: AppConstants.padding16,
       decoration: BoxDecoration(
         color: context.cs.surface,
         borderRadius: AppConstants.borderRadius20,
-        border: Border.all(width: 0.2, color: context.cs.onSurface),
+        border: .all(width: 0.2, color: context.cs.onSurface),
         boxShadow: [
           BoxShadow(
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
             blurRadius: 4,
             color: context.cs.surfaceContainerLow,
           ),
         ],
       ),
       child: Column(
-        spacing: 16,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 10,
+        crossAxisAlignment: .start,
         children: [
           Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            spacing: 10,
+            crossAxisAlignment: .start,
+            mainAxisAlignment: .spaceBetween,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      user.name,
-                      style: context.tt.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+              Column(
+                spacing: 2,
+                crossAxisAlignment: .start,
+                children: [
+                  Text(
+                    user.name,
+                    style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
+                  ),
+                  Text(
+                    "@${user.username}",
+                    style: context.tt.bodyMedium?.copyWith(
+                      color: context.cs.onSurfaceVariant,
                     ),
-                    Text(
-                      "@${user.username}",
-                      style: context.tt.bodyMedium?.copyWith(
-                        color: context.cs.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               _buildRoleChip(user.role.displayName, user.role),
-              _buildIconBtn(
-                Icons.edit,
-                context.cs.secondaryContainer,
-                context.cs.secondary,
-                () => onUpdateUser(user),
-              ),
-              _buildIconBtn(
-                Icons.delete,
-                context.cs.errorContainer,
-                context.cs.error,
-                () => onDeleteUser(user),
-              ),
             ],
           ),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Text(
-          //       "${"created_at".tr()}: ${user.createdAt?.formatYYYYMMDD ?? "-"}",
-          //       style: context.tt.bodySmall,
-          //     ),
-          //     if (user.updatedAt != null)
-          //       Text(
-          //         "${"updated_at".tr()}: ${user.updatedAt?.formatYYYYMMDD ?? "-"}",
-          //         style: context.tt.bodySmall,
-          //       ),
-          //   ],
-          // ),
+          if (role.isEngineer && !user.role.isEngineer)
+            Row(
+              mainAxisAlignment: .end,
+              spacing: 10,
+              children: [
+                _buildIconBtn(
+                  Icons.edit,
+                  context.cs.secondaryContainer,
+                  context.cs.secondary,
+                  () => onUpdateUser(user),
+                ),
+                _buildIconBtn(
+                  Icons.delete,
+                  context.cs.errorContainer,
+                  context.cs.error,
+                  () => onDeleteUser(user),
+                ),
+              ],
+            ),
         ],
       ),
     );
@@ -215,17 +209,17 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
 
   Widget _buildRoleChip(String label, UserRoleEnum role) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: AppConstants.paddingH20V10,
       decoration: BoxDecoration(
         color: role.color.withOpacity(0.1),
         borderRadius: AppConstants.borderRadius10,
-        border: Border.all(color: role.color.withOpacity(0.3)),
+        border: .all(color: role.color.withOpacity(0.3)),
       ),
       child: Text(
         label,
-        style: context.tt.labelSmall?.copyWith(
+        style: context.tt.labelMedium?.copyWith(
           color: role.color,
-          fontWeight: FontWeight.w600,
+          fontWeight: .w600,
         ),
       ),
     );
@@ -243,7 +237,7 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
         borderRadius: AppConstants.borderRadius10,
       ),
       child: Padding(
-        padding: AppConstants.padding10,
+        padding: AppConstants.padding8,
         child: InkWell(
           onTap: onTap,
           child: Icon(icon, color: color, size: 20),
