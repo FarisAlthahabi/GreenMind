@@ -7,6 +7,7 @@ import 'package:green_mind/features/diseases/cubit/diseases_cubit.dart';
 import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';
 import 'package:green_mind/features/diseases/view/widgets/update_disease_view.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/extensions/locale_x.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
@@ -19,6 +20,7 @@ import 'package:green_mind/global/widgets/main_drawer.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_fab.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
+import 'package:green_mind/global/widgets/main_tile.dart';
 
 abstract class DiseasesViewCallBacks {}
 
@@ -45,6 +47,7 @@ class DiseasesPage extends StatefulWidget {
 class _DiseasesPageState extends State<DiseasesPage>
     implements DiseasesViewCallBacks {
   late final DiseasesCubit diseasesCubit = context.read();
+  late final locale = context.locale;
 
   @override
   void initState() {
@@ -147,20 +150,8 @@ class _DiseasesPageState extends State<DiseasesPage>
   }
 
   Widget _buildDiseaseTile(DiseaseModel disease, UserRoleEnum role) {
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: .all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    final name = locale.isAr ? disease.arName : disease.enName;
+    return MainTile(
       child: Column(
         spacing: 16,
         crossAxisAlignment: .start,
@@ -171,7 +162,7 @@ class _DiseasesPageState extends State<DiseasesPage>
             children: [
               Expanded(
                 child: Text(
-                  disease.enName,
+                  name,
                   style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
                 ),
               ),
@@ -192,9 +183,14 @@ class _DiseasesPageState extends State<DiseasesPage>
             ],
           ),
           Row(
+            crossAxisAlignment: .start,
             mainAxisAlignment: .spaceBetween,
             children: [
-              Text("${"technical_name".tr()}: ${disease.technicalName}"),
+              Expanded(
+                child: Text(
+                  "${"technical_name".tr()}: ${disease.technicalName}",
+                ),
+              ),
               Text("${"date".tr()}: ${disease.createdAt?.formatYYYYMMDD}"),
             ],
           ),

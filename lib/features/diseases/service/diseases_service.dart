@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:green_mind/features/diseases/model/add_disease_model/add_disease_model.dart';
 import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';

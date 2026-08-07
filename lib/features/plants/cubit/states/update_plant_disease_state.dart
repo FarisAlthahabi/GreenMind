@@ -1,7 +1,10 @@
 part of '../plants_cubit.dart';
 
 @immutable
-class UpdatePlantDiseaseState extends GeneralPlantsState {}
+class UpdatePlantDiseaseState extends GeneralPlantsState {
+  @override
+  List<Object?> get props => [];
+}
 
 final class UpdatePlantDiseaseInitial extends UpdatePlantDiseaseState {}
 

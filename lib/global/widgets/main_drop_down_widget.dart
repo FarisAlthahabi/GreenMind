@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
-abstract class DropDownItemModel extends Equatable{
+abstract class DropDownItemModel extends Equatable {
   String get displayName;
   int get id;
   String? get description;
@@ -28,7 +28,6 @@ class MainDropDownWidget<T extends DropDownItemModel> extends StatefulWidget {
     this.backgrounColor,
     this.borderRadius = AppConstants.borderRadius10,
     this.color,
-    this.onClearTap,
     this.prefixIcon,
     this.hasSearch = true,
     this.displayName,
@@ -48,7 +47,6 @@ class MainDropDownWidget<T extends DropDownItemModel> extends StatefulWidget {
   final Color? backgrounColor;
   final BorderRadius borderRadius;
   final Color? color;
-  final VoidCallback? onClearTap;
   final IconData? prefixIcon;
   final bool hasSearch;
   final String Function(T)? displayName;
@@ -105,13 +103,6 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
             child: DropdownButton2<T>(
               isExpanded: true,
               valueListenable: _selectedNotifier,
-              // style: const TextStyle(
-              //   color: AppColors.black,
-              //   fontSize: 14,
-              //   fontWeight: .w400,
-              //   height: 1.19,
-              //   overflow: TextOverflow.ellipsis,
-              // ),
               items: items.map((T item) {
                 return DropdownItem<T>(
                   value: item, // ✅ الآن لا يوجد تكرار (حسب id)
@@ -126,7 +117,10 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
                 maxHeight: widget.expandedHeight,
                 width: widget.width,
                 offset: Offset(0, widget.offsetY),
-                decoration: BoxDecoration(borderRadius: borderRadius),
+                decoration: BoxDecoration(
+                  borderRadius: borderRadius,
+                  border: .all(width: 0.2, color: context.cs.onSurface),
+                ),
               ),
               dropdownSearchData: _buildSearchDataField(),
               customButton: Container(
@@ -151,7 +145,7 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
                     ],
                     Expanded(
                       child: Text(
-                        _selectedNotifier.value?.displayName ?? widget.text
+                        _selectedNotifier.value?.displayName ?? widget.text,
                         // selectedValue?.displayName ?? widget.text,
                         // style: TextStyle(
                         //   color: selectedValue != null
@@ -165,22 +159,15 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
                       ),
                     ),
                     // if (selectedValue != null)
-                    if (_selectedNotifier.value != null)
-                      GestureDetector(
-                        onTap: () => _onChanged(null),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 4),
-                          child: Icon(
-                            Icons.close,
-                            size: 20,
-                            // color: AppColors.black,
-                          ),
-                        ),
-                      ),
-                    Icon(
-                      Icons.keyboard_arrow_down,
-                      // color: widget.color ?? context.cs.secondary,
-                    ),
+                    // if (_selectedNotifier.value != null)
+                    //   GestureDetector(
+                    //     onTap: () => _onChanged(null),
+                    //     child: const Padding(
+                    //       padding: EdgeInsets.symmetric(horizontal: 4),
+                    //       child: Icon(Icons.close, size: 20),
+                    //     ),
+                    //   ),
+                    Icon(Icons.keyboard_arrow_down),
                   ],
                 ),
               ),

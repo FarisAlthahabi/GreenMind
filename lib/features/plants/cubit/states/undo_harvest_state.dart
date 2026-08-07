@@ -1,7 +1,10 @@
 part of '../plants_cubit.dart';
 
 @immutable
-class UndoHarvestState extends GeneralPlantsState {}
+class UndoHarvestState extends GeneralPlantsState {
+  @override
+  List<Object?> get props => [];
+}
 
 final class UndoHarvestInitial extends UndoHarvestState {}
 

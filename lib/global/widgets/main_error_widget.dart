@@ -24,11 +24,7 @@ class MainErrorWidget extends StatelessWidget {
         crossAxisAlignment: .center,
         children: [
           SizedBox(height: height),
-          Text(
-            error,
-            style: context.tt.titleMedium,
-            textAlign: TextAlign.center,
-          ),
+          Text(error, style: context.tt.titleMedium, textAlign: .center),
           if (onTryAgainTap != null)
             InkWell(
               onTap: onTryAgainTap,

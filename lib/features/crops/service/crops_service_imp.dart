@@ -13,6 +13,8 @@ class CropsServiceImp implements CropsService {
       final getCached = prefs.getStringList(storagePath);
       if (!con && getCached != null) {
         return getCached.map((e) => CropModel.fromString(e)).toList();
+      } else if (!con && getCached == null) {
+        throw "no_internet".tr();
       }
 
       final response = await dio.get("crops");
@@ -22,7 +24,7 @@ class CropsServiceImp implements CropsService {
           .toList();
       final setCache = crops.map((crop) => crop.toString()).toList();
       prefs.setStringList(storagePath, setCache);
-      
+
       return crops;
     } catch (e, stackTrace) {
       if (kDebugMode) print("stackTrace of getCrops is : $stackTrace");

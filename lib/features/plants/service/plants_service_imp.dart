@@ -5,23 +5,26 @@ class PlantsServiceImp implements PlantsService {
   final dio = DioClient();
 
   @override
-  Future<List<PlantModel>> getPlants() async {
+  Future<PaginatedModel<PlantModel>> getPlants({int page = 1}) async {
     const storagePath = "plants";
     try {
       final prefs = get<SharedPreferences>();
       bool con = await get<InternetConnectionCubit>().checkInternetConnection();
-      final getCached = prefs.getStringList(storagePath);
-      if (!con && getCached != null) {
-        return getCached.map((e) => PlantModel.fromString(e)).toList();
+      final getCached = prefs.getString(storagePath);
+      fromJson(json) => PlantModel.fromJson(json as Map<String, dynamic>);
+      if (!con && getCached != null && page == 1) {
+        return PaginatedModel.fromString(getCached, fromJson);
+      } else if (!con && (getCached == null || page > 1)) {
+        throw "no_internet".tr();
       }
 
-      final response = await dio.get("plants");
-      final data = response.data["data"] as List;
-      final plants = data
-          .map((plant) => PlantModel.fromJson(plant as Map<String, dynamic>))
-          .toList();
-      final setCache = plants.map((plant) => plant.toString()).toList();
-      prefs.setStringList(storagePath, setCache);
+      final queries = <String, dynamic>{'page': page};
+      final response = await dio.get("plants", queries: queries);
+      final data = response.data as Map<String, dynamic>;
+      final plants = PaginatedModel.fromJson(data, fromJson);
+      if (page == 1) {
+        prefs.setString(storagePath, plants.toString());
+      }
 
       return plants;
     } catch (e, stackTrace) {

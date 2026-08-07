@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:green_mind/features/irrigation_schedule/model/complete_irrigation_model/complete_irrigation_model.dart';
 import 'package:green_mind/features/irrigation_schedule/model/irrigation_schedule_model/irrigation_schedule_model.dart';
 import 'package:green_mind/features/irrigation_schedule/service/irrigation_schedule_service.dart';
+import 'package:green_mind/features/irrigation_schedule/view/irrigation_schedule_view.dart';
 import 'package:green_mind/global/extensions/date_x.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
@@ -21,28 +22,90 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
 
   List<IrrigationScheduleModel> schedules = [];
   String searchQuery = "";
+  IrrigationScheduleStatus selectedStatus = IrrigationScheduleStatus.all;
+
+  // Pagination properties
+  int currentPage = 1;
+  int lastPage = 1;
+  bool isLoadingMore = false;
+  bool hasReachedMax = false;
 
   DateTime? newScheduleDate;
 
   void setSearchQuery(String value) {
     searchQuery = value;
+
+    // currentPage = 1;
+    // hasReachedMax = false;
+    // schedules.clear();
+
     search();
+  }
+
+  void setStatus(IrrigationScheduleStatus? status) {
+    if (status != null) {
+      selectedStatus = status;
+      _resetAndRefresh();
+    }
+  }
+
+  void _resetAndRefresh() {
+    currentPage = 1;
+    hasReachedMax = false;
+    schedules.clear();
+    getIrrigationSchedules(reset: true);
   }
 
   void setNewScheduleDate(DateTime? date) {
     newScheduleDate = date;
   }
 
-  Future<void> getIrrigationSchedules() async {
-    emit(IrrigationScheduleLoading());
+  Future<void> getIrrigationSchedules({bool reset = false}) async {
+    if (reset) {
+      currentPage = 1;
+      hasReachedMax = false;
+      schedules.clear();
+      emit(IrrigationScheduleLoading());
+    } else if (isLoadingMore || hasReachedMax) {
+      return;
+    }
+
     if (isClosed) return;
+
     try {
-      final schedules = await service.getIrrigationSchedules();
-      this.schedules = schedules;
+      isLoadingMore = true;
+
+      final paginatedSchedules = await service.getIrrigationSchedules(
+        page: currentPage,
+        isIrrigated: selectedStatus.isIrrigated,
+      );
+
+      lastPage = paginatedSchedules.pagination.lastPage;
+      currentPage = paginatedSchedules.pagination.currentPage;
+
+      if (currentPage >= lastPage) {
+        hasReachedMax = true;
+      }
+
+      if (reset) {
+        schedules = paginatedSchedules.data;
+      } else {
+        schedules = [...schedules, ...paginatedSchedules.data];
+      }
+
+      isLoadingMore = false;
       search();
     } catch (e) {
+      isLoadingMore = false;
       if (isClosed) return;
       emit(IrrigationScheduleFail(e.toString()));
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (!hasReachedMax && !isLoadingMore) {
+      currentPage++;
+      await getIrrigationSchedules();
     }
   }
 
@@ -108,7 +171,13 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
     if (schedules.isEmpty) {
       emit(IrrigationScheduleEmpty("no_irrigation_schedules".tr()));
     } else if (searchQuery.isEmpty) {
-      emit(IrrigationScheduleSuccess(schedules));
+      emit(
+        IrrigationScheduleSuccess(
+          schedules,
+          hasReachedMax: hasReachedMax,
+          currentPage: currentPage,
+        ),
+      );
     } else {
       final filtered = schedules.where((schedule) {
         // Search by recommended date or plant name if available
@@ -124,7 +193,13 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
       if (filtered.isEmpty) {
         emit(IrrigationScheduleEmpty("no_schedules_found".tr()));
       } else {
-        emit(IrrigationScheduleSuccess(filtered));
+        emit(
+          IrrigationScheduleSuccess(
+            filtered,
+            hasReachedMax: hasReachedMax,
+            currentPage: currentPage,
+          ),
+        );
       }
     }
   }

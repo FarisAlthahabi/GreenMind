@@ -8,7 +8,6 @@ import 'package:green_mind/features/ai_chat_bot/cubit/ai_chat_bot_cubit.dart';
 import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart';
 import 'package:green_mind/features/diagnosing_diseases/model/diagnose_model/diagnose_model.dart';
 import 'package:green_mind/global/di/di.dart';
-import 'package:green_mind/global/dio/dio_client.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
@@ -203,9 +202,15 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                 style: context.tt.headlineMedium?.copyWith(color: primary),
               ),
               Text(diagnose.diseaseNameArabic),
-              // Image.network("$baseUrl/{$diagnose.gradCamImagePath}"),
+              Padding(
+                padding: AppConstants.paddingH10,
+                child: const Text("grad_cam_image").tr(),
+              ),
               AppImageWidget(
-                url: "$baseUrl/storage/{$diagnose.gradCamImagePath}",
+                url: diagnose.gradCamImagePath,
+                fit: .fitWidth,
+                borderRadius: AppConstants.borderRadius20,
+                border: .all(width: 0.5, color: context.cs.onSurface),
               ),
               Row(
                 children: [

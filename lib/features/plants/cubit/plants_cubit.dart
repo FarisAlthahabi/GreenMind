@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:equatable/equatable.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
 import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';
 import 'package:green_mind/features/plants/model/add_plant_model/add_plant_model.dart';
@@ -24,6 +25,12 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   String searchQuery = "";
   AddPlantModel model = AddPlantModel();
   int? diseaseId;
+
+  // Pagination properties
+  int currentPage = 1;
+  int lastPage = 1;
+  bool isLoadingMore = false;
+  bool hasReachedMax = false;
 
   void setModel(PlantModel? plant) {
     setCrop(plant?.crop);
@@ -71,19 +78,74 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
 
   void setSearchQuery(String value) {
     searchQuery = value;
+
+    // currentPage = 1;
+    // hasReachedMax = false;
+    // plants.clear();
+
     search();
   }
 
-  Future<void> getPlants() async {
-    emit(PlantsLoading());
+  // Future<void> getPlants() async {
+  //   emit(PlantsLoading());
+
+  //   if (isClosed) return;
+  //   try {
+  //     final plants = await plantService.getPlants();
+  //     this.plants = plants.data;
+  //     search();
+  //   } catch (e) {
+  //     if (isClosed) return;
+  //     emit(PlantsFail(e.toString()));
+  //   }
+  // }
+
+  Future<void> getPlants({bool reset = false}) async {
+    if (reset) {
+      currentPage = 1;
+      hasReachedMax = false;
+      plants.clear();
+      emit(PlantsLoading());
+    } else if (isLoadingMore || hasReachedMax) {
+      return;
+    }
+
     if (isClosed) return;
+
     try {
-      final plants = await plantService.getPlants();
-      this.plants = plants;
-      search();
+      isLoadingMore = true;
+
+      // Pass the current page to the service
+      final paginatedPlants = await plantService.getPlants(page: currentPage);
+
+      lastPage = paginatedPlants.pagination.lastPage;
+      currentPage = paginatedPlants.pagination.currentPage;
+
+      // Check if we've reached the last page
+      if (currentPage >= lastPage) {
+        hasReachedMax = true;
+      }
+
+      // Add new plants to the list
+      if (reset) {
+        plants = paginatedPlants.data;
+      } else {
+        plants = [...plants, ...paginatedPlants.data];
+      }
+
+      isLoadingMore = false;
+      search(); // This will filter the combined list
     } catch (e) {
+      isLoadingMore = false;
       if (isClosed) return;
       emit(PlantsFail(e.toString()));
+    }
+  }
+
+  Future<void> loadMore() async {
+    if (!hasReachedMax && !isLoadingMore) {
+      currentPage++;
+      await getPlants();
     }
   }
 
@@ -180,7 +242,13 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     if (filtered.isEmpty) {
       emit(PlantsEmpty("no_plants".tr()));
     } else {
-      emit(PlantsSuccess(filtered));
+      emit(
+        PlantsSuccess(
+          filtered,
+          hasReachedMax: hasReachedMax,
+          currentPage: currentPage,
+        ),
+      );
     }
   }
 }

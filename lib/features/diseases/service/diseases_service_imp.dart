@@ -13,6 +13,8 @@ class DiseasesServiceImp implements DiseasesService {
       final getCached = prefs.getStringList(storagePath);
       if (!con && getCached != null) {
         return getCached.map((e) => DiseaseModel.fromString(e)).toList();
+      } else if (!con && getCached == null) {
+        throw "no_internet".tr();
       }
 
       final response = await dio.get("diseases");

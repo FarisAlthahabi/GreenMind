@@ -5,33 +5,31 @@ class IrrigationScheduleServiceImp implements IrrigationScheduleService {
   final dio = DioClient();
 
   @override
-  Future<List<IrrigationScheduleModel>> getIrrigationSchedules() async {
+  Future<PaginatedModel<IrrigationScheduleModel>> getIrrigationSchedules({
+    int page = 1,
+    bool? isIrrigated,
+  }) async {
     const storagePath = "irrigation_schedules";
     try {
       final prefs = get<SharedPreferences>();
       bool con = await get<InternetConnectionCubit>().checkInternetConnection();
-      final getCached = prefs.getStringList(storagePath);
-
-      if (!con && getCached != null) {
-        return getCached
-            .map((e) => IrrigationScheduleModel.fromString(e))
-            .toList();
+      final getCached = prefs.getString(storagePath);
+      fromJson(json) =>
+          IrrigationScheduleModel.fromJson(json as Map<String, dynamic>);
+      if (!con && getCached != null && page == 1) {
+        return PaginatedModel.fromString(getCached, fromJson);
+      } else if (!con && (getCached == null || page > 1)) {
+        throw "no_internet".tr();
       }
 
-      final response = await dio.get("schedule");
-      final data = response.data["data"] as List;
-      final schedules = data
-          .map(
-            (schedule) => IrrigationScheduleModel.fromJson(
-              schedule as Map<String, dynamic>,
-            ),
-          )
-          .toList();
+      final queries = {'page': page, 'is_irrigated': ?isIrrigated};
+      final response = await dio.get("schedule", queries: queries);
+      final data = response.data as Map<String, dynamic>;
+      final schedules = PaginatedModel.fromJson(data, fromJson);
 
-      final setCache = schedules
-          .map((schedule) => schedule.toString())
-          .toList();
-      prefs.setStringList(storagePath, setCache);
+      if (page == 1) {
+        prefs.setString(storagePath, schedules.toString());
+      }
 
       return schedules;
     } catch (e, stackTrace) {

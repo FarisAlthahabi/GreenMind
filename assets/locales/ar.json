@@ -173,5 +173,20 @@
     "high_accuracy": "دقة عالية",
     "treatment_recommendations": "توصيات العلاج",
     "ask_agricultural_expert_for_more": "اسأل خبير زراعي للمزيد",
-    "want_know_more_about": "أريد معرفة المزيد عن مرض"
+    "want_know_more_about": "أريد معرفة المزيد عن مرض",
+    "no_more_data": "لا يوجد المزيد من البيانات",
+    "filter_by_status": "تصفية حسب الحالة",
+    "select_status": "اختر الحالة",
+    "all": "الكل",
+    "upcoming": "قادم",
+    "audit_logs": "سجلات التدقيق",
+    "entity": "الكيان",
+    "old_values": "القيم القديمة",
+    "new_values": "القيم الجديدة",
+    "by": "بواسطة",
+    "deleted": "محذوف",
+    "created": "منشأ",
+    "updated": "محدث",
+    "no_audit_logs": "لا توجد سجلات تدقيق",
+    "an_error_occured_during_server_connection" : "حدث خطأ أثناء الاتصال بالخادم"
 }

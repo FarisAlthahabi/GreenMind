@@ -6,6 +6,7 @@ import 'package:green_mind/features/auth/model/user_model/user_model.dart';
 import 'package:green_mind/features/profile/cubit/profile_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
+import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
@@ -52,6 +53,10 @@ class _ProfilePageState extends State<ProfilePage>
   }
 
   void fetchProfile() => profileCubit.getProfile();
+
+  void _navigateToAuditLogs(int userId) {
+    context.pushRoute(AuditLogsRoute(userId: userId));
+  }
 
   void onChangePassword() {
     if (_formKey.currentState?.validate() ?? false) {
@@ -109,7 +114,24 @@ class _ProfilePageState extends State<ProfilePage>
     return MainTile(
       child: Column(
         children: [
-          _buildInfoTile(Icons.person_outline, "name".tr(), user.name),
+          _buildInfoTile(
+            Icons.person_outline,
+            "name".tr(),
+            user.name,
+            btn: DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.cs.secondaryContainer,
+                borderRadius: AppConstants.borderRadius10,
+              ),
+              child: Padding(
+                padding: AppConstants.padding8,
+                child: InkWell(
+                  onTap: () => _navigateToAuditLogs(user.id),
+                  child: Icon(Icons.history, color: context.cs.secondary),
+                ),
+              ),
+            ),
+          ),
           const Divider(height: 1),
           _buildInfoTile(Icons.alternate_email, "username".tr(), user.username),
           const Divider(height: 1),
@@ -131,7 +153,12 @@ class _ProfilePageState extends State<ProfilePage>
     );
   }
 
-  Widget _buildInfoTile(IconData icon, String label, String value) {
+  Widget _buildInfoTile(
+    IconData icon,
+    String label,
+    String value, {
+    Widget? btn,
+  }) {
     return Padding(
       padding: AppConstants.padding12,
       child: Row(
@@ -156,6 +183,7 @@ class _ProfilePageState extends State<ProfilePage>
               ],
             ),
           ),
+          ?btn,
         ],
       ),
     );

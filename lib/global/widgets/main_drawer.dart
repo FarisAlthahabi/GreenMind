@@ -200,14 +200,15 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
 
   Widget _buildHeader(bool isTablet) {
     return DrawerHeader(
-      decoration: const BoxDecoration(color: Colors.transparent),
+      decoration: BoxDecoration(color: context.cs.surface),
+      // decoration: const BoxDecoration(color: Colors.transparent),
       child: Column(
         crossAxisAlignment: .stretch,
         children: [
           Expanded(child: Utils.appImage(context).image()),
           const SizedBox(height: 5),
           Text(
-            "Green Mind",
+            AppConstants.appName,
             style: context.tt.headlineSmall?.copyWith(
               color: context.cs.primary,
               fontWeight: .bold,

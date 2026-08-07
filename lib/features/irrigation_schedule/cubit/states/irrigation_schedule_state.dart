@@ -10,8 +10,14 @@ final class IrrigationScheduleLoading extends IrrigationScheduleState {}
 
 final class IrrigationScheduleSuccess extends IrrigationScheduleState {
   final List<IrrigationScheduleModel> schedules;
+  final bool hasReachedMax;
+  final int currentPage;
 
-  IrrigationScheduleSuccess(this.schedules);
+  IrrigationScheduleSuccess(
+    this.schedules, {
+    this.hasReachedMax = false,
+    required this.currentPage,
+  });
 }
 
 final class IrrigationScheduleEmpty extends IrrigationScheduleState {

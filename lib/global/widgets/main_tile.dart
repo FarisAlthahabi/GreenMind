@@ -9,11 +9,13 @@ class MainTile extends StatelessWidget {
     this.height,
     this.width,
     this.padding = AppConstants.padding16,
+    this.boxShadow,
   });
   final Widget child;
   final EdgeInsets padding;
   final double? width;
   final double? height;
+  final List<BoxShadow>? boxShadow;
 
   @override
   Widget build(BuildContext context) {
@@ -25,13 +27,15 @@ class MainTile extends StatelessWidget {
         color: context.cs.surface,
         borderRadius: AppConstants.borderRadius20,
         border: .all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
+        boxShadow:
+            boxShadow ??
+            [
+              BoxShadow(
+                offset: const Offset(0, 4),
+                blurRadius: 4,
+                color: context.cs.surfaceContainerLow,
+              ),
+            ],
       ),
       child: child,
     );

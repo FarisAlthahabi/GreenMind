@@ -13,6 +13,8 @@ class UsersServiceImp implements UsersService {
       final getCached = prefs.getStringList(storagePath);
       if (!con && getCached != null) {
         return getCached.map((e) => UserModel.fromString(e)).toList();
+      } else if (!con && getCached == null) {
+        throw "no_internet".tr();
       }
 
       final response = await dio.get("users");
@@ -56,6 +58,41 @@ class UsersServiceImp implements UsersService {
     } catch (e, stackTrace) {
       if (kDebugMode) {
         print("stackTrace of updateUser ${id ?? ""} is : $stackTrace");
+      }
+      rethrow;
+    }
+  }
+
+  @override
+  Future<PaginatedModel<AuditLogModel>> getAuditLogs(
+    int userId, {
+    int page = 1,
+  }) async {
+    const storagePath = "audit_logs";
+    try {
+      final prefs = get<SharedPreferences>();
+      bool con = await get<InternetConnectionCubit>().checkInternetConnection();
+      final getCached = prefs.getString(storagePath);
+      fromJson(json) => AuditLogModel.fromJson(json as Map<String, dynamic>);
+      if (!con && getCached != null && page == 1) {
+        return PaginatedModel.fromString(getCached, fromJson);
+      } else if (!con && (getCached == null || page > 1)) {
+        throw "no_internet".tr();
+      }
+
+      final queries = {'user_id': userId, 'page': page};
+      final response = await dio.get("audit-logs", queries: queries);
+      final data = response.data as Map<String, dynamic>;
+      final models = PaginatedModel.fromJson(data, fromJson);
+
+      if (page == 1) {
+        prefs.setString(storagePath, models.toString());
+      }
+
+      return models;
+    } catch (e, stackTrace) {
+      if (kDebugMode) {
+        print("stackTrace of getAuditLogs is : $stackTrace");
       }
       rethrow;
     }

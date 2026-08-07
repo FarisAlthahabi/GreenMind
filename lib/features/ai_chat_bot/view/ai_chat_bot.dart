@@ -74,7 +74,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
   Widget _buildChatContent() {
     return Expanded(
       child: Container(
-        clipBehavior: Clip.antiAlias,
+        clipBehavior: .antiAlias,
         decoration: BoxDecoration(
           borderRadius: AppConstants.borderRadius20,
           border: .all(color: context.cs.outline, width: 0.5),

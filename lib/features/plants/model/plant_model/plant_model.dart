@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
 import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';
@@ -9,7 +10,7 @@ part 'plant_model.g.dart';
 
 @JsonSerializable()
 @immutable
-class PlantModel implements DeleteModel {
+class PlantModel extends Equatable implements DeleteModel {
   const PlantModel({
     required this.id,
     this.userId,
@@ -114,4 +115,7 @@ class PlantModel implements DeleteModel {
 
   @override
   String get apiDeleteUrl => "plants/$id";
+
+  @override
+  List<Object?> get props => [id];
 }

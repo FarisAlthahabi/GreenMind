@@ -401,8 +401,8 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
                   final bgColor = context.cs.errorContainer;
                   return DataRow(
                     cells: [
-                      DataCell(Text(item.createdAt.formatYYYYMMDD)),
-                      DataCell(Text(item.plant?.name ?? "---")),
+                      DataCell(Center(child: Text(item.createdAt.formatYYYYMMDD))),
+                      DataCell(Center(child: Text(item.plant?.name ?? "---"))),
                       DataCell(
                         Center(
                           child: Container(
@@ -498,39 +498,33 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
     IrrigationScheduleModel irrigation,
   ) {
     return MainTile(
-      child: Row(
-        mainAxisAlignment: .spaceBetween,
+      child: Column(
+        spacing: 10,
         crossAxisAlignment: .start,
         children: [
-          Column(
-            spacing: 10,
-            crossAxisAlignment: .start,
+          Row(
+            mainAxisAlignment: .spaceBetween,
             children: [
-              Row(
-                mainAxisAlignment: .spaceBetween,
-                children: [
-                  Text(irrigation.plant?.name ?? "---"),
-                  Container(
-                    padding: AppConstants.paddingH8V4,
-                    decoration: BoxDecoration(
-                      color: Colors.yellow,
-                      // color: irrigation.color.withAlpha(15),
-                      borderRadius: AppConstants.borderRadius15,
-                    ),
-                    child: Text("incomming".tr(), style: context.tt.bodySmall),
-                  ),
-                ],
+              Text(irrigation.plant?.name ?? "---"),
+              Container(
+                padding: AppConstants.paddingH8V4,
+                decoration: BoxDecoration(
+                  color: Colors.yellow,
+                  // color: irrigation.color.withAlpha(15),
+                  borderRadius: AppConstants.borderRadius15,
+                ),
+                child: Text("incomming".tr(), style: context.tt.bodySmall),
               ),
-              Row(
-                spacing: 5,
-                mainAxisSize: .min,
-                children: [
-                  Icon(Icons.date_range),
-                  Text(irrigation.recommendedDate.formatYYYYMMDD),
-                  // Text("•", style: TextStyle(fontWeight: .bold)),
-                  // Text(irrigation.plant?.name ?? "---"),
-                ],
-              ),
+            ],
+          ),
+          Row(
+            spacing: 5,
+            mainAxisSize: .min,
+            children: [
+              Icon(Icons.date_range),
+              Text(irrigation.recommendedDate.formatYYYYMMDD),
+              // Text("•", style: TextStyle(fontWeight: .bold)),
+              // Text(irrigation.plant?.name ?? "---"),
             ],
           ),
         ],
@@ -579,5 +573,3 @@ class WeaklyDiagnosis extends StatelessWidget {
     );
   }
 }
-
-

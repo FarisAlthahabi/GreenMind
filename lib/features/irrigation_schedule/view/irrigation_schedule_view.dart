@@ -13,9 +13,69 @@ import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_app_bar.dart';
 import 'package:green_mind/global/widgets/main_drawer.dart';
+import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
+import 'package:green_mind/global/widgets/main_tile.dart';
+
+enum IrrigationScheduleStatus implements DropDownItemModel {
+  all,
+  upcoming,
+  completed;
+
+  bool get isAll => this == .all;
+  bool get isUpcoming => this == .upcoming;
+  bool get isCompleted => this == .completed;
+
+  bool? get isIrrigated {
+    switch (this) {
+      case .all:
+        return null;
+      case .upcoming:
+        return false;
+      case .completed:
+        return true;
+    }
+  }
+
+  @override
+  String get displayName {
+    switch (this) {
+      case .all:
+        return 'all'.tr();
+      case .upcoming:
+        return 'upcoming'.tr();
+      case .completed:
+        return 'completed'.tr();
+    }
+  }
+
+  static IrrigationScheduleStatus fromString(String? value) {
+    switch (value) {
+      case 'all':
+        return .all;
+      case 'upcoming':
+        return .upcoming;
+      case 'completed':
+        return .completed;
+      default:
+        return .all;
+    }
+  }
+
+  @override
+  String? get description => null;
+
+  @override
+  int get id => index;
+
+  @override
+  List<Object?> get props => [id];
+
+  @override
+  bool? get stringify => null;
+}
 
 abstract class IrrigationScheduleViewCallBacks {}
 
@@ -46,11 +106,11 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
   @override
   void initState() {
     super.initState();
-    fetchIrrigationSchedules();
+    fetchIrrigationSchedules(isRefresh: true);
   }
 
-  void fetchIrrigationSchedules() =>
-      irrigationScheduleCubit.getIrrigationSchedules();
+  void fetchIrrigationSchedules({bool isRefresh = false}) =>
+      irrigationScheduleCubit.getIrrigationSchedules(reset: isRefresh);
 
   void onMarkCompleted(IrrigationScheduleModel schedule) {
     irrigationScheduleCubit.markCompleted(schedule.id);
@@ -83,9 +143,13 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                 MainSnackBar.showErrorMessage(context, state.error);
               } else if (state is UndoIrrigationFail) {
                 MainSnackBar.showErrorMessage(context, state.error);
+              } else if (state is RescheduleIrrigationFail) {
+                MainSnackBar.showErrorMessage(context, state.error);
               } else if (state is MarkCompletedSuccess) {
                 MainSnackBar.showSuccessMessage(context, state.message);
               } else if (state is UndoIrrigationSuccess) {
+                MainSnackBar.showSuccessMessage(context, state.message);
+              } else if (state is RescheduleIrrigationSuccess) {
                 MainSnackBar.showSuccessMessage(context, state.message);
               }
             },
@@ -100,66 +164,99 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                     prefixIcon: const Icon(Icons.search),
                     onChanged: irrigationScheduleCubit.setSearchQuery,
                   ),
-                  Expanded(
-                    child:
-                        BlocBuilder<
-                          IrrigationScheduleCubit,
-                          GeneralIrrigationScheduleState
-                        >(
-                          buildWhen: (_, current) =>
-                              current is IrrigationScheduleState,
-                          builder: (context, state) {
-                            if (state is IrrigationScheduleLoading) {
-                              return const Align(child: LoadingIndicator());
-                            } else if (state is IrrigationScheduleSuccess) {
-                              final schedules = state.schedules;
-                              return RefreshIndicator(
-                                onRefresh: () async =>
-                                    fetchIrrigationSchedules(),
-                                child: SingleChildScrollView(
-                                  physics: const BouncingScrollPhysics(),
-                                  child: Column(
-                                    spacing: 16,
-                                    children:
-                                        AnimationConfiguration.toStaggeredList(
-                                          duration: AppConstants.duration500ms,
-                                          childAnimationBuilder: (widget) =>
-                                              SlideAnimation(
-                                                horizontalOffset: 50.0,
-                                                child: FadeInAnimation(
-                                                  child: widget,
-                                                ),
-                                              ),
-                                          children: [
-                                            ...schedules.map(
-                                              _buildScheduleTile,
-                                            ),
-                                            const SizedBox(height: 50),
-                                          ],
-                                        ),
-                                  ),
-                                ),
-                              );
-                            } else if (state is IrrigationScheduleEmpty) {
-                              return MainErrorWidget(
-                                error: state.message,
-                                isRefresh: true,
-                                onTryAgainTap: fetchIrrigationSchedules,
-                              );
-                            } else if (state is IrrigationScheduleFail) {
-                              return MainErrorWidget(
-                                error: state.error,
-                                onTryAgainTap: fetchIrrigationSchedules,
-                              );
-                            } else {
-                              return const SizedBox.shrink();
-                            }
-                          },
-                        ),
+                  MainDropDownWidget<IrrigationScheduleStatus>(
+                    items: IrrigationScheduleStatus.values,
+                    text: "select_status".tr(),
+                    onChanged: irrigationScheduleCubit.setStatus,
+                    hasSearch: false,
                   ),
+                  _buildSchdualesListView(),
                 ],
               ),
             ),
+          ),
+    );
+  }
+
+  Widget _buildSchdualesListView() {
+    return Expanded(
+      child:
+          BlocBuilder<IrrigationScheduleCubit, GeneralIrrigationScheduleState>(
+            buildWhen: (_, current) => current is IrrigationScheduleState,
+            builder: (context, state) {
+              if (state is IrrigationScheduleLoading &&
+                  irrigationScheduleCubit.schedules.isEmpty) {
+                return const Align(child: LoadingIndicator());
+              } else if (state is IrrigationScheduleSuccess) {
+                final schedules = state.schedules;
+                final hasReachedMax = state.hasReachedMax;
+                final currentPage = state.currentPage;
+
+                return NotificationListener(
+                  onNotification: (scrollInfo) {
+                    if (scrollInfo is ScrollUpdateNotification) {
+                      final maxScroll = scrollInfo.metrics.maxScrollExtent;
+                      final currentScroll = scrollInfo.metrics.pixels;
+
+                      if (maxScroll > 0 &&
+                          currentScroll >= maxScroll - 200 &&
+                          !irrigationScheduleCubit.isLoadingMore &&
+                          !irrigationScheduleCubit.hasReachedMax) {
+                        irrigationScheduleCubit.loadMore();
+                      }
+                    }
+                    return true;
+                  },
+                  child: RefreshIndicator(
+                    onRefresh: () async =>
+                        fetchIrrigationSchedules(isRefresh: true),
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        spacing: 16,
+                        children: AnimationConfiguration.toStaggeredList(
+                          duration: AppConstants.duration500ms,
+                          childAnimationBuilder: (widget) => SlideAnimation(
+                            horizontalOffset: 50.0,
+                            child: FadeInAnimation(child: widget),
+                          ),
+                          children: [
+                            ...schedules.map(_buildScheduleTile),
+                            // Show loading indicator at bottom
+                            if (!hasReachedMax) ...[
+                              const Padding(
+                                padding: AppConstants.paddingV8,
+                                child: LoadingIndicator(size: 30),
+                              ),
+                            ] else if (hasReachedMax &&
+                                schedules.isNotEmpty &&
+                                currentPage != 1) ...[
+                              MainErrorWidget(error: 'no_more_data'.tr()),
+                            ],
+                            const SizedBox(height: 35),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              } else if (state is IrrigationScheduleEmpty) {
+                return MainErrorWidget(
+                  error: state.message,
+                  isRefresh: true,
+                  onTryAgainTap: () =>
+                      fetchIrrigationSchedules(isRefresh: true),
+                );
+              } else if (state is IrrigationScheduleFail) {
+                return MainErrorWidget(
+                  error: state.error,
+                  onTryAgainTap: () =>
+                      fetchIrrigationSchedules(isRefresh: true),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
           ),
     );
   }
@@ -170,33 +267,18 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
     final status = isCompleted ? "completed" : "incomming";
     final statusColor = isCompleted ? Colors.green : Colors.yellow;
 
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: .all(
-          width: 0.2,
-          color: isOverridden ? context.cs.primary : context.cs.onSurface,
-        ),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: Column(
         spacing: 10,
         crossAxisAlignment: .start,
         children: [
           Row(
+            crossAxisAlignment: .start,
             spacing: 10,
             children: [
               Expanded(
                 child: Text(
-                  "${"plant".tr()}: ${schedule.plant?.name ?? schedule.plantId.toString()}",
+                  schedule.plant?.name ?? schedule.plantId.toString(),
                   style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
                 ),
               ),
@@ -235,7 +317,7 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                 color: context.cs.onSurfaceVariant,
               ),
               Text("${"recommended_date".tr()}:", style: context.tt.bodyMedium),
-              Spacer(),
+              const Spacer(),
               Text(
                 schedule.recommendedDate.formatYYYYMMDD,
                 style: context.tt.bodyMedium,
@@ -276,7 +358,6 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                     );
                   },
                 ),
-              // if (isCompleted)
               BlocBuilder<
                 IrrigationScheduleCubit,
                 GeneralIrrigationScheduleState

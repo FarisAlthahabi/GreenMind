@@ -14,6 +14,8 @@ class ProfileServiceImp implements ProfileService {
 
       if (!con && getCached != null) {
         return UserModel.fromString(getCached);
+      }else if (!con && getCached == null) {
+        throw "no_internet".tr();
       }
 
       final response = await dio.get("auth/profile");

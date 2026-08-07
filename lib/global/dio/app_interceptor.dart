@@ -51,6 +51,9 @@ class AppInterceptor extends Interceptor {
         err.type == DioExceptionType.receiveTimeout) {
       throw DeadlineExceededException(err.requestOptions);
     }
+    if (err.type == DioExceptionType.connectionError) {
+      throw ConnectionToServerError(err.requestOptions);
+    }
     throw CustomDioException(
       response: err.response,
       error: err.error,

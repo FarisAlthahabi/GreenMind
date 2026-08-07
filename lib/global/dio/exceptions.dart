@@ -21,6 +21,16 @@ class DeadlineExceededException extends DioException {
   }
 }
 
+class ConnectionToServerError extends DioException {
+  ConnectionToServerError(RequestOptions requestOptions)
+    : super(requestOptions: requestOptions);
+
+  @override
+  String toString() {
+    return "an_error_occured_during_server_connection".tr();
+  }
+}
+
 class BadRequestException extends DioException {
   BadRequestException({
     required super.requestOptions,
@@ -46,7 +56,8 @@ class CustomDioException extends DioException {
   @override
   String toString() {
     try {
-      return response?.data?["message"]?.toString() ??
+      return message ??
+          response?.data?["message"]?.toString() ??
           response?.data ??
           error?.toString() ??
           "something_went_wrong".tr();

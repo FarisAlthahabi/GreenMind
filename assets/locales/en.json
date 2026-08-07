@@ -173,5 +173,20 @@
     "high_accuracy": "High Accuracy",
     "treatment_recommendations": "Treatment Recommendations",
     "ask_agricultural_expert_for_more": "Ask Agricultural Expert for More",
-    "want_know_more_about": "I Want to know more about"
+    "want_know_more_about": "I Want to know more about",
+    "no_more_data": "No more data",
+    "filter_by_status": "Filter by status",
+    "select_status": "Select status",
+    "all": "All",
+    "upcoming": "Upcoming",
+    "audit_logs": "Audit Logs",
+    "entity": "Entity",
+    "old_values": "Old Values",
+    "new_values": "New Values",
+    "by": "By",
+    "deleted": "Deleted",
+    "created": "Created",
+    "updated": "Updated",
+    "no_audit_logs": "No audit logs found",
+    "an_error_occured_during_server_connection" : "An error occured during server connection"
 }

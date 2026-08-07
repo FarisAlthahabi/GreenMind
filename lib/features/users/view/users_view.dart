@@ -7,6 +7,7 @@ import 'package:green_mind/features/users/cubit/users_cubit.dart';
 import 'package:green_mind/features/users/view/widgets/update_user_widget.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
+import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
@@ -17,6 +18,7 @@ import 'package:green_mind/global/widgets/main_drawer.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_fab.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
+import 'package:green_mind/global/widgets/main_tile.dart';
 
 abstract class UsersViewCallBacks {}
 
@@ -47,6 +49,10 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
   void initState() {
     super.initState();
     fetchUsers();
+  }
+
+  void _navigateToAuditLogs(int userId) {
+    context.pushRoute(AuditLogsRoute(userId: userId));
   }
 
   void onDeleteUser(UserModel user) {
@@ -142,20 +148,7 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
   }
 
   Widget _buildUserTile(UserModel user, UserRoleEnum role) {
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: .all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: Column(
         spacing: 10,
         crossAxisAlignment: .start,
@@ -183,11 +176,17 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
               _buildRoleChip(user.role.displayName, user.role),
             ],
           ),
-          if (role.isEngineer && !user.role.isEngineer)
+          if ((role.isEngineer && !user.role.isEngineer) || role.isAdmin)
             Row(
               mainAxisAlignment: .end,
               spacing: 10,
               children: [
+                _buildIconBtn(
+                  Icons.history,
+                  context.cs.tertiaryContainer,
+                  context.cs.tertiary,
+                  () => _navigateToAuditLogs(user.id),
+                ),
                 _buildIconBtn(
                   Icons.edit,
                   context.cs.secondaryContainer,

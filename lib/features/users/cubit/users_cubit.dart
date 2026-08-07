@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:green_mind/features/auth/model/user_model/user_model.dart';
 import 'package:green_mind/features/users/model/add_user_model/add_user_model.dart';
+import 'package:green_mind/features/users/model/audit_log_model/audit_log_model.dart';
 import 'package:green_mind/features/users/service/users_service.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/utils/utils.dart';
@@ -11,6 +12,7 @@ import 'package:meta/meta.dart';
 part 'states/users_state.dart';
 part 'states/update_user_state.dart';
 part 'states/general_users_state.dart';
+part 'states/audit_logs_state.dart';
 
 @injectable
 class UsersCubit extends Cubit<GeneralUsersState> {
@@ -19,6 +21,13 @@ class UsersCubit extends Cubit<GeneralUsersState> {
 
   List<UserModel> users = [];
   String searchQuery = "";
+
+  // Audit logs pagination properties
+  List<AuditLogModel> auditLogs = [];
+  int currentPage = 1;
+  int lastPage = 1;
+  bool isLoadingMore = false;
+  bool hasReachedMax = false;
 
   AddUserModel model = AddUserModel();
 
@@ -127,6 +136,66 @@ class UsersCubit extends Cubit<GeneralUsersState> {
       emit(UsersEmpty("no_users".tr()));
     } else {
       emit(UsersSuccess(filtered));
+    }
+  }
+
+  // Audit logs methods
+  Future<void> getAuditLogs(int userId, {bool reset = false}) async {
+    if (reset) {
+      currentPage = 1;
+      hasReachedMax = false;
+      auditLogs.clear();
+      emit(AuditLogsLoading());
+    } else if (isLoadingMore || hasReachedMax) {
+      return;
+    }
+
+    if (isClosed) return;
+
+    try {
+      isLoadingMore = true;
+      final paginatedLogs = await usersService.getAuditLogs(
+        userId,
+        page: currentPage,
+      );
+
+      lastPage = paginatedLogs.pagination.lastPage;
+      currentPage = paginatedLogs.pagination.currentPage;
+
+      if (currentPage >= lastPage) {
+        hasReachedMax = true;
+      }
+
+      if (reset) {
+        auditLogs = paginatedLogs.data;
+      } else {
+        auditLogs = [...auditLogs, ...paginatedLogs.data];
+      }
+
+      isLoadingMore = false;
+
+      if (auditLogs.isEmpty) {
+        emit(AuditLogsEmpty("no_audit_logs".tr()));
+      } else {
+        emit(
+          AuditLogsSuccess(
+            auditLogs,
+            hasReachedMax: hasReachedMax,
+            currentPage: currentPage,
+          ),
+        );
+      }
+    } catch (e) {
+      isLoadingMore = false;
+      if (isClosed) return;
+      emit(AuditLogsFail(e.toString()));
+    }
+  }
+
+  Future<void> loadMoreAuditLogs(int userId) async {
+    if (!hasReachedMax && !isLoadingMore) {
+      currentPage++;
+      await getAuditLogs(userId);
     }
   }
 }

@@ -7,6 +7,7 @@ import 'package:green_mind/features/crops/cubit/crops_cubit.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
 import 'package:green_mind/features/crops/view/widgets/update_crop_view.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/extensions/locale_x.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
@@ -19,6 +20,7 @@ import 'package:green_mind/global/widgets/main_drawer.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_fab.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
+import 'package:green_mind/global/widgets/main_tile.dart';
 
 abstract class CropsViewCallBacks {}
 
@@ -44,6 +46,7 @@ class CropsPage extends StatefulWidget {
 
 class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
   late final CropsCubit cropsCubit = context.read();
+  late final locale = context.locale;
 
   @override
   void initState() {
@@ -145,20 +148,8 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
   }
 
   Widget _buildCropTile(CropModel crop, UserRoleEnum role) {
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: .all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    final name = locale.isAr ? crop.nameAr : crop.nameEn;
+    return MainTile(
       child: Column(
         spacing: 16,
         crossAxisAlignment: .start,
@@ -168,7 +159,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
             spacing: 10,
             children: [
               Text(
-                crop.nameEn,
+                name,
                 style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
               ),
               if (!role.isFarmer) ...[

@@ -21,6 +21,7 @@ import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_fab.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
+import 'package:green_mind/global/widgets/main_tile.dart';
 
 abstract class PlantsViewCallBacks {}
 
@@ -51,7 +52,7 @@ class _PlantsPageState extends State<PlantsPage>
   @override
   void initState() {
     super.initState();
-    fetchPlants();
+    fetchPlants(isRefresh: true);
   }
 
   void onUpdatePlantDisease(PlantModel plant) {
@@ -200,7 +201,8 @@ class _PlantsPageState extends State<PlantsPage>
     );
   }
 
-  void fetchPlants() => plantsCubit.getPlants();
+  void fetchPlants({bool isRefresh = false}) =>
+      plantsCubit.getPlants(reset: isRefresh);
 
   @override
   Widget build(BuildContext context) {
@@ -239,24 +241,57 @@ class _PlantsPageState extends State<PlantsPage>
                       return Align(child: LoadingIndicator());
                     } else if (state is PlantsSuccess) {
                       final plants = state.plants;
-                      return RefreshIndicator(
-                        onRefresh: () async => fetchPlants(),
-                        child: SingleChildScrollView(
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            spacing: 16,
-                            children: AnimationConfiguration.toStaggeredList(
-                              duration: AppConstants.duration500ms,
-                              childAnimationBuilder: (widget) => SlideAnimation(
-                                horizontalOffset: 50.0,
-                                child: FadeInAnimation(child: widget),
+                      final hasReachedMax = state.hasReachedMax;
+                      final currentPage = state.currentPage;
+                      return NotificationListener(
+                        onNotification: (scrollInfo) {
+                          // Check if we're near the bottom
+                          if (scrollInfo is ScrollUpdateNotification) {
+                            final maxScroll =
+                                scrollInfo.metrics.maxScrollExtent;
+                            final currentScroll = scrollInfo.metrics.pixels;
+
+                            // Load more when user scrolls within 200px of bottom
+                            if (maxScroll > 0 &&
+                                currentScroll >= maxScroll - 200 &&
+                                !plantsCubit.isLoadingMore &&
+                                !hasReachedMax) {
+                              plantsCubit.loadMore();
+                            }
+                          }
+                          return true;
+                        },
+                        child: RefreshIndicator(
+                          onRefresh: () async => fetchPlants(isRefresh: true),
+                          child: SingleChildScrollView(
+                            physics: const BouncingScrollPhysics(),
+                            child: Column(
+                              spacing: 16,
+                              children: AnimationConfiguration.toStaggeredList(
+                                duration: AppConstants.duration500ms,
+                                childAnimationBuilder: (widget) =>
+                                    SlideAnimation(
+                                      horizontalOffset: 50.0,
+                                      child: FadeInAnimation(child: widget),
+                                    ),
+                                children: [
+                                  ...plants.map(
+                                    (plant) => _buildPlantTile(plant, role),
+                                  ),
+
+                                  // Show loading indicator at bottom
+                                  if (!hasReachedMax) ...[
+                                    const Padding(
+                                      padding: AppConstants.paddingV8,
+                                      child: LoadingIndicator(size: 30),
+                                    ),
+                                  ] else if (plants.isNotEmpty &&
+                                      currentPage != 1) ...[
+                                    MainErrorWidget(error: 'no_more_data'.tr()),
+                                  ],
+                                  const SizedBox(height: 35),
+                                ],
                               ),
-                              children: [
-                                ...plants.map(
-                                  (plant) => _buildPlantTile(plant, role),
-                                ),
-                                const SizedBox(height: 50),
-                              ],
                             ),
                           ),
                         ),
@@ -265,12 +300,12 @@ class _PlantsPageState extends State<PlantsPage>
                       return MainErrorWidget(
                         error: state.message,
                         isRefresh: true,
-                        onTryAgainTap: fetchPlants,
+                        onTryAgainTap: () => fetchPlants(isRefresh: true),
                       );
                     } else if (state is PlantsFail) {
                       return MainErrorWidget(
                         error: state.error,
-                        onTryAgainTap: fetchPlants,
+                        onTryAgainTap: () => fetchPlants(isRefresh: true),
                       );
                     } else {
                       return const SizedBox.shrink();
@@ -295,20 +330,7 @@ class _PlantsPageState extends State<PlantsPage>
         ? context.cs.errorContainer
         : context.cs.primaryContainer;
     final textColor = hasDisease ? context.cs.error : context.cs.primary;
-    return Container(
-      padding: AppConstants.padding16,
-      decoration: BoxDecoration(
-        color: context.cs.surface,
-        borderRadius: AppConstants.borderRadius20,
-        border: .all(width: 0.2, color: context.cs.onSurface),
-        boxShadow: [
-          BoxShadow(
-            offset: const Offset(0, 4),
-            blurRadius: 4,
-            color: context.cs.surfaceContainerLow,
-          ),
-        ],
-      ),
+    return MainTile(
       child: Column(
         spacing: 16,
         crossAxisAlignment: .start,
