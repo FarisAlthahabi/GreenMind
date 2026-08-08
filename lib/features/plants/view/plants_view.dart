@@ -3,25 +3,73 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:green_mind/features/crops/cubit/crops_cubit.dart';
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
-import 'package:green_mind/features/plants/view/widgets/update_plant_disease_view.dart';
 import 'package:green_mind/features/plants/view/widgets/update_plant_view.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
-import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
-import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_app_bar.dart';
 import 'package:green_mind/global/widgets/main_drawer.dart';
+import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_fab.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
 import 'package:green_mind/global/widgets/main_tile.dart';
+
+enum HealthStatusEnum implements DropDownItemModel {
+  all,
+  healthy,
+  diseased;
+
+  bool get isAll => this == .all;
+  bool get isHealthy => this == healthy;
+  bool get isCompleted => this == diseased;
+
+  bool? get value {
+    switch (this) {
+      case .all:
+        return null;
+      case healthy:
+        return true;
+      case diseased:
+        return false;
+    }
+  }
+
+  @override
+  String get displayName => name.tr();
+
+  static HealthStatusEnum fromString(String? value) {
+    switch (value) {
+      case 'all':
+        return .all;
+      case 'upcoming':
+        return healthy;
+      case 'completed':
+        return diseased;
+      default:
+        return .all;
+    }
+  }
+
+  @override
+  String? get description => null;
+
+  @override
+  int get id => index;
+
+  @override
+  List<Object?> get props => [id];
+
+  @override
+  bool? get stringify => null;
+}
 
 abstract class PlantsViewCallBacks {}
 
@@ -31,8 +79,11 @@ class PlantsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => get<PlantsCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => get<PlantsCubit>()),
+        BlocProvider(create: (context) => get<CropsCubit>()),
+      ],
       child: const PlantsPage(),
     );
   }
@@ -48,21 +99,23 @@ class PlantsPage extends StatefulWidget {
 class _PlantsPageState extends State<PlantsPage>
     implements PlantsViewCallBacks {
   late final PlantsCubit plantsCubit = context.read();
+  late final CropsCubit cropsCubit = context.read();
 
   @override
   void initState() {
     super.initState();
     fetchPlants(isRefresh: true);
+    cropsCubit.getCrops();
   }
 
-  void onUpdatePlantDisease(PlantModel plant) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) =>
-          UpdatePlantDiseaseView(plant: plant, plantsCubit: plantsCubit),
-    );
-  }
+  // void onUpdatePlantDisease(PlantModel plant) {
+  //   showDialog(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (context) =>
+  //         UpdatePlantDiseaseView(plant: plant, plantsCubit: plantsCubit),
+  //   );
+  // }
 
   void onMoreTap(PlantModel plant) {
     showModalBottomSheet(
@@ -92,23 +145,23 @@ class _PlantsPageState extends State<PlantsPage>
                     crossAxisAlignment: .stretch,
                     // spacing: 10,
                     children: [
-                      TextButton(
-                        onPressed: () => onUpdatePlantDisease(plant),
-                        style: const ButtonStyle(
-                          alignment: AlignmentDirectional.centerStart,
-                        ),
-                        child: Row(
-                          spacing: 10,
-                          mainAxisSize: .min,
-                          children: [
-                            Icon(Icons.edit),
-                            Text(
-                              'update_disease_status'.tr(),
-                              style: context.tt.bodyMedium,
-                            ),
-                          ],
-                        ),
-                      ),
+                      // TextButton(
+                      //   onPressed: () => onUpdatePlantDisease(plant),
+                      //   style: const ButtonStyle(
+                      //     alignment: AlignmentDirectional.centerStart,
+                      //   ),
+                      //   child: Row(
+                      //     spacing: 10,
+                      //     mainAxisSize: .min,
+                      //     children: [
+                      //       Icon(Icons.edit),
+                      //       Text(
+                      //         'update_disease_status'.tr(),
+                      //         style: context.tt.bodyMedium,
+                      //       ),
+                      //     ],
+                      //   ),
+                      // ),
                       BlocBuilder<PlantsCubit, GeneralPlantsState>(
                         buildWhen: (_, current) =>
                             current is MarkHarvestedState,
@@ -206,7 +259,6 @@ class _PlantsPageState extends State<PlantsPage>
 
   @override
   Widget build(BuildContext context) {
-    final role = Utils.userRole;
     return Scaffold(
       appBar: const MainAppBar(title: "plants"),
       drawer: const MainDrawer(),
@@ -233,6 +285,15 @@ class _PlantsPageState extends State<PlantsPage>
                 prefixIcon: Icon(Icons.search),
                 onChanged: plantsCubit.setSearchQuery,
               ),
+              MainDropDownWidget<HealthStatusEnum>(
+                items: HealthStatusEnum.values,
+                textColor: context.cs.onSurfaceVariant,
+                prefixIcon: Icons.health_and_safety_outlined,
+                text: "select_health_status".tr(),
+                onChanged: plantsCubit.setHealthStatusFilter,
+                hasSearch: false,
+              ),
+              _buildCropsDropDown(),
               Expanded(
                 child: BlocBuilder<PlantsCubit, GeneralPlantsState>(
                   buildWhen: (_, current) => current is PlantsState,
@@ -275,9 +336,7 @@ class _PlantsPageState extends State<PlantsPage>
                                       child: FadeInAnimation(child: widget),
                                     ),
                                 children: [
-                                  ...plants.map(
-                                    (plant) => _buildPlantTile(plant, role),
-                                  ),
+                                  ...plants.map(_buildPlantTile),
 
                                   // Show loading indicator at bottom
                                   if (!hasReachedMax) ...[
@@ -321,7 +380,7 @@ class _PlantsPageState extends State<PlantsPage>
     );
   }
 
-  Widget _buildPlantTile(PlantModel plant, UserRoleEnum role) {
+  Widget _buildPlantTile(PlantModel plant) {
     final hasDisease = plant.disease != null;
     final diseaseStatus = hasDisease
         ? (plant.disease?.arName ?? "---")
@@ -367,26 +426,24 @@ class _PlantsPageState extends State<PlantsPage>
                   ],
                 ),
               ),
-              if (!role.isFarmer) ...[
-                _buildIconBtn(
-                  Icons.edit,
-                  context.cs.secondaryContainer,
-                  context.cs.secondary,
-                  () => onUpdatePlant(plant),
-                ),
-                _buildIconBtn(
-                  Icons.delete,
-                  context.cs.errorContainer,
-                  context.cs.error,
-                  () => onDeletePlant(plant),
-                ),
-                _buildIconBtn(
-                  Icons.more_vert_outlined,
-                  context.cs.tertiaryContainer,
-                  context.cs.tertiary,
-                  () => onMoreTap(plant),
-                ),
-              ],
+              _buildIconBtn(
+                Icons.edit,
+                context.cs.secondaryContainer,
+                context.cs.secondary,
+                () => onUpdatePlant(plant),
+              ),
+              _buildIconBtn(
+                Icons.delete,
+                context.cs.errorContainer,
+                context.cs.error,
+                () => onDeletePlant(plant),
+              ),
+              _buildIconBtn(
+                Icons.more_vert_outlined,
+                context.cs.tertiaryContainer,
+                context.cs.tertiary,
+                () => onMoreTap(plant),
+              ),
             ],
           ),
           Row(
@@ -443,6 +500,42 @@ class _PlantsPageState extends State<PlantsPage>
           child: Icon(icon, color: color, size: 20),
         ),
       ),
+    );
+  }
+
+  Widget _buildCropsDropDown() {
+    return BlocBuilder<CropsCubit, GeneralCropsState>(
+      buildWhen: (_, current) => current is CropsState,
+      builder: (context, state) {
+        if (state is CropsLoading) {
+          return const LoadingIndicator();
+        } else if (state is CropsSuccess) {
+          // final selectedValue = state.crops.firstWhereOrNull(
+          //   (crop) => crop.id == widget.plant?.cropId,
+          // );
+          return MainDropDownWidget(
+            // selectedValue: selectedValue,
+            prefixIcon: Icons.local_florist_outlined,
+            items: state.crops,
+            text: "select_crop_type".tr(),
+            textColor: context.cs.onSurfaceVariant,
+            onChanged: plantsCubit.setCropFilter,
+          );
+        } else if (state is CropsEmpty) {
+          return MainErrorWidget(
+            error: state.message,
+            isRefresh: true,
+            onTryAgainTap: cropsCubit.getCrops,
+          );
+        } else if (state is CropsFail) {
+          return MainErrorWidget(
+            error: state.error,
+            onTryAgainTap: cropsCubit.getCrops,
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
     );
   }
 }

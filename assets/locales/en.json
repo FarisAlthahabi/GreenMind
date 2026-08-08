@@ -188,5 +188,14 @@
     "created": "Created",
     "updated": "Updated",
     "no_audit_logs": "No audit logs found",
-    "an_error_occured_during_server_connection" : "An error occured during server connection"
+    "an_error_occured_during_server_connection": "An error occured during server connection",
+    "syrian_remedy": "Syrian Remedy",
+    "organic_advice": "Organic Advice",
+    "symptoms": "Symptoms",
+    "seasonal_timing": "Seasonal Timing",
+    "source": "Source",
+    "recommended_follow_up": "Recommended Follow-up",
+    "days": "days",
+    "select_health_status": "Select health status",
+    "diseased": "Diseased"
 }

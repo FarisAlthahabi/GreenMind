@@ -5,7 +5,7 @@ class DiagnosingDiseasesServiceImp implements DiagnosingDiseasesService {
   final dio = DioClient();
 
   @override
-  Future<DiagnoseModel> diagnoiseDesease(XFile image) async {
+  Future<DiagnoseResponseModel> diagnoiseDesease(XFile image) async {
     try {
       MultipartFile multipartFile;
 
@@ -38,7 +38,7 @@ class DiagnosingDiseasesServiceImp implements DiagnosingDiseasesService {
       //   data: FormData.fromMap(paylod),
       // );
       final data = response.data["data"] as Map<String, dynamic>;
-      return DiagnoseModel.fromJson(data);
+      return DiagnoseResponseModel.fromJson(data);
     } catch (e, stackTrace) {
       if (kDebugMode) print("stackTrace of predict : $stackTrace");
       rethrow;

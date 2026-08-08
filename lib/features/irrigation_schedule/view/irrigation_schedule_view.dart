@@ -30,37 +30,28 @@ enum IrrigationScheduleStatus implements DropDownItemModel {
 
   bool? get isIrrigated {
     switch (this) {
-      case .all:
+      case all:
         return null;
-      case .upcoming:
+      case upcoming:
         return false;
-      case .completed:
+      case completed:
         return true;
     }
   }
 
   @override
-  String get displayName {
-    switch (this) {
-      case .all:
-        return 'all'.tr();
-      case .upcoming:
-        return 'upcoming'.tr();
-      case .completed:
-        return 'completed'.tr();
-    }
-  }
+  String get displayName => name.tr();
 
   static IrrigationScheduleStatus fromString(String? value) {
     switch (value) {
       case 'all':
-        return .all;
+        return all;
       case 'upcoming':
-        return .upcoming;
+        return upcoming;
       case 'completed':
-        return .completed;
+        return completed;
       default:
-        return .all;
+        return all;
     }
   }
 

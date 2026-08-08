@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
@@ -6,6 +8,7 @@ import 'package:green_mind/features/diseases/model/disease_model/disease_model.d
 import 'package:green_mind/features/plants/model/add_plant_model/add_plant_model.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/features/plants/service/plants_service.dart';
+import 'package:green_mind/features/plants/view/plants_view.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 
@@ -23,8 +26,10 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
 
   List<PlantModel> plants = [];
   String searchQuery = "";
+  CropModel? cropFilter;
+  HealthStatusEnum selectedHealthStatus = HealthStatusEnum.all;
   AddPlantModel model = AddPlantModel();
-  int? diseaseId;
+  // int? diseaseId;
 
   // Pagination properties
   int currentPage = 1;
@@ -32,13 +37,16 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   bool isLoadingMore = false;
   bool hasReachedMax = false;
 
+  Timer? _debounceTimer;
+
   void setModel(PlantModel? plant) {
     setCrop(plant?.crop);
     setName(plant?.name);
     setPlantingDate(plant?.plantingDate);
     setHarvestDate(plant?.harvestDate);
     setQuantity(plant?.quantity);
-    setHealthStatus(plant?.healthStatus);
+    // setHealthStatus(plant?.healthStatus);
+    setDiseaseId(plant?.disease);
     setNotes(plant?.notes);
   }
 
@@ -60,9 +68,9 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     model = model.copyWith(harvestDate: () => harvestDate);
   }
 
-  void setHealthStatus(String? healthStatus) {
-    model = model.copyWith(healthStatus: () => healthStatus);
-  }
+  // void setHealthStatus(String? healthStatus) {
+  //   model = model.copyWith(healthStatus: () => healthStatus);
+  // }
 
   void setQuantity(int? quantity) {
     model = model.copyWith(quantity: () => quantity);
@@ -73,17 +81,47 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   }
 
   void setDiseaseId(DiseaseModel? disease) {
-    diseaseId = disease?.id;
+    model = model.copyWith(diseaseId: () => disease?.id);
+  }
+
+  // void setDiseaseId(DiseaseModel? disease) {
+  //   diseaseId = disease?.id;
+  // }
+
+  // void setSearchQuery(String value) {
+  //   searchQuery = value;
+
+  //   // currentPage = 1;
+  //   // hasReachedMax = false;
+  //   // plants.clear();
+
+  //   search();
+  // }
+
+  void setCropFilter(CropModel? crop) {
+    cropFilter = crop;
+    getPlants(reset: true);
+  }
+
+  void setHealthStatusFilter(HealthStatusEnum? status) {
+    if (status != null) {
+      selectedHealthStatus = status;
+      getPlants(reset: true);
+    }
   }
 
   void setSearchQuery(String value) {
     searchQuery = value;
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(seconds: 1), () {
+      getPlants(reset: true);
+    });
+  }
 
-    // currentPage = 1;
-    // hasReachedMax = false;
-    // plants.clear();
-
-    search();
+  @override
+  Future<void> close() {
+    _debounceTimer?.cancel();
+    return super.close();
   }
 
   // Future<void> getPlants() async {
@@ -115,18 +153,20 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     try {
       isLoadingMore = true;
 
-      // Pass the current page to the service
-      final paginatedPlants = await plantService.getPlants(page: currentPage);
+      final paginatedPlants = await plantService.getPlants(
+        page: currentPage,
+        search: searchQuery,
+        cropId: cropFilter?.id,
+        isHealthy: selectedHealthStatus.value
+      );
 
       lastPage = paginatedPlants.pagination.lastPage;
       currentPage = paginatedPlants.pagination.currentPage;
 
-      // Check if we've reached the last page
       if (currentPage >= lastPage) {
         hasReachedMax = true;
       }
 
-      // Add new plants to the list
       if (reset) {
         plants = paginatedPlants.data;
       } else {
@@ -134,7 +174,8 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
       }
 
       isLoadingMore = false;
-      search(); // This will filter the combined list
+      // search();
+      emitPlants();
     } catch (e) {
       isLoadingMore = false;
       if (isClosed) return;
@@ -166,22 +207,22 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     }
   }
 
-  Future<void> updateDiseaseStatus(int id) async {
-    emit(UpdatePlantDiseaseLoading());
-    if (isClosed) return;
-    try {
-      final plant = await plantService.updateDiseaseStatus(
-        id,
-        diseaseId: diseaseId,
-      );
-      emit(UpdatePlantDiseaseSuccess("action_done".tr(), plant));
-      diseaseId = null;
-      updateLocalPlant(plant);
-    } catch (e) {
-      if (isClosed) return;
-      emit(UpdatePlantDiseaseFail(e.toString()));
-    }
-  }
+  // Future<void> updateDiseaseStatus(int id) async {
+  //   emit(UpdatePlantDiseaseLoading());
+  //   if (isClosed) return;
+  //   try {
+  //     final plant = await plantService.updateDiseaseStatus(
+  //       id,
+  //       diseaseId: diseaseId,
+  //     );
+  //     emit(UpdatePlantDiseaseSuccess("action_done".tr(), plant));
+  //     diseaseId = null;
+  //     updateLocalPlant(plant);
+  //   } catch (e) {
+  //     if (isClosed) return;
+  //     emit(UpdatePlantDiseaseFail(e.toString()));
+  //   }
+  // }
 
   Future<void> markAsHarvested(int id) async {
     emit(MarkHarvestedLoading());
@@ -211,44 +252,61 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
 
   void addLocalPlant(PlantModel plant) {
     plants = [...plants, plant];
-    search();
+    // search();
+    emitPlants();
   }
 
   void updateLocalPlant(PlantModel plant) {
     plants = plants.map((p) => p.id == plant.id ? plant : p).toList();
-    search();
+    // search();
+    emitPlants();
   }
 
   void deleteLocalPlant(PlantModel plant) {
     plants = plants.where((p) => p.id != plant.id).toList();
-    search();
+    // search();
+    emitPlants();
   }
 
-  void search() {
-    final filtered = plants
-        .where(
-          (plant) =>
-              plant.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
-              (plant.crop?.nameEn.toLowerCase().contains(
-                    searchQuery.toLowerCase(),
-                  ) ??
-                  false) ||
-              (plant.crop?.nameAr.toLowerCase().contains(
-                    searchQuery.toLowerCase(),
-                  ) ??
-                  false),
-        )
-        .toList();
-    if (filtered.isEmpty) {
+  void emitPlants() {
+    if (plants.isEmpty) {
       emit(PlantsEmpty("no_plants".tr()));
     } else {
       emit(
         PlantsSuccess(
-          filtered,
+          plants,
           hasReachedMax: hasReachedMax,
           currentPage: currentPage,
         ),
       );
     }
   }
+
+  // void search() {
+  //   final filtered = plants
+  //       .where(
+  //         (plant) =>
+  //             plant.name.toLowerCase().contains(searchQuery.toLowerCase()) ||
+  //             (plant.crop?.nameEn.toLowerCase().contains(
+  //                   searchQuery.toLowerCase(),
+  //                 ) ??
+  //                 false) ||
+  //             (plant.crop?.nameAr.toLowerCase().contains(
+  //                   searchQuery.toLowerCase(),
+  //                 ) ??
+  //                 false),
+  //       )
+  //       .toList();
+  //   if (filtered.isEmpty) {
+  //     emit(PlantsEmpty("no_plants".tr()));
+  //   } else {
+  //     emit(
+  //       PlantsSuccess(
+  //         filtered,
+  //         hasReachedMax: hasReachedMax,
+  //         currentPage: currentPage,
+  //       ),
+  //     );
+  //   }
+  // }
 }

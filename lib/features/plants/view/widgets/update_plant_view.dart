@@ -3,6 +3,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/crops/cubit/crops_cubit.dart';
+import 'package:green_mind/features/diseases/cubit/diseases_cubit.dart';
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/global/di/di.dart';
@@ -36,6 +37,7 @@ class UpdatePlantView extends StatelessWidget {
       providers: [
         BlocProvider.value(value: plantsCubit),
         BlocProvider(create: (context) => get<CropsCubit>()),
+        BlocProvider(create: (context) => get<DiseasesCubit>()),
       ],
       child: UpdatePlantWidget(plant: plant, onSuccess: onSuccess),
     );
@@ -55,11 +57,13 @@ class UpdatePlantWidget extends StatefulWidget {
 class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
   late final PlantsCubit plantsCubit = context.read();
   late final CropsCubit cropsCubit = context.read();
+  late final DiseasesCubit diseasesCubit = context.read();
 
   @override
   void initState() {
     super.initState();
     cropsCubit.getCrops();
+    diseasesCubit.getDiseases();
     plantsCubit.setModel(widget.plant);
   }
 
@@ -98,51 +102,20 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
               hintText: "${"example".tr()}: Tomato",
               onChanged: plantsCubit.setName,
             ),
-            BlocBuilder<CropsCubit, GeneralCropsState>(
-              buildWhen: (_, current) => current is CropsState,
-              builder: (context, state) {
-                if (state is CropsLoading) {
-                  return const LoadingIndicator();
-                } else if (state is CropsSuccess) {
-                  final selectedValue = state.crops.firstWhereOrNull(
-                    (crop) => crop.id == plant?.cropId,
-                  );
-                  return MainDropDownWidget(
-                    label: "crop_type".tr(),
-                    selectedValue: selectedValue,
-                    items: state.crops,
-                    text: "select_crop_type".tr(),
-                    onChanged: plantsCubit.setCrop,
-                  );
-                } else if (state is CropsEmpty) {
-                  return MainErrorWidget(
-                    error: state.message,
-                    isRefresh: true,
-                    onTryAgainTap: cropsCubit.getCrops,
-                  );
-                } else if (state is CropsFail) {
-                  return MainErrorWidget(
-                    error: state.error,
-                    onTryAgainTap: cropsCubit.getCrops,
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            ),
+            _buildCropsDropDown(),
             MainDatePicker(
               title: "planting_date".tr(),
               lastDate: DateTime.now(),
               initialDate: plant?.plantingDate,
               onDateSelected: (date) =>
-                  plantsCubit.setPlantingDate(date?.formatDDMMYYYY),
+                  plantsCubit.setPlantingDate(date?.formatYYYYMMDD),
             ),
             if (plant != null)
               MainDatePicker(
                 title: "harvest_date".tr(),
                 initialDate: plant.harvestDate,
                 onDateSelected: (date) =>
-                    plantsCubit.setHarvestDate(date?.formatDDMMYYYY),
+                    plantsCubit.setHarvestDate(date?.formatYYYYMMDD),
               ),
             MainCounterWidget(
               initialCount: plant?.quantity,
@@ -150,13 +123,13 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
               hint: "plants_count",
               onChanged: plantsCubit.setQuantity,
             ),
-            if (plant != null)
-              MainTextField(
-                initialText: plant.healthStatus,
-                title: "health_status".tr(),
-                hintText: "healthy".tr(),
-                onChanged: plantsCubit.setHealthStatus,
-              ),
+            if (plant != null) _buildDiseasesDropDown(),
+            // MainTextField(
+            //   initialText: plant.healthStatus,
+            //   title: "health_status".tr(),
+            //   hintText: "healthy".tr(),
+            //   onChanged: plantsCubit.setHealthStatus,
+            // ),
             MainTextField(
               initialText: plant?.notes,
               title: "notes".tr(),
@@ -219,6 +192,73 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCropsDropDown() {
+    return BlocBuilder<CropsCubit, GeneralCropsState>(
+      buildWhen: (_, current) => current is CropsState,
+      builder: (context, state) {
+        if (state is CropsLoading) {
+          return const LoadingIndicator();
+        } else if (state is CropsSuccess) {
+          final selectedValue = state.crops.firstWhereOrNull(
+            (crop) => crop.id == widget.plant?.cropId,
+          );
+          return MainDropDownWidget(
+            label: "crop_type".tr(),
+            selectedValue: selectedValue,
+            items: state.crops,
+            text: "select_crop_type".tr(),
+            onChanged: plantsCubit.setCrop,
+          );
+        } else if (state is CropsEmpty) {
+          return MainErrorWidget(
+            error: state.message,
+            isRefresh: true,
+            onTryAgainTap: cropsCubit.getCrops,
+          );
+        } else if (state is CropsFail) {
+          return MainErrorWidget(
+            error: state.error,
+            onTryAgainTap: cropsCubit.getCrops,
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
+  }
+
+  Widget _buildDiseasesDropDown() {
+    return BlocBuilder<DiseasesCubit, GeneralDiseasesState>(
+      buildWhen: (_, current) => current is DiseasesState,
+      builder: (context, state) {
+        if (state is DiseasesLoading) {
+          return const LoadingIndicator();
+        } else if (state is DiseasesSuccess) {
+          return MainDropDownWidget(
+            label: "health_status".tr(),
+            items: state.diseases,
+            selectedValue: widget.plant?.disease,
+            text: "select_disease_status".tr(),
+            onChanged: plantsCubit.setDiseaseId,
+          );
+        } else if (state is DiseasesEmpty) {
+          return MainErrorWidget(
+            error: state.message,
+            onTryAgainTap: diseasesCubit.getDiseases,
+            isRefresh: true,
+          );
+        } else if (state is DiseasesFail) {
+          return MainErrorWidget(
+            error: state.error,
+            onTryAgainTap: diseasesCubit.getDiseases,
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
     );
   }
 

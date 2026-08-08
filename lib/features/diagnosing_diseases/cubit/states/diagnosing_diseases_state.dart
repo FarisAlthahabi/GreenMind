@@ -8,9 +8,9 @@ final class DiagnosingDiseasesInitial extends DiagnosingDiseasesState {}
 final class DiagnosingDiseasesLoading extends DiagnosingDiseasesState {}
 
 final class DiagnosingDiseasesSuccess extends DiagnosingDiseasesState {
-  final DiagnoseModel diagnose;
+  final DiagnoseResponseModel diagnoseResponse;
 
-  DiagnosingDiseasesSuccess(this.diagnose);
+  DiagnosingDiseasesSuccess(this.diagnoseResponse);
 }
 
 final class DiagnosingDiseasesFail extends DiagnosingDiseasesState {

@@ -27,10 +27,10 @@ class MainDropDownWidget<T extends DropDownItemModel> extends StatefulWidget {
     this.label,
     this.backgrounColor,
     this.borderRadius = AppConstants.borderRadius10,
-    this.color,
     this.prefixIcon,
     this.hasSearch = true,
     this.displayName,
+    this.textColor,
   });
 
   final List<T> items;
@@ -45,8 +45,8 @@ class MainDropDownWidget<T extends DropDownItemModel> extends StatefulWidget {
   final double? width;
   final String? label;
   final Color? backgrounColor;
+  final Color? textColor;
   final BorderRadius borderRadius;
-  final Color? color;
   final IconData? prefixIcon;
   final bool hasSearch;
   final String Function(T)? displayName;
@@ -146,6 +146,9 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
                     Expanded(
                       child: Text(
                         _selectedNotifier.value?.displayName ?? widget.text,
+                        style: context.tt.bodyMedium?.copyWith(
+                          color: widget.textColor,
+                        ),
                         // selectedValue?.displayName ?? widget.text,
                         // style: TextStyle(
                         //   color: selectedValue != null

@@ -13,10 +13,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'plants_service_imp.dart';
 
 abstract class PlantsService {
-  Future<PaginatedModel<PlantModel>> getPlants({int page = 1});
+  Future<PaginatedModel<PlantModel>> getPlants({
+    int page = 1,
+    String? search,
+    int? cropId,
+    bool? isHealthy,
+  });
   Future<PlantModel> getPlant(int id);
   Future<PlantModel> updatePlant(AddPlantModel plant, {int? id});
-  Future<PlantModel> updateDiseaseStatus(int id, {int? diseaseId});
+  // Future<PlantModel> updateDiseaseStatus(int id, {int? diseaseId});
   Future<PlantModel> markAsHarvested(int id);
   Future<PlantModel> undoHarvest(int id);
 }

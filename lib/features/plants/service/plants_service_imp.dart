@@ -5,7 +5,12 @@ class PlantsServiceImp implements PlantsService {
   final dio = DioClient();
 
   @override
-  Future<PaginatedModel<PlantModel>> getPlants({int page = 1}) async {
+  Future<PaginatedModel<PlantModel>> getPlants({
+    int page = 1,
+    String? search,
+    int? cropId,
+    bool? isHealthy,
+  }) async {
     const storagePath = "plants";
     try {
       final prefs = get<SharedPreferences>();
@@ -18,7 +23,12 @@ class PlantsServiceImp implements PlantsService {
         throw "no_internet".tr();
       }
 
-      final queries = <String, dynamic>{'page': page};
+      final queries = {
+        'page': page,
+        "search": ?search,
+        "crop_id": ?cropId,
+        "is_healthy": ?isHealthy,
+      };
       final response = await dio.get("plants", queries: queries);
       final data = response.data as Map<String, dynamic>;
       final plants = PaginatedModel.fromJson(data, fromJson);
@@ -92,18 +102,18 @@ class PlantsServiceImp implements PlantsService {
     }
   }
 
-  @override
-  Future<PlantModel> updateDiseaseStatus(int id, {int? diseaseId}) async {
-    try {
-      final paylod = {"disease_id": diseaseId};
-      final response = await dio.put("plants/$id/disease", data: paylod);
-      final data = response.data["data"] as Map<String, dynamic>;
-      return PlantModel.fromJson(data);
-    } catch (e, stackTrace) {
-      if (kDebugMode) {
-        print("stackTrace of updateDiseaseStatus $id is : $stackTrace");
-      }
-      rethrow;
-    }
-  }
+  // @override
+  // Future<PlantModel> updateDiseaseStatus(int id, {int? diseaseId}) async {
+  //   try {
+  //     final paylod = {"disease_id": diseaseId};
+  //     final response = await dio.put("plants/$id/disease", data: paylod);
+  //     final data = response.data["data"] as Map<String, dynamic>;
+  //     return PlantModel.fromJson(data);
+  //   } catch (e, stackTrace) {
+  //     if (kDebugMode) {
+  //       print("stackTrace of updateDiseaseStatus $id is : $stackTrace");
+  //     }
+  //     rethrow;
+  //   }
+  // }
 }

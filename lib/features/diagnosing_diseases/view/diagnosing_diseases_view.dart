@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/ai_chat_bot/cubit/ai_chat_bot_cubit.dart';
 import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart';
-import 'package:green_mind/features/diagnosing_diseases/model/diagnose_model/diagnose_model.dart';
+import 'package:green_mind/features/diagnosing_diseases/model/diagnose_response_model/diagnose_response_model.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
@@ -138,7 +138,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
         if (state is DiagnosingDiseasesLoading) {
           child = const SizedBox.shrink();
         } else if (state is DiagnosingDiseasesSuccess) {
-          child = _buildResults(state.diagnose);
+          child = _buildResults(state.diagnoseResponse);
         } else {
           child = _buildPlaceHolderResualts();
         }
@@ -174,9 +174,12 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
     );
   }
 
-  Widget _buildResults(DiagnoseModel diagnose) {
+  Widget _buildResults(DiagnoseResponseModel diagnoseResponse) {
+    final diagnose = diagnoseResponse.diagnosis;
+    final details = diagnoseResponse.details;
     final primary = context.cs.primary;
     final percent = (double.tryParse(diagnose.confidencePercentage) ?? 0);
+
     return Container(
       padding: AppConstants.padding16,
       clipBehavior: .antiAlias,
@@ -202,6 +205,12 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                 style: context.tt.headlineMedium?.copyWith(color: primary),
               ),
               Text(diagnose.diseaseNameArabic),
+              if (details?.localName.isNotEmpty == true) ...[
+                Text(
+                  "${"local_name".tr()}: ${details?.localName ?? "---"}",
+                  style: context.tt.bodyMedium,
+                ),
+              ],
               Padding(
                 padding: AppConstants.paddingH10,
                 child: const Text("grad_cam_image").tr(),
@@ -250,82 +259,65 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                   ),
                   child: const Text("high_accuracy").tr(),
                 ),
-              // Container(
-              //   padding: AppConstants.paddingH16V12,
-              //   decoration: BoxDecoration(
-              //     color: context.cs.surfaceContainer,
-              //     borderRadius: AppConstants.borderRadius10,
-              //   ),
-              //   child: Row(
-              //     crossAxisAlignment: .start,
-              //     children: [
-              //       const Icon(Icons.info_outline, size: 20),
-              //       const SizedBox(width: 10),
-              //       Expanded(
-              //         child: Text(
-              //           "النموذج ركز على منطقة البقع البنية في الجزء العلوي الأيسر من الورقة",
-              //           style: context.tt.bodyMedium,
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
-              Text(
-                "${"treatment_recommendations".tr()}:",
-                style: context.tt.titleMedium?.copyWith(fontWeight: .bold),
-              ),
-              DecoratedBox(
+              Container(
+                padding: AppConstants.padding16,
                 decoration: BoxDecoration(
-                  color: context.cs.primaryContainer,
+                  color: context.cs.secondaryContainer,
                   borderRadius: AppConstants.borderRadius10,
                 ),
-                child: Padding(
-                  padding: AppConstants.padding16,
-                  child: Column(
-                    spacing: 10,
-                    crossAxisAlignment: .start,
-                    children: [
-                      _buildRecommendationItem(context, diagnose.treatment),
-                      // _buildRecommendationItem(
-                      //   context,
-                      //   "1.  إزالة الأوراق المصابة فوراً والتخلص منها",
-                      // ),
-                      // _buildRecommendationItem(
-                      //   context,
-                      //   "2.  رش النباتات بمبيد قطري يحتوي على مانكوزيب",
-                      // ),
-                      // _buildRecommendationItem(
-                      //   context,
-                      //   "3.  تحسين التهوية بين النباتات",
-                      // ),
-                      // _buildRecommendationItem(
-                      //   context,
-                      //   "4.  تجنب الري العلوي للحد من انتشار المرض",
-                      // ),
-                      // _buildRecommendationItem(
-                      //   context,
-                      //   "5.  مراقبة النباتات يومياً للكشف المبكر عن الإصابات الجديدة",
-                      // ),
-                    ],
-                  ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.calendar_today,
+                      size: 18,
+                      color: context.cs.secondary,
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      "${"recommended_follow_up".tr()}: ${diagnoseResponse.recommendedIntervalDays} ${"days".tr()}",
+                      style: context.tt.bodyMedium,
+                    ),
+                  ],
                 ),
               ),
-              MainActionButton(
-                padding: AppConstants.padding16,
-                buttonColor: context.cs.surface,
-                border: .all(color: primary, width: 1.5),
-                borderRadius: AppConstants.borderRadius20,
-                fontWeight: .bold,
-                icon: Icon(Icons.chat, size: 20, color: primary),
-                textColor: primary,
-                onPressed: () {
-                  context.router.navigate(AiChatBotRoute());
-                  context.read<AiChatBotCubit>().getAiResponse(
-                    "${"want_know_more_about".tr()} ${diagnose.diseaseNameArabic}",
-                  );
-                },
-                text: "ask_agricultural_expert_for_more".tr(),
+              _buildTitleDescription(
+                "treatment_recommendations",
+                diagnose.treatment,
+                context.cs.primaryContainer,
               ),
+              if (details?.syrianRemedy.isNotEmpty == true) ...[
+                _buildTitleDescription(
+                  "syrian_remedy",
+                  details?.syrianRemedy ?? "---",
+                  context.cs.secondaryContainer,
+                ),
+              ],
+              if (details?.organicAdvice.isNotEmpty == true)
+                _buildTitleDescription(
+                  "organic_advice",
+                  details?.organicAdvice ?? "---",
+                  context.cs.tertiaryContainer,
+                ),
+              if (details?.symptoms.isNotEmpty == true)
+                _buildTitleDescription(
+                  "symptoms",
+                  details?.symptoms ?? "---",
+                  context.cs.errorContainer.withOpacity(0.3),
+                ),
+              if (details?.localTiming.isNotEmpty == true)
+                _buildIconTitleDescription(
+                  Icons.access_time,
+                  "seasonal_timing",
+                  details?.localTiming ?? "---",
+                ),
+              if (details?.officialSource.isNotEmpty == true)
+                _buildIconTitleDescription(
+                  Icons.source,
+                  "source",
+                  details?.officialSource ?? "---",
+                  fontStyle: .italic,
+                ),
+              _buildChatBtn(diagnose.diseaseNameArabic),
             ],
           ),
         ),
@@ -333,10 +325,70 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
     );
   }
 
-  Widget _buildRecommendationItem(BuildContext context, String text) {
-    return Row(
+  Widget _buildTitleDescription(String title, String description, Color color) {
+    return Column(
+      mainAxisSize: .min,
       crossAxisAlignment: .start,
-      children: [Expanded(child: Text(text, style: context.tt.bodyMedium))],
+      spacing: 5,
+      children: [
+        Text(
+          "${title.tr()}:",
+          style: context.tt.titleMedium?.copyWith(fontWeight: .bold),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: AppConstants.borderRadius10,
+                ),
+                child: Padding(
+                  padding: AppConstants.padding16,
+                  child: Text(description),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildIconTitleDescription(
+    IconData icon,
+    String title,
+    String description, {
+    FontStyle fontStyle = .normal,
+  }) {
+    return Row(
+      spacing: 8,
+      children: [
+        Icon(icon, size: 18, color: context.cs.primary),
+        Text(
+          "${title.tr()}: $description",
+          style: context.tt.bodyMedium?.copyWith(fontStyle: fontStyle),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChatBtn(String diseaseNameArabic) {
+    return MainActionButton(
+      padding: AppConstants.padding16,
+      buttonColor: context.cs.surface,
+      border: .all(color: context.cs.primary, width: 1.5),
+      borderRadius: AppConstants.borderRadius20,
+      fontWeight: .bold,
+      icon: Icon(Icons.chat, size: 20, color: context.cs.primary),
+      textColor: context.cs.primary,
+      onPressed: () {
+        context.router.navigate(AiChatBotRoute());
+        context.read<AiChatBotCubit>().getAiResponse(
+          "${"want_know_more_about".tr()} $diseaseNameArabic",
+        );
+      },
+      text: "ask_agricultural_expert_for_more".tr(),
     );
   }
 }

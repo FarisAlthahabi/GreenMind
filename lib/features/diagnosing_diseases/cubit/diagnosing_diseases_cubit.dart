@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:green_mind/features/diagnosing_diseases/model/diagnose_model/diagnose_model.dart';
+import 'package:green_mind/features/diagnosing_diseases/model/diagnose_response_model/diagnose_response_model.dart';
 import 'package:green_mind/features/diagnosing_diseases/service/diagnosing_diseases_service.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';

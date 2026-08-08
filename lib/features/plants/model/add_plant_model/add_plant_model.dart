@@ -13,22 +13,25 @@ class AddPlantModel {
     String? plantingDate,
     String? harvestDate,
     int? quantity,
-     String? healthStatus,
+    int? diseaseId,
+    // String? healthStatus,
     String? notes,
-  })  : _cropId = cropId,
-        _name = name,
-        _plantingDate = plantingDate,
-        _harvestDate = harvestDate,
-        _quantity = quantity,
-        _healthStatus = healthStatus,
-        _notes = notes;
+  }) : _cropId = cropId,
+       _name = name,
+       _plantingDate = plantingDate,
+       _harvestDate = harvestDate,
+       _quantity = quantity,
+       _diseaseId = diseaseId,
+       //  _healthStatus = healthStatus,
+       _notes = notes;
 
   final int? _cropId;
   final String? _name;
   final String? _plantingDate;
   final String? _harvestDate;
   final int? _quantity;
-  final String? _healthStatus;
+  final int? _diseaseId;
+  // final String? _healthStatus;
   final String? _notes;
 
   AddPlantModel copyWith({
@@ -37,7 +40,8 @@ class AddPlantModel {
     String? Function()? plantingDate,
     String? Function()? harvestDate,
     int? Function()? quantity,
-    String? Function()? healthStatus,
+    int? Function()? diseaseId,
+    // String? Function()? healthStatus,
     String? Function()? notes,
   }) {
     return AddPlantModel(
@@ -46,7 +50,8 @@ class AddPlantModel {
       plantingDate: plantingDate != null ? plantingDate() : _plantingDate,
       harvestDate: harvestDate != null ? harvestDate() : _harvestDate,
       quantity: quantity != null ? quantity() : _quantity,
-      healthStatus: healthStatus != null ? healthStatus() : _healthStatus,
+      diseaseId: diseaseId != null ? diseaseId() : _diseaseId,
+      // healthStatus: healthStatus != null ? healthStatus() : _healthStatus,
       notes: notes != null ? notes() : _notes,
     );
   }
@@ -77,9 +82,14 @@ class AddPlantModel {
     return _harvestDate;
   }
 
-  @JsonKey(name: "health_status")
-  String? get healthStatus {
-    return _healthStatus;
+  // @JsonKey(name: "health_status")
+  // String? get healthStatus {
+  //   return _healthStatus;
+  // }
+
+  @JsonKey(name: "disease_id")
+  int? get diseaseId {
+    return _diseaseId;
   }
 
   @JsonKey(name: "quantity")
