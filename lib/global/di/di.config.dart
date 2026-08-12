@@ -51,7 +51,6 @@ import 'package:green_mind/global/blocs/internet_connection/cubit/internet_conne
 import 'package:green_mind/global/blocs/upload_image_cubit/cubit/upload_image_cubit.dart'
     as _i872;
 import 'package:green_mind/global/di/app_module.dart' as _i807;
-import 'package:green_mind/global/dio/dio_client.dart' as _i645;
 import 'package:green_mind/global/services/delete_service/delete_service.dart'
     as _i869;
 import 'package:green_mind/global/theme/cubit/theme_cubit.dart' as _i696;
@@ -76,7 +75,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i749.InternetConnectionCubit>(
       () => _i749.InternetConnectionCubit(),
     );
-    gh.singleton<_i645.DioClient>(() => _i645.DioClient());
     gh.factory<_i209.AiChatBotService>(() => _i209.AiChatBotServiceImp());
     gh.factory<_i622.DiseasesService>(() => _i622.DiseasesServiceImp());
     gh.factory<_i529.StatsService>(() => _i529.StatsServiceImp());

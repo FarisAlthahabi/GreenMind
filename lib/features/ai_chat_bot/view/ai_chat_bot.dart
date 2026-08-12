@@ -77,14 +77,14 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
         clipBehavior: .antiAlias,
         decoration: BoxDecoration(
           borderRadius: AppConstants.borderRadius20,
-          border: .all(color: context.cs.outline, width: 0.5),
+          border: .all(color: context.cs.outline, width: 0.3),
         ),
         child: Column(
           children: [
             _buildRemainingMessages(),
-            Divider(height: 0, color: context.cs.outline, thickness: 0.5),
+            Divider(height: 0, color: context.cs.outline, thickness: 0.3),
             Expanded(child: _buildChatView()),
-            Divider(color: context.cs.outline, thickness: 0.5),
+            Divider(color: context.cs.outline, thickness: 0.3),
             Padding(
               padding: AppConstants.padding16,
               child: TextSenderWidget(senderController: senderController),
@@ -194,6 +194,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
           return _buildEmptyState();
         }
         if (state is ChatMessagesSuccess) {
+          // return FlutterLogo();
           return _buildMessagesList(state.messages);
         } else {
           return const SizedBox.shrink();
@@ -204,10 +205,10 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
 
   Widget _buildEmptyState() {
     const initialTexts = [
-      "ما هي أمراض الطماطم الشائعة؟",
-      "كيف أعالج اللفحة المتأخرة؟",
-      "ما هو جدول الري المناسب للبطاطا؟",
-      "ما هي أعراض مرض تبقع الأوراق؟",
+      "what_are_popular_tomato_diseases",
+      "how_to_treat_late_blight",
+      "suitable_potato_irrigation_schedule",
+      "symptoms_of_leaf_spot_disease",
     ];
     return Center(
       child: SingleChildScrollView(
@@ -250,7 +251,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
                       child: FadeInAnimation(
                         child: InkWell(
                           onTap: () {
-                            senderController.text = text;
+                            senderController.text = text.tr();
                           },
                           child: Container(
                             padding: AppConstants.padding12,
@@ -263,7 +264,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
                               ),
                             ),
                             child: Center(
-                              child: Text(text, textAlign: .center),
+                              child: Text(text.tr(), textAlign: .center),
                             ),
                           ),
                         ),
@@ -279,40 +280,35 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
     );
   }
 
-  Widget _buildMessagesList(List<String> messages) {
+  Widget _buildMessagesList(List<ChatMessage> messages) {
     return SingleChildScrollView(
       controller: scrollController,
       padding: AppConstants.padding16,
       physics: const BouncingScrollPhysics(),
       child: Column(
         spacing: 10,
-        children: [
-          ...List.generate(messages.length, (index) {
-            final message = messages[index];
-            final isAi = index.isOdd;
-            return _buildMessageBubble(message, isAi);
-          }),
-        ],
+        children: messages.map(_buildMessageBubble).toList(),
       ),
     );
   }
 
-  Widget _buildMessageBubble(String message, bool isAi) {
-    final icon = isAi ? Icons.agriculture : Icons.person;
-    final iconColor = isAi ? context.cs.primary : context.cs.tertiary;
-    final textColor = isAi ? context.cs.onSurface : Colors.white;
-    final textBgColor = isAi ? context.cs.surfaceContainer : context.cs.primary;
-    final borderRadius = isAi
+  Widget _buildMessageBubble(ChatMessage message) {
+    final isUser = message.isUser;
+    final icon = isUser ? Icons.person : Icons.agriculture;
+    final iconColor = isUser ? context.cs.tertiary : context.cs.primary;
+    final textColor = isUser ? Colors.white : context.cs.onSurface;
+    final textBgColor = isUser
+        ? context.cs.primary
+        : context.cs.surfaceContainerHigh;
+    final borderRadius = isUser
         ? AppConstants.borderRadius15TE5
         : AppConstants.borderRadius15TS5;
 
     return Row(
-      mainAxisAlignment: isAi ? .start : .end,
+      mainAxisAlignment: isUser ? .end : .start,
       crossAxisAlignment: .start,
       children: [
-        if (!isAi)
-          const Spacer()
-        else ...[
+        if (!isUser) ...[
           CircleAvatar(
             backgroundColor: iconColor,
             child: Icon(icon, color: Colors.white, size: 20),
@@ -322,7 +318,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
         Expanded(
           flex: 5,
           child: Column(
-            crossAxisAlignment: isAi ? .start : .end,
+            crossAxisAlignment: isUser ? .end : .start,
             spacing: 5,
             children: [
               DecoratedBox(
@@ -333,7 +329,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
                 child: Padding(
                   padding: AppConstants.padding12,
                   child: Text(
-                    message,
+                    message.message,
                     style: context.tt.bodyMedium?.copyWith(
                       color: textColor,
                       fontWeight: .bold,
@@ -350,14 +346,13 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
             ],
           ),
         ),
-        if (!isAi) ...[
+        if (isUser) ...[
           const SizedBox(width: 8),
           CircleAvatar(
             backgroundColor: iconColor,
             child: Icon(icon, color: Colors.white, size: 20),
           ),
-        ] else
-          const Spacer(),
+        ],
       ],
     );
   }
@@ -373,18 +368,12 @@ class TextSenderWidget extends StatefulWidget {
 
 class _TextSenderWidgetState extends State<TextSenderWidget> {
   late final AiChatBotCubit aiChatBotCubit = context.read();
-  // TODO fix this color
-  late Color iconColor = context.cs.outline;
 
   @override
   void initState() {
     super.initState();
     widget.senderController.addListener(() {
-      setState(() {
-        iconColor = widget.senderController.text.isEmpty
-            ? context.cs.outline
-            : context.cs.primary;
-      });
+      setState(() {});
     });
   }
 
@@ -401,6 +390,9 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final iconColor = widget.senderController.text.isEmpty
+        ? context.cs.surfaceContainerHigh
+        : context.cs.primary;
     return BlocBuilder<AiChatBotCubit, GeneralAiChatBotState>(
       builder: (context, state) {
         // TODO check this color to come from theme
@@ -428,7 +420,7 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
                 controller: widget.senderController,
                 hintText: hintText,
                 hintColor: context.cs.outline,
-                borderRadius: AppConstants.borderRadius30,
+                borderRadius: AppConstants.borderRadius20,
                 fillColor: context.cs.surfaceContainer,
                 borderColor: context.cs.outline,
                 borderWidth: 0.3,
@@ -438,10 +430,7 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
             InkWell(
               onTap: onTap,
               child: DecoratedBox(
-                decoration: BoxDecoration(
-                  color: iconColor,
-                  shape: BoxShape.circle,
-                ),
+                decoration: BoxDecoration(color: iconColor, shape: .circle),
                 child: Padding(padding: AppConstants.padding16, child: icon),
               ),
             ),

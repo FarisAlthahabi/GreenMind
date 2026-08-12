@@ -65,7 +65,7 @@
 //           key: _formKey,
 //           child: Column(
 //             spacing: 5,
-//             crossAxisAlignment: CrossAxisAlignment.center,
+//             crossAxisAlignment: .center,
 //             children: [
 //               const SizedBox(height: 40),
 //               _buildImage(),
@@ -88,7 +88,7 @@
 //     //     key: _formKey,
 //     //     child: Column(
 //     //       spacing: 5,
-//     //       crossAxisAlignment: CrossAxisAlignment.center,
+//     //       crossAxisAlignment: .center,
 //     //       children: [
 //     //         _buildBackButton(),
 //     //         const SizedBox(height: 100),
@@ -132,7 +132,7 @@
 //       style: const TextStyle(
 //         fontSize: 24,
 //         color: AppColors.blackShade2,
-//         fontWeight: FontWeight.bold,
+//         fontWeight: .bold,
 //       ),
 //     );
 //   }
@@ -181,7 +181,7 @@
 
 //   Widget _buildGoSignUp() {
 //     return Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
+//       mainAxisAlignment: .center,
 //       children: [
 //         Text("not_have_account".tr()),
 //         GestureDetector(

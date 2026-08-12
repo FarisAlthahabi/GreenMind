@@ -66,7 +66,12 @@ class _RescheduleIrrigationWidgetState
       title: Row(
         mainAxisAlignment: .spaceBetween,
         children: [
-          Expanded(child: const Text("update_irrigation").tr()),
+          Expanded(
+            child: Text(
+              "update_irrigation".tr(),
+              style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
+            ),
+          ),
           _buildCloseIcon(),
         ],
       ),

@@ -1,17 +1,17 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:injectable/injectable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:green_mind/global/dio/app_interceptor.dart';
 import 'package:green_mind/global/utils/constants.dart';
 
 // const baseUrl = "http://127.0.0.1:8000";
 // const baseUrl = "http://192.168.1.36:8000";
-const baseUrl = "http://192.168.1.111:8000";
+const appIP = "192.168.1.111";
+const baseUrl = "http://$appIP:8000";
 const apiUrl = '$baseUrl/api/';
 // const apiUrl = '$baseUrl/';
 
-@singleton
 class DioClient {
   factory DioClient() {
     return _instance;
@@ -23,6 +23,7 @@ class DioClient {
       receiveTimeout: AppConstants.duration15s,
       connectTimeout: AppConstants.duration15s,
       sendTimeout: AppConstants.duration15s,
+      // responseType: .stream
     );
 
     _dio = Dio(baseOptions);
@@ -50,31 +51,40 @@ class DioClient {
     Map<String, dynamic>? headers,
     Map<String, dynamic>? data,
     Duration? duration,
-
-    Options? options,
+    ResponseType? responseType = .json,
   }) async {
-    if (duration != null) {
-      _dio.options = _dio.options.copyWith(
-        receiveTimeout: duration,
-        connectTimeout: duration,
-        sendTimeout: duration,
-      );
-    }
-
-    final mergedHeaders = <String, dynamic>{
-      ...(options?.headers ?? {}),
-      ...(headers ?? {}),
-    };
-
-    final effectiveOptions = (options ?? Options()).copyWith(
-      headers: mergedHeaders,
+    _dio.options = _dio.options.copyWith(
+      receiveTimeout: duration,
+      connectTimeout: duration,
+      sendTimeout: duration,
+      responseType: responseType,
     );
 
     return _dio.get(
       endpoint,
       queryParameters: queries,
       data: data,
-      options: effectiveOptions,
+      options: Options(headers: headers),
+    );
+  }
+
+  Future<Response<dynamic>> postStreaming(
+    String endpoint, {
+    Map<String, dynamic>? queries,
+    dynamic data,
+    // Map<String, dynamic>? headers,
+    Duration? duration,
+  }) async {
+    final requestHeaders = {
+      'Content-Type': 'application/json',
+      'Accept': 'text/event-stream',
+    };
+    return post(
+      endpoint,
+      queries: queries,
+      data: data,
+      headers: requestHeaders,
+      responseType: .stream,
     );
   }
 
@@ -82,13 +92,16 @@ class DioClient {
     String endpoint, {
     Map<String, dynamic>? queries,
     dynamic data,
+    Options? options,
     Map<String, dynamic>? headers,
     Duration? duration,
+    ResponseType? responseType = .json,
   }) async {
     _dio.options = _dio.options.copyWith(
       receiveTimeout: duration,
       connectTimeout: duration,
       sendTimeout: duration,
+      responseType: responseType,
     );
     return _dio.post(
       endpoint,
@@ -102,7 +115,9 @@ class DioClient {
     String endpoint, {
     dynamic data,
     Map<String, dynamic>? headers,
+    ResponseType? responseType = .json,
   }) async {
+    _dio.options = _dio.options.copyWith(responseType: responseType);
     return _dio.put(
       endpoint,
       data: data,
@@ -114,7 +129,9 @@ class DioClient {
     String endpoint, {
     dynamic data,
     Map<String, dynamic>? headers,
+    ResponseType? responseType = .json,
   }) async {
+    _dio.options = _dio.options.copyWith(responseType: responseType);
     return _dio.patch(
       endpoint,
       data: data,
@@ -126,7 +143,9 @@ class DioClient {
     String endpoint, {
     dynamic data,
     Map<String, dynamic>? headers,
+    ResponseType? responseType = .json,
   }) async {
+    _dio.options = _dio.options.copyWith(responseType: responseType);
     return _dio.delete(
       endpoint,
       data: data,

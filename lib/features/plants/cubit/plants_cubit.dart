@@ -9,6 +9,7 @@ import 'package:green_mind/features/plants/model/add_plant_model/add_plant_model
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/features/plants/service/plants_service.dart';
 import 'package:green_mind/features/plants/view/plants_view.dart';
+import 'package:green_mind/global/utils/constants.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 
@@ -27,7 +28,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   List<PlantModel> plants = [];
   String searchQuery = "";
   CropModel? cropFilter;
-  HealthStatusEnum selectedHealthStatus = HealthStatusEnum.all;
+  HealthStatusEnum? selectedHealthStatus;
   AddPlantModel model = AddPlantModel();
   // int? diseaseId;
 
@@ -113,7 +114,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   void setSearchQuery(String value) {
     searchQuery = value;
     _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(seconds: 1), () {
+    _debounceTimer = Timer(AppConstants.duration1s, () {
       getPlants(reset: true);
     });
   }
@@ -157,7 +158,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
         page: currentPage,
         search: searchQuery,
         cropId: cropFilter?.id,
-        isHealthy: selectedHealthStatus.value
+        isHealthy: selectedHealthStatus?.value
       );
 
       lastPage = paginatedPlants.pagination.lastPage;

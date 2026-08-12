@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:green_mind/features/auth/model/user_model/user_model.dart';
 import 'package:green_mind/features/users/model/add_user_model/add_user_model.dart';
@@ -20,5 +19,6 @@ abstract class UsersService {
   Future<PaginatedModel<AuditLogModel>> getAuditLogs(
     int userId, {
     int page = 1,
+    String? search,
   });
 }

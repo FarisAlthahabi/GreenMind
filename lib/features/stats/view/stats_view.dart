@@ -384,13 +384,18 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
                 columns: headerTitles
                     .map(
                       (header) => DataColumn(
-                        label: Text(header.tr()),
+                        label: Text(header.tr(), style: context.tt.titleMedium),
                         headingRowAlignment: .center,
                       ),
                     )
                     .toList(),
                 rows: List.generate(items.length, (index) {
                   final item = items[index];
+                  final percent =
+                      (double.tryParse(item.confidencePercentage) ?? 0.00);
+                  final valueColor = percent < 50
+                      ? context.cs.error
+                      : context.cs.primary;
                   // final color = item.hasDisease
                   //     ? context.cs.error
                   //     : context.cs.primary;
@@ -401,46 +406,46 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
                   final bgColor = context.cs.errorContainer;
                   return DataRow(
                     cells: [
-                      DataCell(Center(child: Text(item.createdAt.formatYYYYMMDD))),
+                      DataCell(
+                        Center(child: Text(item.createdAt.formatYYYYMMDD)),
+                      ),
                       DataCell(Center(child: Text(item.plant?.name ?? "---"))),
                       DataCell(
-                        Center(
-                          child: Container(
-                            padding: AppConstants.paddingH8V4,
-                            decoration: BoxDecoration(
-                              color: bgColor,
-                              borderRadius: AppConstants.borderRadius15,
-                            ),
-                            child: Text(
-                              item.diseaseNameArabic,
-                              style: context.tt.bodyMedium?.copyWith(
-                                color: color,
-                              ),
+                        Container(
+                          padding: AppConstants.paddingH8V4,
+                          decoration: BoxDecoration(
+                            color: bgColor,
+                            borderRadius: AppConstants.borderRadius15,
+                          ),
+                          child: Text(
+                            item.diseaseNameArabic,
+                            style: context.tt.bodyMedium?.copyWith(
+                              color: color,
                             ),
                           ),
                         ),
                       ),
                       DataCell(
                         SizedBox(
-                          width: 70,
+                          width: 80,
                           child: Row(
                             spacing: 5,
                             children: [
                               Expanded(
                                 child: LinearProgressIndicator(
-                                  minHeight: 12,
-                                  value: .tryParse(item.confidencePercentage),
+                                  minHeight: 8,
+                                  value: percent / 100,
                                   // TODO color from theme
                                   backgroundColor: const Color(0xffe5e7eb),
-                                  valueColor: AlwaysStoppedAnimation(color),
+                                  valueColor: AlwaysStoppedAnimation(
+                                    valueColor,
+                                  ),
                                   borderRadius: AppConstants.borderRadius12,
                                 ),
                               ),
                               Text(
                                 "${item.confidencePercentage}%",
-                                style: context.tt.bodyMedium?.copyWith(
-                                  color: color,
-                                ),
+                                style: context.tt.bodyMedium,
                               ),
                             ],
                           ),
@@ -509,11 +514,15 @@ class _IncommingIrrigationState extends State<IncommingIrrigation> {
               Container(
                 padding: AppConstants.paddingH8V4,
                 decoration: BoxDecoration(
-                  color: Colors.yellow,
-                  // color: irrigation.color.withAlpha(15),
+                  color: context.cs.primaryContainer,
                   borderRadius: AppConstants.borderRadius15,
                 ),
-                child: Text("incomming".tr(), style: context.tt.bodySmall),
+                child: Text(
+                  "incomming".tr(),
+                  style: context.tt.bodySmall?.copyWith(
+                    color: context.cs.primary,
+                  ),
+                ),
               ),
             ],
           ),
@@ -545,8 +554,10 @@ class WeaklyDiagnosis extends StatelessWidget {
           text: "weekly_diagnoses".tr(),
           textStyle: context.tt.titleLarge,
         ),
-        primaryXAxis: CategoryAxis(labelStyle: context.tt.bodySmall),
-        primaryYAxis: NumericAxis(maximum: 50, minimum: 0),
+        primaryXAxis: CategoryAxis(
+          labelStyle: context.tt.bodySmall,
+          labelRotation: 50,
+        ),
         series: <LineSeries<DiagnoseCountModel, String>>[
           LineSeries<DiagnoseCountModel, String>(
             color: context.cs.primary,

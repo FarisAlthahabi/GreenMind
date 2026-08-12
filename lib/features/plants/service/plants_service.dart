@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:green_mind/features/plants/model/add_plant_model/add_plant_model.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';

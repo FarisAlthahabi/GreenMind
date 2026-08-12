@@ -13,7 +13,6 @@ import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
-import 'package:green_mind/global/widgets/restart_app_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @immutable
@@ -61,7 +60,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
     final prefs = get<SharedPreferences>();
     prefs.setString('locale', newLocale.languageCode);
     // localizationCubit.emitLanguageChanged();
-    RestartAppWidget.restartApp(context);
+    // RestartAppWidget.restartApp(context);
   }
 
   void onChangeThemeTap() {

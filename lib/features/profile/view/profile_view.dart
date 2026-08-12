@@ -98,7 +98,6 @@ class _ProfilePageState extends State<ProfilePage>
             } else if (state is ProfileFail) {
               return MainErrorWidget(
                 error: state.error,
-                isRefresh: true,
                 onTryAgainTap: fetchProfile,
               );
             } else {

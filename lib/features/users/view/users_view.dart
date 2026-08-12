@@ -131,7 +131,6 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
                   } else if (state is UsersFail) {
                     return MainErrorWidget(
                       error: state.error,
-                      isRefresh: true,
                       onTryAgainTap: fetchUsers,
                     );
                   } else {

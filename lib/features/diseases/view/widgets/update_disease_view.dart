@@ -71,7 +71,13 @@ class _UpdateDiseaseWidgetState extends State<UpdateDiseaseWidget> {
       contentPadding: AppConstants.padding30,
       title: Row(
         mainAxisAlignment: .spaceBetween,
-        children: [Text(title), _buildCloseIcon()],
+        children: [
+          Text(
+            title,
+            style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
+          ),
+          _buildCloseIcon(),
+        ],
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -126,7 +132,8 @@ class _UpdateDiseaseWidgetState extends State<UpdateDiseaseWidget> {
                       }
                     },
                     builder: (context, state) {
-                      var onTap = () => diseasesCubit.updateDisease(id: disease?.id);
+                      var onTap = () =>
+                          diseasesCubit.updateDisease(id: disease?.id);
                       Widget? child;
                       if (state is UpdateDiseaseLoading) {
                         onTap = () async {};

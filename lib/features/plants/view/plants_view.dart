@@ -6,8 +6,10 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/crops/cubit/crops_cubit.dart';
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
+import 'package:green_mind/features/plants/view/widgets/plants_filter_widget.dart';
 import 'package:green_mind/features/plants/view/widgets/update_plant_view.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/extensions/locale_x.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
@@ -100,6 +102,7 @@ class _PlantsPageState extends State<PlantsPage>
     implements PlantsViewCallBacks {
   late final PlantsCubit plantsCubit = context.read();
   late final CropsCubit cropsCubit = context.read();
+  late final locale = context.locale;
 
   @override
   void initState() {
@@ -254,6 +257,22 @@ class _PlantsPageState extends State<PlantsPage>
     );
   }
 
+  void onFilterTap() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: plantsCubit),
+            BlocProvider.value(value: cropsCubit),
+          ],
+          child: PlantsFilterWidget(),
+        );
+      },
+    );
+  }
+
   void fetchPlants({bool isRefresh = false}) =>
       plantsCubit.getPlants(reset: isRefresh);
 
@@ -285,15 +304,6 @@ class _PlantsPageState extends State<PlantsPage>
                 prefixIcon: Icon(Icons.search),
                 onChanged: plantsCubit.setSearchQuery,
               ),
-              MainDropDownWidget<HealthStatusEnum>(
-                items: HealthStatusEnum.values,
-                textColor: context.cs.onSurfaceVariant,
-                prefixIcon: Icons.health_and_safety_outlined,
-                text: "select_health_status".tr(),
-                onChanged: plantsCubit.setHealthStatusFilter,
-                hasSearch: false,
-              ),
-              _buildCropsDropDown(),
               Expanded(
                 child: BlocBuilder<PlantsCubit, GeneralPlantsState>(
                   buildWhen: (_, current) => current is PlantsState,
@@ -376,19 +386,28 @@ class _PlantsPageState extends State<PlantsPage>
           ),
         ),
       ),
-      floatingActionButton: MainFab(onTap: () => onUpdatePlant(null)),
+      floatingActionButton: Row(
+        children: [
+          const SizedBox(width: 30),
+          MainFab(icon: Icons.filter_alt_outlined, onTap: () => onFilterTap()),
+          const Spacer(),
+          MainFab(onTap: () => onUpdatePlant(null)),
+        ],
+      ),
+      // floatingActionButton: MainFab(onTap: () => onUpdatePlant(null)),
     );
   }
 
   Widget _buildPlantTile(PlantModel plant) {
     final hasDisease = plant.disease != null;
-    final diseaseStatus = hasDisease
-        ? (plant.disease?.arName ?? "---")
-        : "healthy".tr();
+    final disease = plant.disease;
+    final diseaseName = locale.isAr ? disease?.arName : disease?.enName;
+    final diseaseStatus = hasDisease ? (diseaseName ?? "---") : "healthy".tr();
     final bgColor = hasDisease
         ? context.cs.errorContainer
         : context.cs.primaryContainer;
     final textColor = hasDisease ? context.cs.error : context.cs.primary;
+    final cropName = locale.isAr ? plant.crop?.nameAr : plant.crop?.nameEn;
     return MainTile(
       child: Column(
         spacing: 16,
@@ -450,9 +469,7 @@ class _PlantsPageState extends State<PlantsPage>
             crossAxisAlignment: .start,
             spacing: 10,
             children: [
-              Expanded(
-                child: Text("${"type".tr()}: ${plant.crop?.nameAr ?? "---"}"),
-              ),
+              Expanded(child: Text("${"type".tr()}: ${cropName ?? "---"}")),
               Expanded(child: Text("${"quantity".tr()}: ${plant.quantity}")),
             ],
           ),
@@ -500,42 +517,6 @@ class _PlantsPageState extends State<PlantsPage>
           child: Icon(icon, color: color, size: 20),
         ),
       ),
-    );
-  }
-
-  Widget _buildCropsDropDown() {
-    return BlocBuilder<CropsCubit, GeneralCropsState>(
-      buildWhen: (_, current) => current is CropsState,
-      builder: (context, state) {
-        if (state is CropsLoading) {
-          return const LoadingIndicator();
-        } else if (state is CropsSuccess) {
-          // final selectedValue = state.crops.firstWhereOrNull(
-          //   (crop) => crop.id == widget.plant?.cropId,
-          // );
-          return MainDropDownWidget(
-            // selectedValue: selectedValue,
-            prefixIcon: Icons.local_florist_outlined,
-            items: state.crops,
-            text: "select_crop_type".tr(),
-            textColor: context.cs.onSurfaceVariant,
-            onChanged: plantsCubit.setCropFilter,
-          );
-        } else if (state is CropsEmpty) {
-          return MainErrorWidget(
-            error: state.message,
-            isRefresh: true,
-            onTryAgainTap: cropsCubit.getCrops,
-          );
-        } else if (state is CropsFail) {
-          return MainErrorWidget(
-            error: state.error,
-            onTryAgainTap: cropsCubit.getCrops,
-          );
-        } else {
-          return const SizedBox.shrink();
-        }
-      },
     );
   }
 }

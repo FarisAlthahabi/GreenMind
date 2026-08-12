@@ -42,19 +42,22 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   late final UserModel user = context.read();
 
-  late final navItems = [
-    PageTitleIconModel(AiChatBotRoute(), "ai_chat_bot".tr(), Icons.chat),
-    PageTitleIconModel(
-      DiagnosingDiseasesRoute(),
-      "diagnosing_diseases".tr(),
-      Icons.medical_services,
-    ),
-  ];
-
-  late final List<PageRouteInfo> routes = navItems.map((e) => e.page).toList();
-
   @override
   Widget build(BuildContext context) {
+    final navItems = [
+      PageTitleIconModel(
+        AiChatBotRoute(),
+        context.tr("ai_chat_bot"),
+        Icons.chat,
+      ),
+      PageTitleIconModel(
+        DiagnosingDiseasesRoute(),
+        context.tr("diagnosing_diseases"),
+        Icons.medical_services,
+      ),
+    ];
+    final List<PageRouteInfo> routes = navItems.map((e) => e.page).toList();
+
     return AutoTabsScaffold(
       drawer: const MainDrawer(),
       appBarBuilder: (context, tabsRouter) => const MainAppBar(),

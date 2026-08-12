@@ -9,12 +9,10 @@ class CropsServiceImp implements CropsService {
     const storagePath = "crops";
     try {
       final prefs = get<SharedPreferences>();
-      bool con = await get<InternetConnectionCubit>().checkInternetConnection();
+      bool hasNet = await get<InternetConnectionCubit>().checkInternet();
       final getCached = prefs.getStringList(storagePath);
-      if (!con && getCached != null) {
+      if (!hasNet && getCached != null) {
         return getCached.map((e) => CropModel.fromString(e)).toList();
-      } else if (!con && getCached == null) {
-        throw "no_internet".tr();
       }
 
       final response = await dio.get("crops");

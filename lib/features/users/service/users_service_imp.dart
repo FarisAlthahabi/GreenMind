@@ -9,12 +9,10 @@ class UsersServiceImp implements UsersService {
     const storagePath = "users";
     try {
       final prefs = get<SharedPreferences>();
-      bool con = await get<InternetConnectionCubit>().checkInternetConnection();
+      bool hasNet = await get<InternetConnectionCubit>().checkInternet();
       final getCached = prefs.getStringList(storagePath);
-      if (!con && getCached != null) {
+      if (!hasNet && getCached != null) {
         return getCached.map((e) => UserModel.fromString(e)).toList();
-      } else if (!con && getCached == null) {
-        throw "no_internet".tr();
       }
 
       final response = await dio.get("users");
@@ -67,20 +65,19 @@ class UsersServiceImp implements UsersService {
   Future<PaginatedModel<AuditLogModel>> getAuditLogs(
     int userId, {
     int page = 1,
+    String? search,
   }) async {
     const storagePath = "audit_logs";
     try {
       final prefs = get<SharedPreferences>();
-      bool con = await get<InternetConnectionCubit>().checkInternetConnection();
+      bool hasNet = await get<InternetConnectionCubit>().checkInternet();
       final getCached = prefs.getString(storagePath);
       fromJson(json) => AuditLogModel.fromJson(json as Map<String, dynamic>);
-      if (!con && getCached != null && page == 1) {
+      if (!hasNet && getCached != null && page == 1) {
         return PaginatedModel.fromString(getCached, fromJson);
-      } else if (!con && (getCached == null || page > 1)) {
-        throw "no_internet".tr();
       }
 
-      final queries = {'user_id': userId, 'page': page};
+      final queries = {'user_id': userId, 'page': page, "search": ?search};
       final response = await dio.get("audit-logs", queries: queries);
       final data = response.data as Map<String, dynamic>;
       final models = PaginatedModel.fromJson(data, fromJson);

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:green_mind/features/auth/model/user_model/user_model.dart';
@@ -5,6 +7,7 @@ import 'package:green_mind/features/users/model/add_user_model/add_user_model.da
 import 'package:green_mind/features/users/model/audit_log_model/audit_log_model.dart';
 import 'package:green_mind/features/users/service/users_service.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
+import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/utils/utils.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
@@ -21,6 +24,9 @@ class UsersCubit extends Cubit<GeneralUsersState> {
 
   List<UserModel> users = [];
   String searchQuery = "";
+  String searchAuditQuery = "";
+
+  Timer? _debounceTimer;
 
   // Audit logs pagination properties
   List<AuditLogModel> auditLogs = [];
@@ -67,6 +73,20 @@ class UsersCubit extends Cubit<GeneralUsersState> {
   void setSearchQuery(String value) {
     searchQuery = value;
     search();
+  }
+
+  void setSearchAuditQuery(String value, int userId) {
+    searchQuery = value;
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(AppConstants.duration1s, () {
+      getAuditLogs(userId, reset: true);
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _debounceTimer?.cancel();
+    return super.close();
   }
 
   Future<void> getUsers() async {
@@ -157,6 +177,7 @@ class UsersCubit extends Cubit<GeneralUsersState> {
       final paginatedLogs = await usersService.getAuditLogs(
         userId,
         page: currentPage,
+        search: searchAuditQuery,
       );
 
       lastPage = paginatedLogs.pagination.lastPage;

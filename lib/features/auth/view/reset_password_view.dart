@@ -73,7 +73,7 @@
 //           physics: const BouncingScrollPhysics(),
 //           child: Column(
 //             spacing: 5,
-//             crossAxisAlignment: CrossAxisAlignment.center,
+//             crossAxisAlignment: .center,
 //             children: [
 //               const SizedBox(height: 60),
 //               _buildImage(),
@@ -98,7 +98,7 @@
 //     //     key: _formKey,
 //     //     child: Column(
 //     //       spacing: 5,
-//     //       crossAxisAlignment: CrossAxisAlignment.center,
+//     //       crossAxisAlignment: .center,
 //     //       children: [
 //     //         const SizedBox(height: 150),
 //     //         _buildTitle(),
@@ -195,7 +195,7 @@
 
 //   Widget _buildGoSignUp() {
 //     return Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
+//       mainAxisAlignment: .center,
 //       children: [
 //         Text("not_have_account".tr()),
 //         GestureDetector(
@@ -204,7 +204,7 @@
 //             "sign_up".tr(),
 //             style: TextStyle(
 //               color: context.cs.primary,
-//               fontWeight: FontWeight.bold,
+//               fontWeight: .bold,
 //             ),
 //           ),
 //         ),

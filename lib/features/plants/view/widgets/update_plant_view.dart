@@ -88,7 +88,13 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
       contentPadding: AppConstants.padding30,
       title: Row(
         mainAxisAlignment: .spaceBetween,
-        children: [Text(title), _buildCloseIcon()],
+        children: [
+          Text(
+            title,
+            style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
+          ),
+          _buildCloseIcon(),
+        ],
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -211,6 +217,7 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
             items: state.crops,
             text: "select_crop_type".tr(),
             onChanged: plantsCubit.setCrop,
+            showAllOption: false,
           );
         } else if (state is CropsEmpty) {
           return MainErrorWidget(
@@ -243,6 +250,7 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
             selectedValue: widget.plant?.disease,
             text: "select_disease_status".tr(),
             onChanged: plantsCubit.setDiseaseId,
+            showAllOption: false,
           );
         } else if (state is DiseasesEmpty) {
           return MainErrorWidget(

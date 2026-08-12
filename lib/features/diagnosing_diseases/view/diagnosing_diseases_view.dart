@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/ai_chat_bot/cubit/ai_chat_bot_cubit.dart';
 import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart';
+import 'package:green_mind/features/diagnosing_diseases/model/diagnose_details_model/diagnose_details_model.dart';
 import 'package:green_mind/features/diagnosing_diseases/model/diagnose_response_model/diagnose_response_model.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
@@ -201,19 +202,16 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
               Text("diagnose_result".tr(), style: context.tt.titleLarge),
               Text("${"discovered_disease".tr()}:"),
               Text(
-                diagnose.diseaseNameTechnical,
-                style: context.tt.headlineMedium?.copyWith(color: primary),
-              ),
-              Text(diagnose.diseaseNameArabic),
-              if (details?.localName.isNotEmpty == true) ...[
-                Text(
-                  "${"local_name".tr()}: ${details?.localName ?? "---"}",
-                  style: context.tt.bodyMedium,
+                diagnose.diseaseNameArabic,
+                style: context.tt.headlineMedium?.copyWith(
+                  color: primary,
+                  fontWeight: .bold,
                 ),
-              ],
+              ),
+              Text("(${diagnose.diseaseNameTechnical})"),
               Padding(
                 padding: AppConstants.paddingH10,
-                child: const Text("grad_cam_image").tr(),
+                child: Text("grad_cam_image".tr(), style: context.tt.bodyLarge),
               ),
               AppImageWidget(
                 url: diagnose.gradCamImagePath,
@@ -285,38 +283,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                 diagnose.treatment,
                 context.cs.primaryContainer,
               ),
-              if (details?.syrianRemedy.isNotEmpty == true) ...[
-                _buildTitleDescription(
-                  "syrian_remedy",
-                  details?.syrianRemedy ?? "---",
-                  context.cs.secondaryContainer,
-                ),
-              ],
-              if (details?.organicAdvice.isNotEmpty == true)
-                _buildTitleDescription(
-                  "organic_advice",
-                  details?.organicAdvice ?? "---",
-                  context.cs.tertiaryContainer,
-                ),
-              if (details?.symptoms.isNotEmpty == true)
-                _buildTitleDescription(
-                  "symptoms",
-                  details?.symptoms ?? "---",
-                  context.cs.errorContainer.withOpacity(0.3),
-                ),
-              if (details?.localTiming.isNotEmpty == true)
-                _buildIconTitleDescription(
-                  Icons.access_time,
-                  "seasonal_timing",
-                  details?.localTiming ?? "---",
-                ),
-              if (details?.officialSource.isNotEmpty == true)
-                _buildIconTitleDescription(
-                  Icons.source,
-                  "source",
-                  details?.officialSource ?? "---",
-                  fontStyle: .italic,
-                ),
+              ?_buildAdditionalInfoTile(details),
               _buildChatBtn(diagnose.diseaseNameArabic),
             ],
           ),
@@ -355,19 +322,104 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
     );
   }
 
-  Widget _buildIconTitleDescription(
-    IconData icon,
-    String title,
-    String description, {
-    FontStyle fontStyle = .normal,
-  }) {
-    return Row(
-      spacing: 8,
+  Widget? _buildAdditionalInfoTile(DiagnoseDetailsModel? details) {
+    if (details == null) return null;
+    return Column(
+      mainAxisSize: .min,
+      crossAxisAlignment: .start,
+      spacing: 5,
       children: [
-        Icon(icon, size: 18, color: context.cs.primary),
         Text(
-          "${title.tr()}: $description",
-          style: context.tt.bodyMedium?.copyWith(fontStyle: fontStyle),
+          "${"additional_info".tr()}:",
+          style: context.tt.titleMedium?.copyWith(fontWeight: .bold),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: context.cs.surfaceContainer,
+                  borderRadius: AppConstants.borderRadius10,
+                ),
+                child: Padding(
+                  padding: AppConstants.padding16,
+                  child: Column(
+                    mainAxisSize: .min,
+                    crossAxisAlignment: .start,
+                    spacing: 12,
+                    children: [
+                      Text.rich(
+                        TextSpan(
+                          text: "${"syrian_remedy".tr()}: ",
+                          children: [
+                            TextSpan(
+                              text: details.syrianRemedy,
+                              style: context.tt.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        style: context.tt.bodyMedium?.copyWith(
+                          fontWeight: .bold,
+                        ),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "${"organic_advice".tr()}: ",
+                          children: [
+                            TextSpan(
+                              text: details.organicAdvice,
+                              style: context.tt.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        style: context.tt.bodyMedium?.copyWith(
+                          fontWeight: .bold,
+                        ),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "${"symptoms".tr()}: ",
+                          children: [
+                            TextSpan(
+                              text: details.symptoms,
+                              style: context.tt.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        style: context.tt.bodyMedium?.copyWith(
+                          fontWeight: .bold,
+                        ),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          text: "${"seasonal_timing".tr()}: ",
+                          children: [
+                            TextSpan(
+                              text: details.localTiming,
+                              style: context.tt.bodyMedium,
+                            ),
+                          ],
+                        ),
+                        style: context.tt.bodyMedium?.copyWith(
+                          fontWeight: .bold,
+                        ),
+                      ),
+                      Row(
+                        spacing: 2,
+                        children: [
+                          Icon(Icons.source_outlined, size: 20),
+                          Text(
+                            details.officialSource,
+                            style: context.tt.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -377,7 +429,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
     return MainActionButton(
       padding: AppConstants.padding16,
       buttonColor: context.cs.surface,
-      border: .all(color: context.cs.primary, width: 1.5),
+      border: .all(color: context.cs.primary, width: 1.3),
       borderRadius: AppConstants.borderRadius20,
       fontWeight: .bold,
       icon: Icon(Icons.chat, size: 20, color: context.cs.primary),

@@ -9,13 +9,11 @@ class ProfileServiceImp implements ProfileService {
   Future<UserModel> getProfile() async {
     try {
       final prefs = get<SharedPreferences>();
-      bool con = await get<InternetConnectionCubit>().checkInternetConnection();
+      bool hasNet = await get<InternetConnectionCubit>().checkInternet();
       final getCached = prefs.getString(storagePath);
 
-      if (!con && getCached != null) {
+      if (!hasNet && getCached != null) {
         return UserModel.fromString(getCached);
-      }else if (!con && getCached == null) {
-        throw "no_internet".tr();
       }
 
       final response = await dio.get("auth/profile");

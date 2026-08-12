@@ -160,6 +160,7 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                     text: "select_status".tr(),
                     onChanged: irrigationScheduleCubit.setStatus,
                     hasSearch: false,
+                    showAllOption: false,
                   ),
                   _buildSchdualesListView(),
                 ],
@@ -256,7 +257,12 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
     final isOverridden = schedule.isManualOverride;
     final isCompleted = schedule.actualDate != null;
     final status = isCompleted ? "completed" : "incomming";
-    final statusColor = isCompleted ? Colors.green : Colors.yellow;
+    final textStatusColor = isCompleted
+        ? context.cs.primary
+        : context.cs.tertiary;
+    final statusColor = isCompleted
+        ? context.cs.primaryContainer
+        : context.cs.tertiaryContainer;
 
     return MainTile(
       child: Column(
@@ -277,13 +283,15 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                 DecoratedBox(
                   decoration: BoxDecoration(
                     borderRadius: AppConstants.borderRadius20,
-                    color: context.cs.primaryContainer,
+                    color: context.cs.tertiaryContainer,
                   ),
                   child: Padding(
                     padding: AppConstants.paddingH12V4,
                     child: Text(
                       "manual_override".tr(),
-                      style: context.tt.bodyMedium,
+                      style: context.tt.bodyMedium?.copyWith(
+                        color: context.cs.tertiary,
+                      ),
                     ),
                   ),
                 ),
@@ -294,7 +302,12 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                 ),
                 child: Padding(
                   padding: AppConstants.paddingH12V4,
-                  child: Text(status.tr(), style: context.tt.bodyMedium),
+                  child: Text(
+                    status.tr(),
+                    style: context.tt.bodyMedium?.copyWith(
+                      color: textStatusColor,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -349,22 +362,23 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                     );
                   },
                 ),
-              BlocBuilder<
-                IrrigationScheduleCubit,
-                GeneralIrrigationScheduleState
-              >(
-                buildWhen: (_, current) => current is UndoIrrigationState,
-                builder: (context, state) {
-                  final bool isLoading = state is UndoIrrigationLoading;
-                  return _buildIconBtn(
-                    Icons.undo,
-                    context.cs.tertiaryContainer,
-                    context.cs.tertiary,
-                    () => onUndoLastIrrigation(schedule),
-                    isLoading: isLoading,
-                  );
-                },
-              ),
+              if (isCompleted)
+                BlocBuilder<
+                  IrrigationScheduleCubit,
+                  GeneralIrrigationScheduleState
+                >(
+                  buildWhen: (_, current) => current is UndoIrrigationState,
+                  builder: (context, state) {
+                    final bool isLoading = state is UndoIrrigationLoading;
+                    return _buildIconBtn(
+                      Icons.undo,
+                      context.cs.tertiaryContainer,
+                      context.cs.tertiary,
+                      () => onUndoLastIrrigation(schedule),
+                      isLoading: isLoading,
+                    );
+                  },
+                ),
               _buildIconBtn(
                 Icons.edit,
                 context.cs.secondaryContainer,
@@ -377,12 +391,11 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
             const Divider(height: 0),
             Row(
               children: [
-                Icon(Icons.note, size: 16, color: context.cs.onSurfaceVariant),
-                const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     "${"notes".tr()}: ${schedule.notes}",
                     style: context.tt.bodyMedium,
+                    textAlign: .center,
                   ),
                 ),
               ],

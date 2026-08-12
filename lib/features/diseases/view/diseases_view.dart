@@ -133,7 +133,6 @@ class _DiseasesPageState extends State<DiseasesPage>
                   } else if (state is DiseasesFail) {
                     return MainErrorWidget(
                       error: state.error,
-                      isRefresh: true,
                       onTryAgainTap: fetchDiseases,
                     );
                   } else {

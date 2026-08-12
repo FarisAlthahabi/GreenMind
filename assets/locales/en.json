@@ -197,5 +197,14 @@
     "recommended_follow_up": "Recommended Follow-up",
     "days": "days",
     "select_health_status": "Select health status",
-    "diseased": "Diseased"
+    "diseased": "Diseased",
+    "search": "search..",
+    "filters": "Filters",
+    "local_name": "Local name",
+    "grad_cam_image": "Visual focus map (Grad-Cam)",
+    "what_are_popular_tomato_diseases": "What are common tomato diseases?",
+    "how_to_treat_late_blight": "How do I treat late blight?",
+    "suitable_potato_irrigation_schedule": "What is the suitable irrigation schedule for potatoes?",
+    "symptoms_of_leaf_spot_disease": "What are the symptoms of leaf spot disease ?",
+    "additional_info" : "Additional Info"
 }

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:green_mind/features/crops/model/add_crop_model/add_crop_model.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';

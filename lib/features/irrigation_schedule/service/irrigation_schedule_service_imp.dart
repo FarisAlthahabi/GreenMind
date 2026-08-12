@@ -12,16 +12,13 @@ class IrrigationScheduleServiceImp implements IrrigationScheduleService {
     const storagePath = "irrigation_schedules";
     try {
       final prefs = get<SharedPreferences>();
-      bool con = await get<InternetConnectionCubit>().checkInternetConnection();
+      bool hasNet = await get<InternetConnectionCubit>().checkInternet();
       final getCached = prefs.getString(storagePath);
       fromJson(json) =>
           IrrigationScheduleModel.fromJson(json as Map<String, dynamic>);
-      if (!con && getCached != null && page == 1) {
+      if (!hasNet && getCached != null && page == 1) {
         return PaginatedModel.fromString(getCached, fromJson);
-      } else if (!con && (getCached == null || page > 1)) {
-        throw "no_internet".tr();
-      }
-
+      } 
       final queries = {'page': page, 'is_irrigated': ?isIrrigated};
       final response = await dio.get("schedule", queries: queries);
       final data = response.data as Map<String, dynamic>;

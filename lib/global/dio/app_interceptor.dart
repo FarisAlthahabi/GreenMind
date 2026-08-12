@@ -13,12 +13,15 @@ class AppInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    if (options.method != "GET") {
-      if (!await get<InternetConnectionCubit>().checkInternetConnection()) {
-        return handler.reject(NoInternetException(requestOptions: options));
-      }
+    // if (options.method != "GET") {
+    if (!await get<InternetConnectionCubit>().hasInternet()) {
+      return handler.reject(NoInternetException(requestOptions: options));
     }
-    options.headers['Accept'] = 'application/json';
+    // }
+
+    if (!options.headers.containsKey('Accept')) {
+      options.headers['Accept'] = 'application/json';
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final locale = prefs.getString('locale') ?? 'ar';

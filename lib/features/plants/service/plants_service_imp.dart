@@ -14,13 +14,11 @@ class PlantsServiceImp implements PlantsService {
     const storagePath = "plants";
     try {
       final prefs = get<SharedPreferences>();
-      bool con = await get<InternetConnectionCubit>().checkInternetConnection();
+      bool hasNet = await get<InternetConnectionCubit>().checkInternet();
       final getCached = prefs.getString(storagePath);
       fromJson(json) => PlantModel.fromJson(json as Map<String, dynamic>);
-      if (!con && getCached != null && page == 1) {
+      if (!hasNet && getCached != null && page == 1) {
         return PaginatedModel.fromString(getCached, fromJson);
-      } else if (!con && (getCached == null || page > 1)) {
-        throw "no_internet".tr();
       }
 
       final queries = {

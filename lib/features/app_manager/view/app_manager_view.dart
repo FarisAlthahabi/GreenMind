@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:green_mind/features/app_manager/cubit/app_manager_cubit.dart';
 import 'package:green_mind/features/auth/model/user_model/user_model.dart';
 import 'package:green_mind/global/di/di.dart';
-import 'package:green_mind/global/widgets/restart_app_widget.dart';
 
 @RoutePage()
 class AppManagerView extends StatelessWidget {
@@ -41,7 +40,7 @@ class _AppManagerPageState extends State<AppManagerPage> {
       //     return const AutoRouter();
       //   },
       // ),
-      child: const RestartAppWidget(child: AutoRouter()),
+      child: const AutoRouter(),
     );
   }
 }

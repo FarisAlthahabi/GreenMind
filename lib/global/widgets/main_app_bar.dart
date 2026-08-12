@@ -37,7 +37,10 @@ class _MainAppBarState extends State<MainAppBar> {
       bottom: widget.bottom,
       title: Text(
         widget.title.tr(),
-        style: context.tt.headlineSmall?.copyWith(fontWeight: .bold),
+        style: context.tt.headlineSmall?.copyWith(
+          fontWeight: .bold,
+          color: context.cs.primary,
+        ),
       ),
       actions: [
         SizedBox(width: 24),

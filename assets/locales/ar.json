@@ -198,5 +198,13 @@
   "recommended_follow_up": "المتابعة الموصى بها",
   "days": "أيام",
   "select_health_status": "اختر الحالة الصحية",
-  "diseased": "مريض"
+  "diseased": "مريض",
+  "search": "ابحث..",
+  "filters": "تصفية النتائج",
+  "grad_cam_image": "خريطة التركيز البصري (Grad-Cam)",
+  "what_are_popular_tomato_diseases": "ما هي أمراض الطماطم الشائعة؟",
+  "how_to_treat_late_blight": "كيف أعالج اللفحة المتأخرة؟",
+  "suitable_potato_irrigation_schedule": "ما هو جدول الري المناسب للبطاطا؟",
+  "symptoms_of_leaf_spot_disease": "ما هي أعراض مرض تبقع الأوراق؟",
+  "additional_info" : "معلومات إضافية"
 }

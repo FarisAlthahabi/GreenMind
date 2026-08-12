@@ -11,6 +11,7 @@ import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_app_bar.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
+import 'package:green_mind/global/widgets/main_text_field.dart';
 
 @RoutePage()
 class AuditLogsView extends StatelessWidget {
@@ -46,78 +47,90 @@ class _AuditLogsPageState extends State<AuditLogsPage> {
       appBar: MainAppBar(title: "audit_logs"),
       body: Padding(
         padding: AppConstants.padding16,
-        child: BlocBuilder<UsersCubit, GeneralUsersState>(
-          buildWhen: (_, current) => current is AuditLogsState,
-          builder: (context, state) {
-            if (state is AuditLogsLoading && usersCubit.auditLogs.isEmpty) {
-              return const Align(child: LoadingIndicator());
-            } else if (state is AuditLogsSuccess) {
-              final logs = state.auditLogs;
-              final hasReachedMax = state.hasReachedMax;
-              final currentPage = state.currentPage;
+        child: Column(
+          children: [
+            MainTextField(
+              hintText: "search",
+              prefixIcon: Icon(Icons.search),
+              onChanged: (value) =>
+                  usersCubit.setSearchAuditQuery(value, widget.userId),
+            ),
+            Expanded(
+              child: BlocBuilder<UsersCubit, GeneralUsersState>(
+                buildWhen: (_, current) => current is AuditLogsState,
+                builder: (context, state) {
+                  if (state is AuditLogsLoading &&
+                      usersCubit.auditLogs.isEmpty) {
+                    return const Align(child: LoadingIndicator());
+                  } else if (state is AuditLogsSuccess) {
+                    final logs = state.auditLogs;
+                    final hasReachedMax = state.hasReachedMax;
+                    final currentPage = state.currentPage;
 
-              return NotificationListener(
-                onNotification: (scrollInfo) {
-                  if (scrollInfo is ScrollUpdateNotification) {
-                    final maxScroll = scrollInfo.metrics.maxScrollExtent;
-                    final currentScroll = scrollInfo.metrics.pixels;
+                    return NotificationListener(
+                      onNotification: (scrollInfo) {
+                        if (scrollInfo is ScrollUpdateNotification) {
+                          final maxScroll = scrollInfo.metrics.maxScrollExtent;
+                          final currentScroll = scrollInfo.metrics.pixels;
 
-                    if (maxScroll > 0 &&
-                        currentScroll >= maxScroll - 200 &&
-                        !usersCubit.isLoadingMore &&
-                        !hasReachedMax) {
-                      usersCubit.loadMoreAuditLogs(widget.userId);
-                    }
-                  }
-                  return true;
-                },
-                child: RefreshIndicator(
-                  onRefresh: () async => fetchAuditLogs(isRefresh: true),
-                  child: SingleChildScrollView(
-                    physics: const BouncingScrollPhysics(),
-                    child: Column(
-                      spacing: 16,
-                      children: AnimationConfiguration.toStaggeredList(
-                        duration: AppConstants.duration500ms,
-                        childAnimationBuilder: (widget) => SlideAnimation(
-                          horizontalOffset: 50.0,
-                          child: FadeInAnimation(child: widget),
-                        ),
-                        children: [
-                          ...logs.map(_buildAuditLogTile),
-                          if (!hasReachedMax && logs.isNotEmpty) ...[
-                            const Padding(
-                              padding: AppConstants.paddingV8,
-                              child: LoadingIndicator(size: 30),
+                          if (maxScroll > 0 &&
+                              currentScroll >= maxScroll - 200 &&
+                              !usersCubit.isLoadingMore &&
+                              !hasReachedMax) {
+                            usersCubit.loadMoreAuditLogs(widget.userId);
+                          }
+                        }
+                        return true;
+                      },
+                      child: RefreshIndicator(
+                        onRefresh: () async => fetchAuditLogs(isRefresh: true),
+                        child: SingleChildScrollView(
+                          physics: const BouncingScrollPhysics(),
+                          child: Column(
+                            spacing: 16,
+                            children: AnimationConfiguration.toStaggeredList(
+                              duration: AppConstants.duration500ms,
+                              childAnimationBuilder: (widget) => SlideAnimation(
+                                horizontalOffset: 50.0,
+                                child: FadeInAnimation(child: widget),
+                              ),
+                              children: [
+                                ...logs.map(_buildAuditLogTile),
+                                if (!hasReachedMax && logs.isNotEmpty) ...[
+                                  const Padding(
+                                    padding: AppConstants.paddingV8,
+                                    child: LoadingIndicator(size: 30),
+                                  ),
+                                ] else if (hasReachedMax &&
+                                    logs.isNotEmpty &&
+                                    currentPage != 1) ...[
+                                  MainErrorWidget(error: 'no_more_data'.tr()),
+                                ],
+                                const SizedBox(height: 35),
+                              ],
                             ),
-                          ] else if (hasReachedMax &&
-                              logs.isNotEmpty &&
-                              currentPage != 1) ...[
-                            MainErrorWidget(error: 'no_more_data'.tr()),
-                          ],
-                          const SizedBox(height: 35),
-                        ],
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-              );
-            } else if (state is AuditLogsEmpty) {
-              return MainErrorWidget(
-                error: state.message,
-                isRefresh: true,
-                onTryAgainTap: () => fetchAuditLogs(isRefresh: true),
-              );
-            } else if (state is AuditLogsFail) {
-              return MainErrorWidget(
-                error: state.error,
-                isRefresh: true,
-                onTryAgainTap: () => fetchAuditLogs(isRefresh: true),
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          },
+                    );
+                  } else if (state is AuditLogsEmpty) {
+                    return MainErrorWidget(
+                      error: state.message,
+                      isRefresh: true,
+                      onTryAgainTap: () => fetchAuditLogs(isRefresh: true),
+                    );
+                  } else if (state is AuditLogsFail) {
+                    return MainErrorWidget(
+                      error: state.error,
+                      onTryAgainTap: () => fetchAuditLogs(isRefresh: true),
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );

@@ -91,7 +91,7 @@
 //           padding: AppConstants.padding16,
 //           child: Column(
 //             spacing: 5,
-//             crossAxisAlignment: CrossAxisAlignment.center,
+//             crossAxisAlignment: .center,
 //             children: [
 //               const SizedBox(height: 60),
 //               _buildImage(),
@@ -115,7 +115,7 @@
 //     // return MainAuthTile(
 //     //   child: Column(
 //     //     spacing: 5,
-//     //     crossAxisAlignment: CrossAxisAlignment.center,
+//     //     crossAxisAlignment: .center,
 //     //     children: [
 //     //       const SizedBox(height: 60),
 //     //       _buildImage(),
@@ -169,7 +169,7 @@
 //           key: _formKey,
 //           child: Row(
 //             spacing: 5,
-//             mainAxisAlignment: MainAxisAlignment.center,
+//             mainAxisAlignment: .center,
 //             children: List.generate(6, (index) {
 //               return Container(
 //                 width: 40,
@@ -238,7 +238,7 @@
 
 //   Widget _buildResend() {
 //     return Row(
-//       mainAxisAlignment: MainAxisAlignment.center,
+//       mainAxisAlignment: .center,
 //       children: [
 //         Text(
 //           "didnt_receive_code".tr(),
@@ -276,7 +276,7 @@
 //     return SingleChildScrollView(
 //       scrollDirection: Axis.horizontal,
 //       child: Row(
-//         mainAxisAlignment: MainAxisAlignment.center,
+//         mainAxisAlignment: .center,
 //         children: [
 //           Text(text1, style: const TextStyle(color: AppColors.black)),
 //           GestureDetector(

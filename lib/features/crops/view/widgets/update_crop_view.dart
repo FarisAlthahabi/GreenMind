@@ -72,7 +72,13 @@ class _UpdateCropWidgetState extends State<UpdateCropWidget> {
       contentPadding: AppConstants.padding30,
       title: Row(
         mainAxisAlignment: .spaceBetween,
-        children: [Text(title), _buildCloseIcon()],
+        children: [
+          Text(
+            title,
+            style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
+          ),
+          _buildCloseIcon(),
+        ],
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -132,7 +138,7 @@ class _UpdateCropWidgetState extends State<UpdateCropWidget> {
                       if (state is UpdateCropLoading) {
                         onTap = () async {};
                         // TODO use color from theme
-                        child =const LoadingIndicator(
+                        child = const LoadingIndicator(
                           isInBtn: true,
                           color: Colors.white,
                         );

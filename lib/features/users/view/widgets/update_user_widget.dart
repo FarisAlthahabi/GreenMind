@@ -71,7 +71,13 @@ class _UpdateUserWidgetState extends State<UpdateUserWidget> {
       contentPadding: AppConstants.padding30,
       title: Row(
         mainAxisAlignment: .spaceBetween,
-        children: [Text(title), _buildCloseIcon()],
+        children: [
+          Text(
+            title,
+            style: context.tt.titleLarge?.copyWith(fontWeight: .bold),
+          ),
+          _buildCloseIcon(),
+        ],
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -105,6 +111,7 @@ class _UpdateUserWidgetState extends State<UpdateUserWidget> {
               items: UserRoleEnum.values
                   .where((role) => !role.isAdmin)
                   .toList(),
+              showAllOption: false,
               text: "select_role".tr(),
               onChanged: usersCubit.setRole,
             ),

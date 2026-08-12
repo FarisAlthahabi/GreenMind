@@ -9,23 +9,29 @@ part 'internet_connection_state.dart';
 class InternetConnectionCubit extends Cubit<InternetConnectionState> {
   InternetConnectionCubit() : super(InternetConnectionInitial());
 
-  Future<bool> checkInternetConnection() async {
+  Future<bool> hasInternet() async {
     bool isConnected = false;
-    emit(CheckInternetLoading());
     try {
-      final List<ConnectivityResult> result =
-          await (Connectivity().checkConnectivity());
+      final result = await (Connectivity().checkConnectivity());
       if (result.isNotEmpty && !result.contains(ConnectivityResult.none)) {
         isConnected = true;
-        emit(InternetConnectedState("انت الان متصل بالانترنت"));
       } else {
         isConnected = false;
-        emit(InternetDisconnectedState("أنت الان بدون اتصال بالانترنت"));
       }
     } catch (e) {
       isConnected = false;
-      emit(CheckInternetFail(e.toString()));
     }
     return isConnected;
+  }
+
+  Future<bool> checkInternet() async {
+    emit(CheckInternetLoading());
+    final hasNet = await hasInternet();
+    if (hasNet) {
+      emit(InternetConnectedState("انت الان متصل بالانترنت"));
+    } else {
+      emit(InternetDisconnectedState("أنت الان بدون اتصال بالانترنت"));
+    }
+    return hasNet;
   }
 }
