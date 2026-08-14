@@ -5,7 +5,6 @@ import 'package:green_mind/features/irrigation_schedule/cubit/irrigation_schedul
 import 'package:green_mind/features/irrigation_schedule/model/irrigation_schedule_model/irrigation_schedule_model.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
-import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
 import 'package:green_mind/global/widgets/main_date_picker.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
@@ -119,25 +118,14 @@ class _RescheduleIrrigationWidgetState
                           }
                         },
                         builder: (context, state) {
-                          var onTap = () => scheduleCubit.rescheduleIrrigation(
-                            widget.schedule.id,
-                          );
-                          Widget? child;
-                          if (state is RescheduleIrrigationLoading) {
-                            onTap = () async {};
-                            // TODO use color from theme
-                            child = const LoadingIndicator(
-                              isInBtn: true,
-                              color: Colors.white,
-                            );
-                          }
                           return MainActionButton(
                             padding: AppConstants.padding16,
-                            textColor: Colors.white,
                             fontWeight: .bold,
-                            onPressed: () => onTap(),
+                            onPressed: () => scheduleCubit.rescheduleIrrigation(
+                              widget.schedule.id,
+                            ),
                             text: "save".tr(),
-                            child: child,
+                            isLoading: state is RescheduleIrrigationLoading,
                           );
                         },
                       ),

@@ -1,7 +1,10 @@
 part of '../diagnosing_diseases_cubit.dart';
 
 @immutable
-class DiagnosingDiseasesState extends GeneralDiagnosingDiseasesState {}
+class DiagnosingDiseasesState extends GeneralDiagnosingDiseasesState {
+  @override
+  List<Object?> get props => [];
+}
 
 final class DiagnosingDiseasesInitial extends DiagnosingDiseasesState {}
 

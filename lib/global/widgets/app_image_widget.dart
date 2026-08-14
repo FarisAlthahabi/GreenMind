@@ -15,7 +15,7 @@ class AppImageWidget extends StatelessWidget {
     this.shadows,
     this.errorWidget,
     this.onImageLoaded,
-    this.padding = AppConstants.padding0,
+    this.padding = AppConstants.padding0, this.bgColor,
   });
 
   final String? url;
@@ -27,6 +27,7 @@ class AppImageWidget extends StatelessWidget {
   final List<BoxShadow>? shadows;
   final EdgeInsets padding;
   final Widget? errorWidget;
+  final Color? bgColor;
   final void Function(ImageProvider)? onImageLoaded;
 
   @override
@@ -40,6 +41,7 @@ class AppImageWidget extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: borderRadius,
         border: border,
+        color: bgColor,
         boxShadow: [...?shadows],
       ),
       child: ClipRRect(

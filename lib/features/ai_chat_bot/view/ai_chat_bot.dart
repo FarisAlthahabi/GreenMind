@@ -194,7 +194,6 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
           return _buildEmptyState();
         }
         if (state is ChatMessagesSuccess) {
-          // return FlutterLogo();
           return _buildMessagesList(state.messages);
         } else {
           return const SizedBox.shrink();
@@ -264,7 +263,12 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
                               ),
                             ),
                             child: Center(
-                              child: Text(text.tr(), textAlign: .center),
+                              child: Text(
+                                text.tr(),
+                                textAlign: .center,
+                                maxLines: 2,
+                                overflow: .ellipsis,
+                              ),
                             ),
                           ),
                         ),

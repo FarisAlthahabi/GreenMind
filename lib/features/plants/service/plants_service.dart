@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:green_mind/features/plants/model/add_plant_model/add_plant_model.dart';
+import 'package:green_mind/features/plants/model/mark_harvested_model/mark_harvested_model.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/global/blocs/internet_connection/cubit/internet_connection_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
@@ -14,6 +15,7 @@ part 'plants_service_imp.dart';
 abstract class PlantsService {
   Future<PaginatedModel<PlantModel>> getPlants({
     int page = 1,
+    required int perPage,
     String? search,
     int? cropId,
     bool? isHealthy,
@@ -21,6 +23,6 @@ abstract class PlantsService {
   Future<PlantModel> getPlant(int id);
   Future<PlantModel> updatePlant(AddPlantModel plant, {int? id});
   // Future<PlantModel> updateDiseaseStatus(int id, {int? diseaseId});
-  Future<PlantModel> markAsHarvested(int id);
-  Future<PlantModel> undoHarvest(int id);
+  Future<PlantModel> markAsHarvested(int id,MarkHarvestedModel model);
+  // Future<PlantModel> undoHarvest(int id);
 }

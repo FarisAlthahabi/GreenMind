@@ -191,7 +191,7 @@
 
 //   // Widget _buildAnotherLoginTypes() {
 //   //   return Row(
-//   //     mainAxisSize: MainAxisSize.min,
+//   //     mainAxisSize: .min,
 //   //     spacing: 20,
 //   //     children: LoginAnotherWayEnum.values.map((way) {
 //   //       return SvgPicture.asset(way.icon);

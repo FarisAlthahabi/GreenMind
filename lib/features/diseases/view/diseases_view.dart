@@ -47,7 +47,6 @@ class DiseasesPage extends StatefulWidget {
 class _DiseasesPageState extends State<DiseasesPage>
     implements DiseasesViewCallBacks {
   late final DiseasesCubit diseasesCubit = context.read();
-  late final locale = context.locale;
 
   @override
   void initState() {
@@ -80,6 +79,7 @@ class _DiseasesPageState extends State<DiseasesPage>
   @override
   Widget build(BuildContext context) {
     final role = Utils.userRole;
+    final locale = context.locale;
     return Scaffold(
       appBar: const MainAppBar(title: "diseases"),
       drawer: const MainDrawer(),
@@ -116,7 +116,8 @@ class _DiseasesPageState extends State<DiseasesPage>
                             ),
                             children: [
                               ...diseases.map(
-                                (disease) => _buildDiseaseTile(disease, role),
+                                (disease) =>
+                                    _buildDiseaseTile(disease, role, locale),
                               ),
                               const SizedBox(height: 50),
                             ],
@@ -148,7 +149,11 @@ class _DiseasesPageState extends State<DiseasesPage>
     );
   }
 
-  Widget _buildDiseaseTile(DiseaseModel disease, UserRoleEnum role) {
+  Widget _buildDiseaseTile(
+    DiseaseModel disease,
+    UserRoleEnum role,
+    Locale locale,
+  ) {
     final name = locale.isAr ? disease.arName : disease.enName;
     return MainTile(
       child: Column(

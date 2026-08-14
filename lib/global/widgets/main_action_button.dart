@@ -3,7 +3,7 @@ import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 
-class MainActionButton extends StatefulWidget {
+class MainActionButton extends StatelessWidget {
   const MainActionButton({
     super.key,
     required this.onPressed,
@@ -46,47 +46,43 @@ class MainActionButton extends StatefulWidget {
   final bool isLoading;
 
   @override
-  State<MainActionButton> createState() => _MainActionButtonState();
-}
-
-class _MainActionButtonState extends State<MainActionButton> {
-  @override
   Widget build(BuildContext context) {
     final textWidget = Text(
-      widget.text,
+      text,
       style: context.tt.bodyLarge?.copyWith(
-        color: widget.textColor ?? context.cs.onPrimary,
-        fontSize: widget.fontSize,
-        fontWeight: widget.fontWeight,
+        color: textColor ?? context.cs.onPrimary,
+        fontSize: fontSize,
+        fontWeight: fontWeight,
       ),
       textAlign: .center,
       overflow: .ellipsis,
     );
-    final buildText = widget.isExpandText
-        ? Expanded(child: textWidget)
-        : textWidget;
-    final icon = widget.icon;
+    final buildText = isExpandText ? Expanded(child: textWidget) : textWidget;
+    final icon = this.icon;
     return InkWell(
-      onTap: widget.isLoading ? null : widget.onPressed,
+      onTap: isLoading ? null : onPressed,
       child: Container(
-        height: widget.height,
-        width: widget.width,
-        margin: widget.margin,
-        padding: widget.padding,
+        height: height,
+        width: width,
+        margin: margin,
+        padding: padding,
         decoration: BoxDecoration(
-          border: widget.border,
-          color: widget.buttonColor ?? context.cs.primary,
-          borderRadius: widget.borderRadius,
-          boxShadow: widget.shadow,
+          border: border,
+          color: buttonColor ?? context.cs.primary,
+          borderRadius: borderRadius,
+          boxShadow: shadow,
         ),
         child: Center(
-          child: widget.isLoading
-              ? LoadingIndicator(size: 25, color: context.cs.onPrimary)
+          child: isLoading
+              ? LoadingIndicator(
+                  size: 25,
+                  color: textColor ?? context.cs.onPrimary,
+                )
               : Row(
                   mainAxisSize: .min,
                   children: [
                     if (icon != null) ...[icon, const SizedBox(width: 5)],
-                    widget.child ?? buildText,
+                    child ?? buildText,
                   ],
                 ),
         ),

@@ -1,16 +1,16 @@
 import 'dart:convert';
-import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
 import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
+import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'plant_model.g.dart';
 
 @JsonSerializable()
 @immutable
-class PlantModel extends Equatable implements DeleteModel {
+class PlantModel implements DropDownItemModel, DeleteModel {
   const PlantModel({
     required this.id,
     this.userId,
@@ -18,6 +18,7 @@ class PlantModel extends Equatable implements DeleteModel {
     required this.name,
     this.plantingDate,
     this.harvestDate,
+    this.baseIrrigationDays,
     this.quantity,
     this.healthStatus,
     this.notes,
@@ -29,6 +30,7 @@ class PlantModel extends Equatable implements DeleteModel {
     this.disease,
   });
 
+  @override
   final int id;
 
   @JsonKey(name: "user_id")
@@ -47,6 +49,9 @@ class PlantModel extends Equatable implements DeleteModel {
 
   @JsonKey(name: "harvest_date")
   final String? harvestDate;
+
+  @JsonKey(name: "base_irrigation_days")
+  final int? baseIrrigationDays;
 
   final int? quantity;
 
@@ -90,6 +95,7 @@ class PlantModel extends Equatable implements DeleteModel {
     String? harvestDate,
     int? quantity,
     String? healthStatus,
+    int? baseIrrigationDays,
     String? notes,
     String? createdAt,
     String? updatedAt,
@@ -105,6 +111,7 @@ class PlantModel extends Equatable implements DeleteModel {
       harvestDate: harvestDate ?? this.harvestDate,
       quantity: quantity ?? this.quantity,
       healthStatus: healthStatus ?? this.healthStatus,
+      baseIrrigationDays: baseIrrigationDays ?? this.baseIrrigationDays,
       notes: notes ?? this.notes,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
@@ -118,4 +125,13 @@ class PlantModel extends Equatable implements DeleteModel {
 
   @override
   List<Object?> get props => [id];
+
+  @override
+  String? get description => null;
+
+  @override
+  String get displayName => name;
+
+  @override
+  bool? get stringify => null;
 }

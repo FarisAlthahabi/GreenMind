@@ -5,7 +5,6 @@ import 'package:green_mind/features/crops/cubit/crops_cubit.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
-import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
 import 'package:green_mind/global/widgets/main_counter_widget.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
@@ -133,23 +132,13 @@ class _UpdateCropWidgetState extends State<UpdateCropWidget> {
                       }
                     },
                     builder: (context, state) {
-                      var onTap = () => cropsCubit.updateCrop(id: crop?.id);
-                      Widget? child;
-                      if (state is UpdateCropLoading) {
-                        onTap = () async {};
-                        // TODO use color from theme
-                        child = const LoadingIndicator(
-                          isInBtn: true,
-                          color: Colors.white,
-                        );
-                      }
                       return MainActionButton(
                         padding: AppConstants.padding16,
                         textColor: Colors.white,
                         fontWeight: .bold,
-                        onPressed: () => onTap(),
+                        onPressed: () => cropsCubit.updateCrop(id: crop?.id),
                         text: "save".tr(),
-                        child: child,
+                        isLoading: state is UpdateCropLoading,
                       );
                     },
                   ),

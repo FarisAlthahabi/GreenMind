@@ -11,8 +11,9 @@ class DiagnoseModel {
     required this.id,
     this.userId,
     this.plantId,
-    required this.diseaseNameTechnical,
-    required this.diseaseNameArabic,
+    required this.nameTechnical,
+    required this.nameEn,
+    required this.nameAr,
     required this.confidencePercentage,
     required this.originalImagePath,
     required this.gradCamImagePath,
@@ -20,6 +21,7 @@ class DiagnoseModel {
     required this.createdAt,
     required this.updatedAt,
     this.plant,
+    this.user,
   });
 
   final int id;
@@ -31,10 +33,13 @@ class DiagnoseModel {
   final int? plantId;
 
   @JsonKey(name: "disease_name_technical")
-  final String diseaseNameTechnical;
+  final String nameTechnical;
+
+  @JsonKey(name: "disease_name_english")
+  final String nameEn;
 
   @JsonKey(name: "disease_name_arabic")
-  final String diseaseNameArabic;
+  final String nameAr;
 
   @JsonKey(name: "confidence_percentage")
   final String confidencePercentage;
@@ -54,6 +59,7 @@ class DiagnoseModel {
   final String updatedAt;
 
   final DiagnosePlantModel? plant;
+  final DiagnosePlantModel? user;
 
   factory DiagnoseModel.fromJson(Map<String, dynamic> json) =>
       _$DiagnoseModelFromJson(json);
@@ -73,8 +79,9 @@ class DiagnoseModel {
     int? id,
     int? userId,
     int? plantId,
-    String? diseaseNameTechnical,
-    String? diseaseNameArabic,
+    String? nameTechnical,
+    String? nameEn,
+    String? nameAr,
     String? confidencePercentage,
     String? originalImagePath,
     String? gradCamImagePath,
@@ -82,13 +89,15 @@ class DiagnoseModel {
     String? createdAt,
     String? updatedAt,
     DiagnosePlantModel? plant,
+    DiagnosePlantModel? user,
   }) {
     return DiagnoseModel(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       plantId: plantId ?? this.plantId,
-      diseaseNameTechnical: diseaseNameTechnical ?? this.diseaseNameTechnical,
-      diseaseNameArabic: diseaseNameArabic ?? this.diseaseNameArabic,
+      nameTechnical: nameTechnical ?? this.nameTechnical,
+      nameEn: nameEn ?? this.nameEn,
+      nameAr: nameAr ?? this.nameAr,
       confidencePercentage: confidencePercentage ?? this.confidencePercentage,
       originalImagePath: originalImagePath ?? this.originalImagePath,
       gradCamImagePath: gradCamImagePath ?? this.gradCamImagePath,
@@ -96,6 +105,7 @@ class DiagnoseModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       plant: plant ?? this.plant,
+      user: user ?? this.user,
     );
   }
 }
@@ -112,4 +122,13 @@ class DiagnosePlantModel {
       _$DiagnosePlantModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$DiagnosePlantModelToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
+  }
+
+  factory DiagnosePlantModel.fromString(String jsonString) {
+    return DiagnosePlantModel.fromJson(json.decode(jsonString));
+  }
 }

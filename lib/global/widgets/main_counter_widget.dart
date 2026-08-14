@@ -53,6 +53,7 @@ class _MainCounterWidgetState extends State<MainCounterWidget> {
       }
       if (widget.maxCount != null && newValue > widget.maxCount!) {
         newValue = widget.maxCount!;
+        controller.text = newValue.toString();
       }
 
       if (newValue != counter) {

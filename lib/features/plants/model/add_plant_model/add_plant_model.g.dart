@@ -12,6 +12,7 @@ AddPlantModel _$AddPlantModelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String?,
       plantingDate: json['planting_date'] as String?,
       harvestDate: json['harvest_date'] as String?,
+      baseIrrigationDays: (json['base_irrigation_days'] as num?)?.toInt(),
       quantity: (json['quantity'] as num?)?.toInt(),
       diseaseId: (json['disease_id'] as num?)?.toInt(),
       notes: json['notes'] as String?,
@@ -19,11 +20,12 @@ AddPlantModel _$AddPlantModelFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$AddPlantModelToJson(AddPlantModel instance) =>
     <String, dynamic>{
-      'crop_id': instance.cropId,
-      'name': instance.name,
-      'planting_date': instance.plantingDate,
-      'harvest_date': instance.harvestDate,
-      'disease_id': instance.diseaseId,
-      'quantity': instance.quantity,
-      'notes': instance.notes,
+      'crop_id': ?instance.cropId,
+      'name': ?instance.name,
+      'planting_date': ?instance.plantingDate,
+      'harvest_date': ?instance.harvestDate,
+      'base_irrigation_days': ?instance.baseIrrigationDays,
+      'disease_id': ?instance.diseaseId,
+      'quantity': ?instance.quantity,
+      'notes': ?instance.notes,
     };

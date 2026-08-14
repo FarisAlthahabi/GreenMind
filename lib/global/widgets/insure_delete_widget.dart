@@ -5,7 +5,6 @@ import 'package:green_mind/global/blocs/delete_cubit/cubit/delete_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
-import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 
@@ -114,21 +113,15 @@ class _InsureDeleteViewState<T extends DeleteModel>
                     }
                   },
                   builder: (context, state) {
-                    var onTap = onDelete;
-                    Widget? child;
-                    if (state is DeleteLoading) {
-                      onTap = () {};
-                      child = const LoadingIndicator(isInBtn: true);
-                    }
                     return MainActionButton(
                       padding: AppConstants.padding16,
                       buttonColor: context.cs.error,
                       // TODO color from theme
                       textColor: Colors.white,
                       fontWeight: .bold,
-                      onPressed: () => onTap(),
+                      onPressed: () => onDelete(),
                       text: "save".tr(),
-                      child: child,
+                      isLoading: state is DeleteLoading,
                     );
                   },
                 ),

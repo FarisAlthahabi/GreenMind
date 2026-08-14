@@ -9,6 +9,7 @@ import 'package:green_mind/features/stats/cubit/stats_cubit.dart';
 import 'package:green_mind/features/stats/model/diagnose_count_model/diagnose_count_model.dart';
 import 'package:green_mind/features/stats/model/kpis_model/kpis_model.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/extensions/locale_x.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
@@ -356,8 +357,10 @@ class LastDiagnosisCard extends StatefulWidget {
 }
 
 class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
+  
   @override
   Widget build(BuildContext context) {
+    final locale = context.locale;
     final items = widget.diagnosis;
     final headerTitles = ["date", "plant", "disease", "accuracy"];
     return Center(
@@ -391,6 +394,7 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
                     .toList(),
                 rows: List.generate(items.length, (index) {
                   final item = items[index];
+                  final name = locale.isAr ? item.nameAr : item.nameEn;
                   final percent =
                       (double.tryParse(item.confidencePercentage) ?? 0.00);
                   final valueColor = percent < 50
@@ -418,7 +422,7 @@ class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
                             borderRadius: AppConstants.borderRadius15,
                           ),
                           child: Text(
-                            item.diseaseNameArabic,
+                            name,
                             style: context.tt.bodyMedium?.copyWith(
                               color: color,
                             ),

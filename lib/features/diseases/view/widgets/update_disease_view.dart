@@ -5,7 +5,6 @@ import 'package:green_mind/features/diseases/cubit/diseases_cubit.dart';
 import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
-import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
@@ -132,23 +131,13 @@ class _UpdateDiseaseWidgetState extends State<UpdateDiseaseWidget> {
                       }
                     },
                     builder: (context, state) {
-                      var onTap = () =>
-                          diseasesCubit.updateDisease(id: disease?.id);
-                      Widget? child;
-                      if (state is UpdateDiseaseLoading) {
-                        onTap = () async {};
-                        child = const LoadingIndicator(
-                          isInBtn: true,
-                          color: Colors.white,
-                        );
-                      }
                       return MainActionButton(
                         padding: AppConstants.padding16,
-                        textColor: Colors.white,
                         fontWeight: .bold,
-                        onPressed: () => onTap(),
+                        onPressed: () =>
+                            diseasesCubit.updateDisease(id: disease?.id),
                         text: "save".tr(),
-                        child: child,
+                        isLoading: state is UpdateDiseaseLoading,
                       );
                     },
                   ),

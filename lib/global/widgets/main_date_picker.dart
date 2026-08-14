@@ -60,8 +60,14 @@ class _MainDatePickerState extends State<MainDatePicker> {
     super.initState();
     if (widget.initialDate != null) {
       selectedDate = DateTime.tryParse(widget.initialDate!);
-      widget.onDateInitialSelected?.call(selectedDate);
     }
+  }
+
+  void setDate(DateTime? date) {
+    setState(() {
+      selectedDate = date;
+    });
+    widget.onDateSelected(date);
   }
 
   Future<void> onPickDate() async {
@@ -70,10 +76,7 @@ class _MainDatePickerState extends State<MainDatePicker> {
       firstDate: widget.firstDate ?? DateTime(2000),
       lastDate: widget.lastDate ?? DateTime(3000),
     );
-    setState(() {
-      selectedDate = date;
-    });
-    widget.onDateSelected(date);
+    if (date != null) setDate(date);
   }
 
   @override
@@ -114,10 +117,7 @@ class _MainDatePickerState extends State<MainDatePicker> {
                 children: [
                   InkWell(
                     onTap: onPickDate,
-                    child: const Icon(
-                      Icons.date_range,
-                      // color: AppColors.black,
-                    ),
+                    child: const Icon(Icons.date_range),
                   ),
                   const SizedBox(width: 12),
                   if (selectedDate?.formatYYYYMMDD != null)
@@ -126,6 +126,11 @@ class _MainDatePickerState extends State<MainDatePicker> {
                     child: Text(selectedDate?.formatYYYYMMDD ?? hintText.tr()),
                   ),
                   ?widget.suffix,
+                  if (selectedDate != null)
+                    InkWell(
+                      onTap: () => setDate(null),
+                      child: Icon(Icons.close),
+                    ),
                 ],
               ),
             ),

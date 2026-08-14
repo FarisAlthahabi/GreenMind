@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/widgets/insure_delete_widget.dart';
+import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
 @immutable
-class UserModel implements DeleteModel {
+class UserModel implements DeleteModel,DropDownItemModel {
   const UserModel({
     required this.id,
     required this.username,
@@ -21,7 +22,9 @@ class UserModel implements DeleteModel {
     this.role = UserRoleEnum.engineer,
   });
 
+  @override
   final int id;
+  
   final String username;
   // final String? email;
   final String name;
@@ -57,4 +60,16 @@ class UserModel implements DeleteModel {
 
   @override
   String get apiDeleteUrl => "users/$id";
+
+  @override
+  String? get description => null;
+
+  @override
+  String get displayName => name;
+
+  @override
+  List<Object?> get props => [id];
+
+  @override
+  bool? get stringify => null;
 }

@@ -11,14 +11,14 @@ part 'diagnose_response_model.g.dart';
 class DiagnoseResponseModel {
   const DiagnoseResponseModel({
     required this.diagnosis,
-    required this.recommendedIntervalDays,
+    required this.recommendation,
     this.details,
   });
 
   final DiagnoseModel diagnosis;
 
-  @JsonKey(name: "recommended_interval_days")
-  final int recommendedIntervalDays;
+  @JsonKey(name: "schedule_recommendation")
+  final ScheduleRecommendationModel recommendation;
 
   final DiagnoseDetailsModel? details;
 
@@ -38,13 +38,41 @@ class DiagnoseResponseModel {
 
   DiagnoseResponseModel copyWith({
     DiagnoseModel? diagnosis,
-    int? recommendedIntervalDays,
+    ScheduleRecommendationModel? recommendation,
     DiagnoseDetailsModel? details,
   }) {
     return DiagnoseResponseModel(
       diagnosis: diagnosis ?? this.diagnosis,
-      recommendedIntervalDays: recommendedIntervalDays ?? this.recommendedIntervalDays,
+      recommendation: recommendation ?? this.recommendation,
       details: details ?? this.details,
     );
+  }
+}
+
+@JsonSerializable()
+@immutable
+class ScheduleRecommendationModel {
+  const ScheduleRecommendationModel({
+    required this.intervalDays,
+    required this.reason,
+  });
+
+  @JsonKey(name: "recommended_interval_days")
+  final int intervalDays;
+
+  final String reason;
+
+  factory ScheduleRecommendationModel.fromJson(Map<String, dynamic> json) =>
+      _$ScheduleRecommendationModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$ScheduleRecommendationModelToJson(this);
+
+  @override
+  String toString() {
+    return jsonEncode(toJson());
+  }
+
+  factory ScheduleRecommendationModel.fromString(String jsonString) {
+    return ScheduleRecommendationModel.fromJson(json.decode(jsonString));
   }
 }

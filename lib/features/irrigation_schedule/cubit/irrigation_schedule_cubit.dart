@@ -1,10 +1,14 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:green_mind/features/irrigation_schedule/model/complete_irrigation_model/complete_irrigation_model.dart';
 import 'package:green_mind/features/irrigation_schedule/model/irrigation_schedule_model/irrigation_schedule_model.dart';
 import 'package:green_mind/features/irrigation_schedule/service/irrigation_schedule_service.dart';
 import 'package:green_mind/features/irrigation_schedule/view/irrigation_schedule_view.dart';
+import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/global/extensions/date_x.dart';
+import 'package:green_mind/global/utils/constants.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 
@@ -22,7 +26,10 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
 
   List<IrrigationScheduleModel> schedules = [];
   String searchQuery = "";
+  Timer? _debounceTimer;
   IrrigationScheduleStatus selectedStatus = IrrigationScheduleStatus.all;
+  PlantModel? plantFilter;
+  DateTime? recommendedDateFilter;
 
   // Pagination properties
   int currentPage = 1;
@@ -32,32 +39,51 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
 
   DateTime? newScheduleDate;
 
+  // void setSearchQuery(String value) {
+  //   searchQuery = value;
+  //   search();
+  // }
+
   void setSearchQuery(String value) {
     searchQuery = value;
-
-    // currentPage = 1;
-    // hasReachedMax = false;
-    // schedules.clear();
-
-    search();
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(AppConstants.duration1s, () {
+      getIrrigationSchedules(reset: true);
+    });
   }
 
   void setStatus(IrrigationScheduleStatus? status) {
     if (status != null) {
       selectedStatus = status;
-      _resetAndRefresh();
+      getIrrigationSchedules(reset: true);
     }
   }
 
-  void _resetAndRefresh() {
-    currentPage = 1;
-    hasReachedMax = false;
-    schedules.clear();
+  void setPlantFilter(PlantModel? plant) {
+    plantFilter = plant;
+    getIrrigationSchedules(reset: true);
+  }
+
+  void setRecommendedDateFilter(DateTime? recommendedDate) {
+    recommendedDateFilter = recommendedDate;
+    getIrrigationSchedules(reset: true);
+  }
+
+  void clearFilters() {
+    selectedStatus = .all;
+    plantFilter = null;
+    recommendedDateFilter = null;
     getIrrigationSchedules(reset: true);
   }
 
   void setNewScheduleDate(DateTime? date) {
     newScheduleDate = date;
+  }
+
+  @override
+  Future<void> close() {
+    _debounceTimer?.cancel();
+    return super.close();
   }
 
   Future<void> getIrrigationSchedules({bool reset = false}) async {
@@ -77,6 +103,9 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
 
       final paginatedSchedules = await service.getIrrigationSchedules(
         page: currentPage,
+        search: searchQuery,
+        plantId: plantFilter?.id,
+        recommendedDate: recommendedDateFilter?.formatYYYYMMDD,
         isIrrigated: selectedStatus.isIrrigated,
       );
 
@@ -94,7 +123,7 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
       }
 
       isLoadingMore = false;
-      search();
+      emitInventories();
     } catch (e) {
       isLoadingMore = false;
       if (isClosed) return;
@@ -117,7 +146,7 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
       emit(MarkCompletedSuccess("action_done".tr(), data));
       updateLocalSchedule(data.completedSchedule);
       addLocalSchedule(data.nextSchedule);
-      search();
+      emitInventories();
     } catch (e) {
       if (isClosed) return;
       emit(MarkCompletedFail(e.toString()));
@@ -130,7 +159,7 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
     try {
       await service.undoLastIrrigation(plantId);
       emit(UndoIrrigationSuccess("action_done".tr()));
-      getIrrigationSchedules();
+      getIrrigationSchedules(reset: true);
     } catch (e) {
       if (isClosed) return;
       emit(UndoIrrigationFail(e.toString()));
@@ -151,7 +180,7 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
       );
       emit(RescheduleIrrigationSuccess("action_done".tr(), data));
       updateLocalSchedule(data);
-      search();
+      emitInventories();
     } catch (e) {
       if (isClosed) return;
       emit(RescheduleIrrigationFail(e.toString()));
@@ -167,10 +196,10 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
     schedules[index] = schedule;
   }
 
-  void search() {
+  void emitInventories() {
     if (schedules.isEmpty) {
-      emit(IrrigationScheduleEmpty("no_irrigation_schedules".tr()));
-    } else if (searchQuery.isEmpty) {
+      emit(IrrigationScheduleEmpty("no_schedules_found".tr()));
+    } else {
       emit(
         IrrigationScheduleSuccess(
           schedules,
@@ -178,29 +207,43 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
           currentPage: currentPage,
         ),
       );
-    } else {
-      final filtered = schedules.where((schedule) {
-        // Search by recommended date or plant name if available
-        final dateMatch = schedule.recommendedDate.contains(searchQuery);
-        final plantMatch =
-            schedule.plant?.name.toLowerCase().contains(
-              searchQuery.toLowerCase(),
-            ) ??
-            false;
-        return dateMatch || plantMatch;
-      }).toList();
-
-      if (filtered.isEmpty) {
-        emit(IrrigationScheduleEmpty("no_schedules_found".tr()));
-      } else {
-        emit(
-          IrrigationScheduleSuccess(
-            filtered,
-            hasReachedMax: hasReachedMax,
-            currentPage: currentPage,
-          ),
-        );
-      }
     }
   }
+
+  // void search() {
+  //   if (schedules.isEmpty) {
+  //     emit(IrrigationScheduleEmpty("no_irrigation_schedules".tr()));
+  //   } else if (searchQuery.isEmpty) {
+  //     emit(
+  //       IrrigationScheduleSuccess(
+  //         schedules,
+  //         hasReachedMax: hasReachedMax,
+  //         currentPage: currentPage,
+  //       ),
+  //     );
+  //   } else {
+  //     final filtered = schedules.where((schedule) {
+  //       // Search by recommended date or plant name if available
+  //       final dateMatch = schedule.recommendedDate.contains(searchQuery);
+  //       final plantMatch =
+  //           schedule.plant?.name.toLowerCase().contains(
+  //             searchQuery.toLowerCase(),
+  //           ) ??
+  //           false;
+  //       return dateMatch || plantMatch;
+  //     }).toList();
+
+  //     if (filtered.isEmpty) {
+  //       emit(IrrigationScheduleEmpty("no_schedules_found".tr()));
+  //     } else {
+  //       emit(
+  //         IrrigationScheduleSuccess(
+  //           filtered,
+  //           hasReachedMax: hasReachedMax,
+  //           currentPage: currentPage,
+  //         ),
+  //       );
+  //     }
+  //   }
+  // }
 }

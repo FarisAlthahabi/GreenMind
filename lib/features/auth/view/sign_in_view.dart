@@ -41,6 +41,10 @@ class _SignInPageState extends State<SignInPage>
 
   @override
   void onForgetPasswordTap() {
+    MainSnackBar.showMessage(
+      context,
+      "please_contact_admin_to_get_new_password",
+    );
     //context.router.push(const ForgetPasswordRoute());
   }
 
@@ -181,7 +185,7 @@ class _SignInPageState extends State<SignInPage>
 
   // Widget _buildAnotherLoginTypes() {
   //   return Row(
-  //     mainAxisSize: MainAxisSize.min,
+  //     mainAxisSize: .min,
   //     spacing: 20,
   //     children: LoginAnotherWayEnum.values.map((way) {
   //       return SvgPicture.asset(way.icon);

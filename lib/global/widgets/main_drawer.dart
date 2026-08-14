@@ -115,6 +115,21 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
         "irrigation_schedules",
         IrrigationScheduleRoute(),
       ),
+      const DrawerTabModel(
+        Icons.medical_services_outlined,
+        "diagnoses_record",
+        DiagnosesRoute(),
+      ),
+      const DrawerTabModel(
+        Icons.inventory_2_outlined,
+        "inventory",
+        InventoryRoute(),
+      ),
+      const DrawerTabModel(
+        Icons.transfer_within_a_station_outlined,
+        "inventory_activities",
+        InventoryActivityRoute(),
+      ),
       if (!role.isFarmer)
         const DrawerTabModel(Icons.group_outlined, "users", UsersRoute()),
       const DrawerTabModel(Icons.show_chart_outlined, "stats", StatsRoute()),
@@ -126,6 +141,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
       onChanged: (value) => onChangeLanguageTap(),
       title: const Text("current_language").tr(),
       secondary: const Icon(Icons.translate_outlined, size: 26),
+      // dense: true,
       visualDensity: .compact,
     );
 
@@ -137,6 +153,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
         isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
         size: 26,
       ),
+      // dense: true,
       visualDensity: .compact,
     );
 
@@ -162,6 +179,8 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
       ),
       title: const Text("logout").tr(),
       onTap: () => context.read<AuthCubit>().signOut(),
+      // dense: true,
+      visualDensity: .compact,
     );
     tiles = List.generate(tabs.length, (index) {
       final item = tabs[index];
@@ -183,6 +202,8 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
           Scaffold.maybeOf(context)?.closeDrawer();
           context.router.navigate(item.route);
         },
+        // dense: true,
+        visualDensity: .compact,
       );
     });
     tiles.add(changeLanguageTile);

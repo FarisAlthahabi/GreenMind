@@ -238,13 +238,12 @@ class _ProfilePageState extends State<ProfilePage>
               },
               buildWhen: (previous, current) => current is ChangePasswordState,
               builder: (context, state) {
-                final isLoading = state is ChangePasswordLoading;
                 return MainActionButton(
                   padding: AppConstants.paddingH36V10,
                   borderRadius: AppConstants.borderRadius10,
                   onPressed: onChangePassword,
                   text: "update_password".tr(),
-                  isLoading: isLoading,
+                  isLoading: state is ChangePasswordLoading,
                 );
               },
             ),

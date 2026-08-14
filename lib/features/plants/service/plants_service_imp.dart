@@ -7,6 +7,7 @@ class PlantsServiceImp implements PlantsService {
   @override
   Future<PaginatedModel<PlantModel>> getPlants({
     int page = 1,
+    required int perPage,
     String? search,
     int? cropId,
     bool? isHealthy,
@@ -23,6 +24,7 @@ class PlantsServiceImp implements PlantsService {
 
       final queries = {
         'page': page,
+        'per_page': perPage,
         "search": ?search,
         "crop_id": ?cropId,
         "is_healthy": ?isHealthy,
@@ -73,9 +75,12 @@ class PlantsServiceImp implements PlantsService {
   }
 
   @override
-  Future<PlantModel> markAsHarvested(int id) async {
+  Future<PlantModel> markAsHarvested(int id, MarkHarvestedModel model) async {
     try {
-      final response = await dio.post("plants/$id/harvest");
+      final response = await dio.post(
+        "plants/$id/harvest",
+        data: model.toJson(),
+      );
       final data = response.data["data"] as Map<String, dynamic>;
       return PlantModel.fromJson(data);
     } catch (e, stackTrace) {
@@ -86,19 +91,19 @@ class PlantsServiceImp implements PlantsService {
     }
   }
 
-  @override
-  Future<PlantModel> undoHarvest(int id) async {
-    try {
-      final response = await dio.post("plants/$id/undo-harvest");
-      final data = response.data["data"] as Map<String, dynamic>;
-      return PlantModel.fromJson(data);
-    } catch (e, stackTrace) {
-      if (kDebugMode) {
-        print("stackTrace of undoHarvest $id is : $stackTrace");
-      }
-      rethrow;
-    }
-  }
+  // @override
+  // Future<PlantModel> undoHarvest(int id) async {
+  //   try {
+  //     final response = await dio.post("plants/$id/undo-harvest");
+  //     final data = response.data["data"] as Map<String, dynamic>;
+  //     return PlantModel.fromJson(data);
+  //   } catch (e, stackTrace) {
+  //     if (kDebugMode) {
+  //       print("stackTrace of undoHarvest $id is : $stackTrace");
+  //     }
+  //     rethrow;
+  //   }
+  // }
 
   // @override
   // Future<PlantModel> updateDiseaseStatus(int id, {int? diseaseId}) async {

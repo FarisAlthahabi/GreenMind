@@ -46,7 +46,6 @@ class CropsPage extends StatefulWidget {
 
 class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
   late final CropsCubit cropsCubit = context.read();
-  late final locale = context.locale;
 
   @override
   void initState() {
@@ -78,6 +77,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
   @override
   Widget build(BuildContext context) {
     final role = Utils.userRole;
+    final locale = context.locale;
     return Scaffold(
       appBar: const MainAppBar(title: "crops"),
       drawer: const MainDrawer(),
@@ -114,7 +114,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
                             ),
                             children: [
                               ...crops.map(
-                                (crop) => _buildCropTile(crop, role),
+                                (crop) => _buildCropTile(crop, role,locale),
                               ),
                               const SizedBox(height: 50),
                             ],
@@ -146,7 +146,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
     );
   }
 
-  Widget _buildCropTile(CropModel crop, UserRoleEnum role) {
+  Widget _buildCropTile(CropModel crop, UserRoleEnum role,Locale locale) {
     final name = locale.isAr ? crop.nameAr : crop.nameEn;
     return MainTile(
       child: Column(

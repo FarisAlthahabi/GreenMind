@@ -5,7 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/irrigation_schedule/cubit/irrigation_schedule_cubit.dart';
 import 'package:green_mind/features/irrigation_schedule/model/irrigation_schedule_model/irrigation_schedule_model.dart';
+import 'package:green_mind/features/irrigation_schedule/view/widgets/irrigation_schedule_filters_view.dart';
 import 'package:green_mind/features/irrigation_schedule/view/widgets/reschedule_irrigation_widget.dart';
+import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
@@ -15,6 +17,7 @@ import 'package:green_mind/global/widgets/main_app_bar.dart';
 import 'package:green_mind/global/widgets/main_drawer.dart';
 import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
 import 'package:green_mind/global/widgets/main_error_widget.dart';
+import 'package:green_mind/global/widgets/main_fab.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
 import 'package:green_mind/global/widgets/main_tile.dart';
@@ -76,8 +79,11 @@ class IrrigationScheduleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => get<IrrigationScheduleCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => get<IrrigationScheduleCubit>()),
+        BlocProvider(create: (context) => get<PlantsCubit>()),
+      ],
       child: const IrrigationSchedulePage(),
     );
   }
@@ -93,11 +99,15 @@ class IrrigationSchedulePage extends StatefulWidget {
 class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
     implements IrrigationScheduleViewCallBacks {
   late final IrrigationScheduleCubit irrigationScheduleCubit = context.read();
+  late final PlantsCubit plantsCubit = context.read();
+
+  void fetchPlants() => plantsCubit.getPlants(reset: true, perPage: 10000000);
 
   @override
   void initState() {
     super.initState();
     fetchIrrigationSchedules(isRefresh: true);
+    fetchPlants();
   }
 
   void fetchIrrigationSchedules({bool isRefresh = false}) =>
@@ -119,6 +129,22 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
         scheduleCubit: irrigationScheduleCubit,
         schedule: schedule,
       ),
+    );
+  }
+
+  void onFilterTap() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (context) {
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: irrigationScheduleCubit),
+            BlocProvider.value(value: plantsCubit),
+          ],
+          child: const IrrigationScheduleFiltersView(),
+        );
+      },
     );
   }
 
@@ -144,29 +170,27 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                 MainSnackBar.showSuccessMessage(context, state.message);
               }
             },
-            child: Padding(
-              padding: AppConstants.padding16,
-              child: Column(
-                spacing: 20,
-                crossAxisAlignment: .start,
-                children: [
-                  MainTextField(
+            child: Column(
+              // spacing: 20,
+              crossAxisAlignment: .start,
+              children: [
+                SizedBox(height: 16),
+                Padding(
+                  padding: AppConstants.paddingH16,
+                  child: MainTextField(
                     hintText: "search_for_irrigation_schedule",
                     prefixIcon: const Icon(Icons.search),
                     onChanged: irrigationScheduleCubit.setSearchQuery,
                   ),
-                  MainDropDownWidget<IrrigationScheduleStatus>(
-                    items: IrrigationScheduleStatus.values,
-                    text: "select_status".tr(),
-                    onChanged: irrigationScheduleCubit.setStatus,
-                    hasSearch: false,
-                    showAllOption: false,
-                  ),
-                  _buildSchdualesListView(),
-                ],
-              ),
+                ),
+                _buildSchdualesListView(),
+              ],
             ),
           ),
+      floatingActionButton: MainFab(
+        icon: Icons.filter_alt_outlined,
+        onTap: onFilterTap,
+      ),
     );
   }
 
@@ -203,6 +227,7 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
                     onRefresh: () async =>
                         fetchIrrigationSchedules(isRefresh: true),
                     child: SingleChildScrollView(
+                      padding: AppConstants.padding16,
                       physics: const BouncingScrollPhysics(),
                       child: Column(
                         spacing: 16,

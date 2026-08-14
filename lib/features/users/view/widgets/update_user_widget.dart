@@ -7,7 +7,6 @@ import 'package:green_mind/features/users/cubit/users_cubit.dart';
 import 'package:green_mind/global/models/user_role_enum.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
-import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
 import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
@@ -144,22 +143,12 @@ class _UpdateUserWidgetState extends State<UpdateUserWidget> {
                       }
                     },
                     builder: (context, state) {
-                      var onTap = () => usersCubit.updateUser(id: user?.id);
-                      Widget? child;
-                      if (state is UpdateUserLoading) {
-                        onTap = () async {};
-                        child = const LoadingIndicator(
-                          isInBtn: true,
-                          color: Colors.white,
-                        );
-                      }
                       return MainActionButton(
                         padding: AppConstants.padding16,
-                        textColor: Colors.white,
                         fontWeight: .bold,
-                        onPressed: () => onTap(),
+                        onPressed: () => usersCubit.updateUser(id: user?.id),
                         text: "save".tr(),
-                        child: child,
+                        isLoading: state is UpdateUserLoading,
                       );
                     },
                   ),

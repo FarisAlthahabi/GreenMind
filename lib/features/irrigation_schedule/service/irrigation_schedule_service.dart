@@ -14,7 +14,10 @@ part 'irrigation_schedule_service_imp.dart';
 abstract class IrrigationScheduleService {
   Future<PaginatedModel<IrrigationScheduleModel>> getIrrigationSchedules({
     int page = 1,
+    String? search,
     bool? isIrrigated,
+    int? plantId,
+    String? recommendedDate
   });
   Future<CompleteIrrigationModel> markCompleted(int id);
   Future<void> undoLastIrrigation(int plantId);

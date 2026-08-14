@@ -65,6 +65,7 @@ class _PlantsFilterWidgetState extends State<PlantsFilterWidget> {
             text: "select_crop_type".tr(),
             textColor: context.cs.onSurfaceVariant,
             onChanged: plantsCubit.setCropFilter,
+            allOptionText: "select_crop_type",
           );
         } else if (state is CropsEmpty) {
           return MainErrorWidget(

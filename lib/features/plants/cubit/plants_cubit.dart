@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:green_mind/features/crops/model/crop_model/crop_model.dart';
 import 'package:green_mind/features/diseases/model/disease_model/disease_model.dart';
 import 'package:green_mind/features/plants/model/add_plant_model/add_plant_model.dart';
+import 'package:green_mind/features/plants/model/mark_harvested_model/mark_harvested_model.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/features/plants/service/plants_service.dart';
 import 'package:green_mind/features/plants/view/plants_view.dart';
@@ -17,7 +18,7 @@ part 'states/plants_state.dart';
 part 'states/update_plant_state.dart';
 part 'states/update_plant_disease_state.dart';
 part 'states/mark_harvested_state.dart';
-part 'states/undo_harvest_state.dart';
+// part 'states/undo_harvest_state.dart';
 part 'states/general_plants_state.dart';
 
 @injectable
@@ -30,6 +31,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   CropModel? cropFilter;
   HealthStatusEnum? selectedHealthStatus;
   AddPlantModel model = AddPlantModel();
+  MarkHarvestedModel markHarvested = MarkHarvestedModel();
   // int? diseaseId;
 
   // Pagination properties
@@ -45,6 +47,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     setName(plant?.name);
     setPlantingDate(plant?.plantingDate);
     setHarvestDate(plant?.harvestDate);
+    setIrrigarionDays(plant?.baseIrrigationDays);
     setQuantity(plant?.quantity);
     // setHealthStatus(plant?.healthStatus);
     setDiseaseId(plant?.disease);
@@ -69,6 +72,10 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     model = model.copyWith(harvestDate: () => harvestDate);
   }
 
+  void setIrrigarionDays(int? days) {
+    model = model.copyWith(baseIrrigationDays: () => days);
+  }
+
   // void setHealthStatus(String? healthStatus) {
   //   model = model.copyWith(healthStatus: () => healthStatus);
   // }
@@ -83,6 +90,14 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
 
   void setDiseaseId(DiseaseModel? disease) {
     model = model.copyWith(diseaseId: () => disease?.id);
+  }
+
+  void setHarvestQuantity(int? quantity) {
+    markHarvested = markHarvested.copyWith(harvestQuantity: () => quantity);
+  }
+
+  void setStorageLocation(String? location) {
+    markHarvested = markHarvested.copyWith(storageLocation: () => location);
   }
 
   // void setDiseaseId(DiseaseModel? disease) {
@@ -139,7 +154,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   //   }
   // }
 
-  Future<void> getPlants({bool reset = false}) async {
+  Future<void> getPlants({bool reset = false, int perPage = 10}) async {
     if (reset) {
       currentPage = 1;
       hasReachedMax = false;
@@ -156,9 +171,10 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
 
       final paginatedPlants = await plantService.getPlants(
         page: currentPage,
+        perPage: perPage,
         search: searchQuery,
         cropId: cropFilter?.id,
-        isHealthy: selectedHealthStatus?.value
+        isHealthy: selectedHealthStatus?.value,
       );
 
       lastPage = paginatedPlants.pagination.lastPage;
@@ -192,12 +208,14 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   }
 
   Future<void> updatePlant({int? id}) async {
+    final isAdd = id == null;
+    model = model.copyWith(isAdd: isAdd);
     emit(UpdatePlantLoading());
     if (isClosed) return;
     try {
       final plant = await plantService.updatePlant(model, id: id);
       emit(UpdatePlantSuccess("action_done".tr(), plant));
-      if (id == null) {
+      if (isAdd) {
         addLocalPlant(plant);
       } else {
         updateLocalPlant(plant);
@@ -229,7 +247,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     emit(MarkHarvestedLoading());
     if (isClosed) return;
     try {
-      final plant = await plantService.markAsHarvested(id);
+      final plant = await plantService.markAsHarvested(id, markHarvested);
       emit(MarkHarvestedSuccess("action_done".tr(), plant));
       updateLocalPlant(plant);
     } catch (e) {
@@ -238,18 +256,18 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     }
   }
 
-  Future<void> undoHarvest(int id) async {
-    emit(UndoHarvestLoading());
-    if (isClosed) return;
-    try {
-      final plant = await plantService.undoHarvest(id);
-      emit(UndoHarvestSuccess("action_done".tr(), plant));
-      updateLocalPlant(plant);
-    } catch (e) {
-      if (isClosed) return;
-      emit(UndoHarvestFail(e.toString()));
-    }
-  }
+  // Future<void> undoHarvest(int id) async {
+  //   emit(UndoHarvestLoading());
+  //   if (isClosed) return;
+  //   try {
+  //     final plant = await plantService.undoHarvest(id);
+  //     emit(UndoHarvestSuccess("action_done".tr(), plant));
+  //     updateLocalPlant(plant);
+  //   } catch (e) {
+  //     if (isClosed) return;
+  //     emit(UndoHarvestFail(e.toString()));
+  //   }
+  // }
 
   void addLocalPlant(PlantModel plant) {
     plants = [...plants, plant];

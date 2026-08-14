@@ -124,6 +124,12 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
                     plantsCubit.setHarvestDate(date?.formatYYYYMMDD),
               ),
             MainCounterWidget(
+              initialCount: plant?.baseIrrigationDays,
+              title: "irrigation_days".tr(),
+              hint: "${"example".tr()}: 1",
+              onChanged: plantsCubit.setIrrigarionDays,
+            ),
+            MainCounterWidget(
               initialCount: plant?.quantity,
               title: "quantity".tr(),
               hint: "plants_count",
@@ -172,23 +178,12 @@ class _UpdatePlantWidgetState extends State<UpdatePlantWidget> {
                       }
                     },
                     builder: (context, state) {
-                      var onTap = () => plantsCubit.updatePlant(id: plant?.id);
-                      Widget? child;
-                      if (state is UpdatePlantLoading) {
-                        onTap = () async {};
-                        // TODO use color from theme
-                        child = const LoadingIndicator(
-                          isInBtn: true,
-                          color: Colors.white,
-                        );
-                      }
                       return MainActionButton(
                         padding: AppConstants.padding16,
-                        textColor: Colors.white,
                         fontWeight: .bold,
-                        onPressed: () => onTap(),
+                        onPressed: () => plantsCubit.updatePlant(id: plant?.id),
                         text: "save".tr(),
-                        child: child,
+                        isLoading: state is UpdatePlantLoading,
                       );
                     },
                   ),

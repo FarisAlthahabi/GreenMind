@@ -228,7 +228,6 @@ class DropdownOption<T extends DropDownItemModel> {
   }
 }
 
-// Update MainDropDownWidget to use DropdownOption
 class MainDropDownWidget<T extends DropDownItemModel> extends StatefulWidget {
   const MainDropDownWidget({
     super.key,
@@ -323,54 +322,66 @@ class _MainDropDownWidgetState<T extends DropDownItemModel>
   @override
   Widget build(BuildContext context) {
     final borderRadius = widget.borderRadius;
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2<DropdownOption<T>>(
-        isExpanded: true,
-        valueListenable: _selectedNotifier,
-        items: _dropdownOptions.map((option) {
-          return DropdownItem<DropdownOption<T>>(
-            value: option,
-            child: Text(option.displayName, style: context.tt.bodyMedium),
-          );
-        }).toList(),
-        onChanged: _onChanged,
-        dropdownStyleData: DropdownStyleData(
-          maxHeight: widget.expandedHeight,
-          width: widget.width,
-          offset: Offset(0, widget.offsetY),
-          decoration: BoxDecoration(
-            borderRadius: borderRadius,
-            border: .all(width: 0.2, color: context.cs.onSurface),
+    final text = _selectedNotifier.value?.displayName ?? widget.text;
+    final label = widget.label;
+    return Column(
+      crossAxisAlignment: .start,
+      children: [
+        if (label != null)
+          Padding(
+            padding: AppConstants.paddingV5,
+            child: Text(label, style: context.tt.titleMedium),
           ),
-        ),
-        dropdownSearchData: _buildSearchDataField(),
-        customButton: Container(
-          height: widget.height,
-          padding: AppConstants.padding16,
-          decoration: BoxDecoration(
-            color: widget.backgrounColor ?? context.cs.surfaceContainer,
-            border: Border.all(color: context.cs.outline, width: 0.5),
-            borderRadius: widget.borderRadius,
-          ),
-          child: Row(
-            children: [
-              if (widget.prefixIcon != null) ...[
-                Icon(widget.prefixIcon, size: 20),
-                const SizedBox(width: 12),
-              ],
-              Expanded(
-                child: Text(
-                  _selectedNotifier.value?.displayName ?? widget.text,
-                  style: context.tt.bodyMedium?.copyWith(
-                    color: widget.textColor,
-                  ),
-                ),
+        DropdownButtonHideUnderline(
+          child: DropdownButton2<DropdownOption<T>>(
+            isExpanded: true,
+            valueListenable: _selectedNotifier,
+            items: _dropdownOptions.map((option) {
+              return DropdownItem<DropdownOption<T>>(
+                value: option,
+                child: Text(option.displayName, style: context.tt.bodyMedium),
+              );
+            }).toList(),
+            onChanged: _onChanged,
+            dropdownStyleData: DropdownStyleData(
+              maxHeight: widget.expandedHeight,
+              width: widget.width,
+              offset: Offset(0, widget.offsetY),
+              decoration: BoxDecoration(
+                borderRadius: borderRadius,
+                border: .all(width: 0.2, color: context.cs.onSurface),
               ),
-              Icon(Icons.keyboard_arrow_down),
-            ],
+            ),
+            dropdownSearchData: _buildSearchDataField(),
+            customButton: Container(
+              height: widget.height,
+              padding: AppConstants.padding16,
+              decoration: BoxDecoration(
+                color: widget.backgrounColor ?? context.cs.surfaceContainer,
+                border: .all(color: context.cs.outline, width: 0.5),
+                borderRadius: widget.borderRadius,
+              ),
+              child: Row(
+                children: [
+                  if (widget.prefixIcon != null) ...[
+                    Icon(widget.prefixIcon, size: 20),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: Text(
+                      text,
+                      style: context.tt.bodyMedium?.copyWith(
+                        color: widget.textColor,
+                      ),
+                    ),
+                  ),
+                  Icon(Icons.keyboard_arrow_down),
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+      ],
     );
   }
 

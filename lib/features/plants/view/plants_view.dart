@@ -6,6 +6,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:green_mind/features/crops/cubit/crops_cubit.dart';
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
+import 'package:green_mind/features/plants/view/widgets/mark_harvested_view.dart';
 import 'package:green_mind/features/plants/view/widgets/plants_filter_widget.dart';
 import 'package:green_mind/features/plants/view/widgets/update_plant_view.dart';
 import 'package:green_mind/global/di/di.dart';
@@ -102,7 +103,6 @@ class _PlantsPageState extends State<PlantsPage>
     implements PlantsViewCallBacks {
   late final PlantsCubit plantsCubit = context.read();
   late final CropsCubit cropsCubit = context.read();
-  late final locale = context.locale;
 
   @override
   void initState() {
@@ -120,122 +120,122 @@ class _PlantsPageState extends State<PlantsPage>
   //   );
   // }
 
-  void onMoreTap(PlantModel plant) {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return BlocProvider.value(
-          value: plantsCubit,
-          child: SafeArea(
-            top: false,
-            child: SingleChildScrollView(
-              padding: AppConstants.padding16,
-              physics: const BouncingScrollPhysics(),
-              child: Column(
-                mainAxisSize: .min,
-                crossAxisAlignment: .start,
-                children: [
-                  Center(
-                    child: Text(
-                      'more_options'.tr(),
-                      style: context.tt.titleLarge,
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  Column(
-                    spacing: 5,
-                    mainAxisSize: .min,
-                    crossAxisAlignment: .stretch,
-                    // spacing: 10,
-                    children: [
-                      // TextButton(
-                      //   onPressed: () => onUpdatePlantDisease(plant),
-                      //   style: const ButtonStyle(
-                      //     alignment: AlignmentDirectional.centerStart,
-                      //   ),
-                      //   child: Row(
-                      //     spacing: 10,
-                      //     mainAxisSize: .min,
-                      //     children: [
-                      //       Icon(Icons.edit),
-                      //       Text(
-                      //         'update_disease_status'.tr(),
-                      //         style: context.tt.bodyMedium,
-                      //       ),
-                      //     ],
-                      //   ),
-                      // ),
-                      BlocBuilder<PlantsCubit, GeneralPlantsState>(
-                        buildWhen: (_, current) =>
-                            current is MarkHarvestedState,
-                        builder: (context, state) {
-                          Widget? loadingIndicator;
-                          final bool isLoading = state is MarkHarvestedLoading;
-                          var onTap = plantsCubit.markAsHarvested;
-                          if (isLoading) {
-                            loadingIndicator = const LoadingIndicator(size: 20);
-                            onTap = (int id) async {};
-                          }
-                          return TextButton(
-                            onPressed: () => onTap(plant.id),
-                            style: const ButtonStyle(
-                              alignment: AlignmentDirectional.centerStart,
-                            ),
-                            child: Row(
-                              spacing: 10,
-                              mainAxisSize: .min,
-                              children: [
-                                Icon(Icons.agriculture),
-                                Text(
-                                  'mark_harvested'.tr(),
-                                  style: context.tt.bodyMedium,
-                                ),
-                                ?loadingIndicator,
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      BlocBuilder<PlantsCubit, GeneralPlantsState>(
-                        buildWhen: (_, current) => current is UndoHarvestState,
-                        builder: (context, state) {
-                          Widget? loadingIndicator;
-                          final bool isLoading = state is UndoHarvestLoading;
-                          var onTap = plantsCubit.undoHarvest;
-                          if (isLoading) {
-                            loadingIndicator = const LoadingIndicator(size: 20);
-                            onTap = (int id) async {};
-                          }
-                          return TextButton(
-                            onPressed: () => onTap(plant.id),
-                            style: const ButtonStyle(
-                              alignment: AlignmentDirectional.centerStart,
-                            ),
-                            child: Row(
-                              spacing: 10,
-                              mainAxisSize: .min,
-                              children: [
-                                Icon(Icons.undo),
-                                Text(
-                                  'undo_harvest'.tr(),
-                                  style: context.tt.bodyMedium,
-                                ),
-                                ?loadingIndicator,
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
+  // void onMoreTap(PlantModel plant) {
+  //   showModalBottomSheet(
+  //     context: context,
+  //     builder: (context) {
+  //       return BlocProvider.value(
+  //         value: plantsCubit,
+  //         child: SafeArea(
+  //           top: false,
+  //           child: SingleChildScrollView(
+  //             padding: AppConstants.padding16,
+  //             physics: const BouncingScrollPhysics(),
+  //             child: Column(
+  //               mainAxisSize: .min,
+  //               crossAxisAlignment: .start,
+  //               children: [
+  //                 Center(
+  //                   child: Text(
+  //                     'more_options'.tr(),
+  //                     style: context.tt.titleLarge,
+  //                   ),
+  //                 ),
+  //                 const SizedBox(height: 12),
+  //                 Column(
+  //                   spacing: 5,
+  //                   mainAxisSize: .min,
+  //                   crossAxisAlignment: .stretch,
+  //                   // spacing: 10,
+  //                   children: [
+  //                     // TextButton(
+  //                     //   onPressed: () => onUpdatePlantDisease(plant),
+  //                     //   style: const ButtonStyle(
+  //                     //     alignment: AlignmentDirectional.centerStart,
+  //                     //   ),
+  //                     //   child: Row(
+  //                     //     spacing: 10,
+  //                     //     mainAxisSize: .min,
+  //                     //     children: [
+  //                     //       Icon(Icons.edit),
+  //                     //       Text(
+  //                     //         'update_disease_status'.tr(),
+  //                     //         style: context.tt.bodyMedium,
+  //                     //       ),
+  //                     //     ],
+  //                     //   ),
+  //                     // ),
+  //                     BlocBuilder<PlantsCubit, GeneralPlantsState>(
+  //                       buildWhen: (_, current) =>
+  //                           current is MarkHarvestedState,
+  //                       builder: (context, state) {
+  //                         Widget? loadingIndicator;
+  //                         final bool isLoading = state is MarkHarvestedLoading;
+  //                         var onTap = plantsCubit.markAsHarvested;
+  //                         if (isLoading) {
+  //                           loadingIndicator = const LoadingIndicator(size: 20);
+  //                           onTap = (int id) async {};
+  //                         }
+  //                         return TextButton(
+  //                           onPressed: () => onTap(plant.id),
+  //                           style: const ButtonStyle(
+  //                             alignment: AlignmentDirectional.centerStart,
+  //                           ),
+  //                           child: Row(
+  //                             spacing: 10,
+  //                             mainAxisSize: .min,
+  //                             children: [
+  //                               Icon(Icons.agriculture),
+  //                               Text(
+  //                                 'mark_harvested'.tr(),
+  //                                 style: context.tt.bodyMedium,
+  //                               ),
+  //                               ?loadingIndicator,
+  //                             ],
+  //                           ),
+  //                         );
+  //                       },
+  //                     ),
+  //                     // BlocBuilder<PlantsCubit, GeneralPlantsState>(
+  //                     //   buildWhen: (_, current) => current is UndoHarvestState,
+  //                     //   builder: (context, state) {
+  //                     //     Widget? loadingIndicator;
+  //                     //     final bool isLoading = state is UndoHarvestLoading;
+  //                     //     var onTap = plantsCubit.undoHarvest;
+  //                     //     if (isLoading) {
+  //                     //       loadingIndicator = const LoadingIndicator(size: 20);
+  //                     //       onTap = (int id) async {};
+  //                     //     }
+  //                     //     return TextButton(
+  //                     //       onPressed: () => onTap(plant.id),
+  //                     //       style: const ButtonStyle(
+  //                     //         alignment: AlignmentDirectional.centerStart,
+  //                     //       ),
+  //                     //       child: Row(
+  //                     //         spacing: 10,
+  //                     //         mainAxisSize: .min,
+  //                     //         children: [
+  //                     //           Icon(Icons.undo),
+  //                     //           Text(
+  //                     //             'undo_harvest'.tr(),
+  //                     //             style: context.tt.bodyMedium,
+  //                     //           ),
+  //                     //           ?loadingIndicator,
+  //                     //         ],
+  //                     //       ),
+  //                     //     );
+  //                     //   },
+  //                     // ),
+  //                   ],
+  //                 ),
+  //               ],
+  //             ),
+  //           ),
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   void onDeletePlant(PlantModel plant) {
     showDialog(
@@ -254,6 +254,20 @@ class _PlantsPageState extends State<PlantsPage>
       barrierDismissible: false,
       builder: (context) =>
           UpdatePlantView(plantsCubit: plantsCubit, plant: plant),
+    );
+  }
+
+  void onMarkHarvested(PlantModel plant) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => MarkHarvestedView(
+        plant: plant,
+        plantsCubit: plantsCubit,
+        // onSuccess: () {
+        //   fetchPlants(isRefresh: true);
+        // },
+      ),
     );
   }
 
@@ -278,6 +292,7 @@ class _PlantsPageState extends State<PlantsPage>
 
   @override
   Widget build(BuildContext context) {
+    final locale = context.locale;
     return Scaffold(
       appBar: const MainAppBar(title: "plants"),
       drawer: const MainDrawer(),
@@ -287,11 +302,12 @@ class _PlantsPageState extends State<PlantsPage>
             MainSnackBar.showSuccessMessage(context, state.message);
           } else if (state is MarkHarvestedFail) {
             MainSnackBar.showErrorMessage(context, state.error);
-          } else if (state is UndoHarvestSuccess) {
-            MainSnackBar.showSuccessMessage(context, state.message);
-          } else if (state is UndoHarvestFail) {
-            MainSnackBar.showErrorMessage(context, state.error);
           }
+          // else if (state is UndoHarvestSuccess) {
+          //   MainSnackBar.showSuccessMessage(context, state.message);
+          // } else if (state is UndoHarvestFail) {
+          //   MainSnackBar.showErrorMessage(context, state.error);
+          // }
         },
         child: Padding(
           padding: AppConstants.padding16,
@@ -346,7 +362,9 @@ class _PlantsPageState extends State<PlantsPage>
                                       child: FadeInAnimation(child: widget),
                                     ),
                                 children: [
-                                  ...plants.map(_buildPlantTile),
+                                  ...plants.map(
+                                    (plant) => _buildPlantTile(plant, locale),
+                                  ),
 
                                   // Show loading indicator at bottom
                                   if (!hasReachedMax) ...[
@@ -398,7 +416,7 @@ class _PlantsPageState extends State<PlantsPage>
     );
   }
 
-  Widget _buildPlantTile(PlantModel plant) {
+  Widget _buildPlantTile(PlantModel plant, Locale locale) {
     final hasDisease = plant.disease != null;
     final disease = plant.disease;
     final diseaseName = locale.isAr ? disease?.arName : disease?.enName;
@@ -445,24 +463,32 @@ class _PlantsPageState extends State<PlantsPage>
                   ],
                 ),
               ),
-              _buildIconBtn(
-                Icons.edit,
-                context.cs.secondaryContainer,
-                context.cs.secondary,
-                () => onUpdatePlant(plant),
-              ),
+              if (plant.harvestDate == null) ...[
+                _buildIconBtn(
+                  Icons.agriculture,
+                  context.cs.tertiaryContainer,
+                  context.cs.tertiary,
+                  () => onMarkHarvested(plant),
+                ),
+                _buildIconBtn(
+                  Icons.edit,
+                  context.cs.secondaryContainer,
+                  context.cs.secondary,
+                  () => onUpdatePlant(plant),
+                ),
+              ],
               _buildIconBtn(
                 Icons.delete,
                 context.cs.errorContainer,
                 context.cs.error,
                 () => onDeletePlant(plant),
               ),
-              _buildIconBtn(
-                Icons.more_vert_outlined,
-                context.cs.tertiaryContainer,
-                context.cs.tertiary,
-                () => onMoreTap(plant),
-              ),
+              // _buildIconBtn(
+              //   Icons.more_vert_outlined,
+              //   context.cs.tertiaryContainer,
+              //   context.cs.tertiary,
+              //   () => onMoreTap(plant),
+              // ),
             ],
           ),
           Row(
@@ -487,7 +513,6 @@ class _PlantsPageState extends State<PlantsPage>
                   "${"harvest_date".tr()}: ${plant.harvestDate?.formatYYYYMMDD ?? "unknown".tr()}",
                 ),
               ),
-              // Expanded(child: Text("${"notes".tr()}: ${plant.notes}")),
             ],
           ),
           if (plant.notes != null) ...[

@@ -7,7 +7,10 @@ class IrrigationScheduleServiceImp implements IrrigationScheduleService {
   @override
   Future<PaginatedModel<IrrigationScheduleModel>> getIrrigationSchedules({
     int page = 1,
+    String? search,
     bool? isIrrigated,
+    int? plantId,
+    String? recommendedDate,
   }) async {
     const storagePath = "irrigation_schedules";
     try {
@@ -18,8 +21,14 @@ class IrrigationScheduleServiceImp implements IrrigationScheduleService {
           IrrigationScheduleModel.fromJson(json as Map<String, dynamic>);
       if (!hasNet && getCached != null && page == 1) {
         return PaginatedModel.fromString(getCached, fromJson);
-      } 
-      final queries = {'page': page, 'is_irrigated': ?isIrrigated};
+      }
+      final queries = {
+        'page': page,
+        'is_irrigated': ?isIrrigated,
+        'search': ?search,
+        'plant_id': ?plantId,
+        'recommended_date': ?recommendedDate,
+      };
       final response = await dio.get("schedule", queries: queries);
       final data = response.data as Map<String, dynamic>;
       final schedules = PaginatedModel.fromJson(data, fromJson);

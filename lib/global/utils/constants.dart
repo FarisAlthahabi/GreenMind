@@ -96,6 +96,7 @@ abstract class AppConstants {
   static const paddingH16V4 = EdgeInsets.symmetric(horizontal: 16, vertical: 4);
   static const paddingH8V4 = EdgeInsets.symmetric(horizontal: 8, vertical: 4);
   static const paddingH10V8 = EdgeInsets.symmetric(horizontal: 10, vertical: 8);
+  static const paddingH10V4 = EdgeInsets.symmetric(horizontal: 10, vertical: 4);
   static const paddingH8V12 = EdgeInsets.symmetric(horizontal: 8, vertical: 12);
   static const paddingH8V16 = EdgeInsets.symmetric(horizontal: 8, vertical: 16);
   static const paddingH20V30 = EdgeInsets.symmetric(

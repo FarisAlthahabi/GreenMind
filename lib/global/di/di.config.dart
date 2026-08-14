@@ -30,6 +30,14 @@ import 'package:green_mind/features/diseases/cubit/diseases_cubit.dart'
     as _i812;
 import 'package:green_mind/features/diseases/service/diseases_service.dart'
     as _i622;
+import 'package:green_mind/features/inventory/cubit/inventory_cubit.dart'
+    as _i454;
+import 'package:green_mind/features/inventory/service/inventory_service.dart'
+    as _i85;
+import 'package:green_mind/features/inventory_activity/cubit/inventory_activity_cubit.dart'
+    as _i873;
+import 'package:green_mind/features/inventory_activity/service/inventory_activity_service.dart'
+    as _i835;
 import 'package:green_mind/features/irrigation_schedule/cubit/irrigation_schedule_cubit.dart'
     as _i1008;
 import 'package:green_mind/features/irrigation_schedule/service/irrigation_schedule_service.dart'
@@ -78,6 +86,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i209.AiChatBotService>(() => _i209.AiChatBotServiceImp());
     gh.factory<_i622.DiseasesService>(() => _i622.DiseasesServiceImp());
     gh.factory<_i529.StatsService>(() => _i529.StatsServiceImp());
+    gh.factory<_i835.InventoryActivityService>(
+      () => _i835.InventoryActivityServiceImp(),
+    );
     gh.factory<_i214.StatsCubit>(
       () => _i214.StatsCubit(gh<_i529.StatsService>()),
     );
@@ -100,10 +111,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i344.ProfileService>(() => _i344.ProfileServiceImp());
     gh.factory<_i702.CropsService>(() => _i702.CropsServiceImp());
     gh.factory<_i869.DeleteService>(() => _i869.DeleteServiceImp());
-    gh.factory<_i105.DiagnosingDiseasesCubit>(
-      () => _i105.DiagnosingDiseasesCubit(
-        diagnosingDiseasesService: gh<_i593.DiagnosingDiseasesService>(),
+    gh.factory<_i85.InventoryService>(() => _i85.InventoryServiceImp());
+    gh.factory<_i873.InventoryActivityCubit>(
+      () => _i873.InventoryActivityCubit(
+        service: gh<_i835.InventoryActivityService>(),
       ),
+    );
+    gh.factory<_i454.InventoryCubit>(
+      () => _i454.InventoryCubit(inventoryService: gh<_i85.InventoryService>()),
     );
     gh.factory<_i1008.IrrigationScheduleCubit>(
       () => _i1008.IrrigationScheduleCubit(
@@ -126,6 +141,11 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i886.AuthCubit(
         gh<_i766.SignInService>(),
         gh<_i753.AuthManagerBloc>(),
+      ),
+    );
+    gh.factory<_i105.DiagnosingDiseasesCubit>(
+      () => _i105.DiagnosingDiseasesCubit(
+        service: gh<_i593.DiagnosingDiseasesService>(),
       ),
     );
     gh.factory<_i29.PlantsCubit>(

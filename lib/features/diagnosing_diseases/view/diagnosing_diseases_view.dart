@@ -8,13 +8,18 @@ import 'package:green_mind/features/ai_chat_bot/cubit/ai_chat_bot_cubit.dart';
 import 'package:green_mind/features/diagnosing_diseases/cubit/diagnosing_diseases_cubit.dart';
 import 'package:green_mind/features/diagnosing_diseases/model/diagnose_details_model/diagnose_details_model.dart';
 import 'package:green_mind/features/diagnosing_diseases/model/diagnose_response_model/diagnose_response_model.dart';
+import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
+import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/extensions/locale_x.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:green_mind/global/widgets/app_image_widget.dart';
 import 'package:green_mind/global/widgets/choose_image_widget.dart';
 import 'package:green_mind/global/widgets/main_action_button.dart';
+import 'package:green_mind/global/widgets/main_drop_down_widget.dart';
+import 'package:green_mind/global/widgets/main_error_widget.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 
 @RoutePage()
@@ -23,8 +28,11 @@ class DiagnosingDiseasesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => get<DiagnosingDiseasesCubit>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => get<DiagnosingDiseasesCubit>()),
+        BlocProvider(create: (context) => get<PlantsCubit>()),
+      ],
       child: const DiagnosingDiseasesPage(),
     );
   }
@@ -39,13 +47,28 @@ class DiagnosingDiseasesPage extends StatefulWidget {
 
 class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
   late final DiagnosingDiseasesCubit diagnosingDiseasesCubit = context.read();
+  late final PlantsCubit plantsCubit = context.read();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPlants();
+  }
+
+  void fetchPlants() => plantsCubit.getPlants(reset: true, perPage: 10000000);
 
   void diagnose() {
     diagnosingDiseasesCubit.diagnose();
   }
 
+  void onApplyChanges(int? plantId, int days) {
+    plantsCubit.setIrrigarionDays(days);
+    plantsCubit.updatePlant(id: plantId);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final locale = context.locale;
     return Scaffold(
       body: SingleChildScrollView(
         padding: AppConstants.padding16,
@@ -63,7 +86,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                 _buildHeaderDescription(),
                 _buildUploadImageWithDiagonseBtn(),
                 const SizedBox.shrink(),
-                _buildResaultView(),
+                _buildResaultView(locale),
               ],
             ),
           ),
@@ -127,19 +150,20 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
               );
             },
           ),
+          _buildPlantDropDown(),
         ],
       ),
     );
   }
 
-  Widget _buildResaultView() {
+  Widget _buildResaultView(Locale locale) {
     return BlocBuilder<DiagnosingDiseasesCubit, GeneralDiagnosingDiseasesState>(
       builder: (context, state) {
         Widget child;
         if (state is DiagnosingDiseasesLoading) {
           child = const SizedBox.shrink();
         } else if (state is DiagnosingDiseasesSuccess) {
-          child = _buildResults(state.diagnoseResponse);
+          child = _buildResults(state.diagnoseResponse, locale);
         } else {
           child = _buildPlaceHolderResualts();
         }
@@ -175,9 +199,10 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
     );
   }
 
-  Widget _buildResults(DiagnoseResponseModel diagnoseResponse) {
+  Widget _buildResults(DiagnoseResponseModel diagnoseResponse, Locale locale) {
     final diagnose = diagnoseResponse.diagnosis;
     final details = diagnoseResponse.details;
+    final name = locale.isAr ? diagnose.nameAr : diagnose.nameEn;
     final primary = context.cs.primary;
     final percent = (double.tryParse(diagnose.confidencePercentage) ?? 0);
 
@@ -202,13 +227,13 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
               Text("diagnose_result".tr(), style: context.tt.titleLarge),
               Text("${"discovered_disease".tr()}:"),
               Text(
-                diagnose.diseaseNameArabic,
+                name,
                 style: context.tt.headlineMedium?.copyWith(
                   color: primary,
                   fontWeight: .bold,
                 ),
               ),
-              Text("(${diagnose.diseaseNameTechnical})"),
+              Text("(${diagnose.nameTechnical})"),
               Padding(
                 padding: AppConstants.paddingH10,
                 child: Text("grad_cam_image".tr(), style: context.tt.bodyLarge),
@@ -257,34 +282,14 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                   ),
                   child: const Text("high_accuracy").tr(),
                 ),
-              Container(
-                padding: AppConstants.padding16,
-                decoration: BoxDecoration(
-                  color: context.cs.secondaryContainer,
-                  borderRadius: AppConstants.borderRadius10,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.calendar_today,
-                      size: 18,
-                      color: context.cs.secondary,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      "${"recommended_follow_up".tr()}: ${diagnoseResponse.recommendedIntervalDays} ${"days".tr()}",
-                      style: context.tt.bodyMedium,
-                    ),
-                  ],
-                ),
-              ),
+              _buildRecommendedDays(diagnoseResponse),
               _buildTitleDescription(
                 "treatment_recommendations",
                 diagnose.treatment,
                 context.cs.primaryContainer,
               ),
               ?_buildAdditionalInfoTile(details),
-              _buildChatBtn(diagnose.diseaseNameArabic),
+              _buildChatBtn(name),
             ],
           ),
         ),
@@ -441,6 +446,103 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
         );
       },
       text: "ask_agricultural_expert_for_more".tr(),
+    );
+  }
+
+  Widget _buildPlantDropDown() {
+    return BlocBuilder<PlantsCubit, GeneralPlantsState>(
+      buildWhen: (_, current) => current is PlantsState,
+      builder: (context, state) {
+        Widget child;
+        if (state is PlantsSuccess) {
+          child = MainDropDownWidget<PlantModel>(
+            prefixIcon: Icons.local_florist_outlined,
+            items: state.plants,
+            selectedValue: diagnosingDiseasesCubit.plant,
+            text: "select_plant_optional".tr(),
+            textColor: context.cs.onSurfaceVariant,
+            onChanged: diagnosingDiseasesCubit.setPlant,
+            allOptionText: "select_plant_optional",
+          );
+        } else if (state is PlantsFail) {
+          child = MainErrorWidget(
+            error: state.error,
+            onTryAgainTap: () => fetchPlants(),
+          );
+        } else {
+          child = const SizedBox.shrink();
+        }
+        return AnimatedSizeAndFade(child: child);
+      },
+    );
+  }
+
+  Widget _buildRecommendedDays(DiagnoseResponseModel diagnoseResponse) {
+    final diagnose = diagnoseResponse.diagnosis;
+    final intervalDays = diagnoseResponse.recommendation.intervalDays;
+    final reason = diagnoseResponse.recommendation.reason;
+    return BlocConsumer<PlantsCubit, GeneralPlantsState>(
+      buildWhen: (_, current) => current is UpdatePlantState,
+      listener: (context, state) {
+        if (state is UpdatePlantSuccess) {
+          MainSnackBar.showSuccessMessage(context, state.message);
+        } else if (state is UpdatePlantFail) {
+          MainSnackBar.showErrorMessage(context, state.error);
+        }
+      },
+      builder: (context, state) {
+        Widget btn;
+        if (state is UpdatePlantSuccess) {
+          btn = const SizedBox.shrink();
+        } else {
+          btn = MainActionButton(
+            padding: AppConstants.paddingH10V4,
+            borderRadius: AppConstants.borderRadius10,
+            onPressed: () => onApplyChanges(diagnose.plantId, intervalDays),
+            text: "apply_changes".tr(),
+            isLoading: state is UpdatePlantLoading,
+          );
+        }
+        return Column(
+          mainAxisSize: .min,
+          crossAxisAlignment: .start,
+          spacing: 5,
+          children: [
+            Text(
+              "${"recommended_follow_up".tr()}:",
+              style: context.tt.titleMedium?.copyWith(fontWeight: .bold),
+            ),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: context.cs.secondaryContainer,
+                borderRadius: AppConstants.borderRadius10,
+              ),
+              child: Padding(
+                padding: AppConstants.padding16,
+                child: Column(
+                  mainAxisSize: .min,
+                  crossAxisAlignment: .start,
+                  spacing: 5,
+                  children: [
+                    Row(
+                      spacing: 20,
+                      children: [
+                        Expanded(child: Text("$intervalDays ${"days".tr()}")),
+                        btn,
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(child: Text("${"reason".tr()}: $reason")),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
