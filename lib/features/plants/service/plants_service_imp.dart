@@ -11,6 +11,7 @@ class PlantsServiceImp implements PlantsService {
     String? search,
     int? cropId,
     bool? isHealthy,
+    bool? isHarvested,
   }) async {
     const storagePath = "plants";
     try {
@@ -28,6 +29,7 @@ class PlantsServiceImp implements PlantsService {
         "search": ?search,
         "crop_id": ?cropId,
         "is_healthy": ?isHealthy,
+        "is_harvested": ?isHarvested,
       };
       final response = await dio.get("plants", queries: queries);
       final data = response.data as Map<String, dynamic>;

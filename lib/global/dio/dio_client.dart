@@ -8,7 +8,8 @@ import 'package:green_mind/global/utils/constants.dart';
 // const baseUrl = "http://127.0.0.1:8000";
 // const baseUrl = "http://192.168.1.36:8000";
 const appIP = "192.168.1.111";
-const baseUrl = "http://$appIP:8000";
+// const baseUrl = "http://$appIP:8000";
+const baseUrl = "https://lazy-yard-dingo.ngrok-free.dev";
 const apiUrl = '$baseUrl/api/';
 // const apiUrl = '$baseUrl/';
 
@@ -84,6 +85,7 @@ class DioClient {
       queries: queries,
       data: data,
       headers: requestHeaders,
+      duration: duration,
       responseType: .stream,
     );
   }

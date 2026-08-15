@@ -67,6 +67,26 @@ class CustomDioException extends DioException {
   }
 }
 
+class UnknownException extends DioException {
+  UnknownException(RequestOptions requestOptions)
+    : super(requestOptions: requestOptions);
+
+  @override
+  String toString() {
+    return "something_went_wrong".tr();
+  }
+}
+
+class InternalServerError extends DioException {
+  InternalServerError(RequestOptions requestOptions)
+    : super(requestOptions: requestOptions);
+
+  @override
+  String toString() {
+    return "internal_server_error".tr();
+  }
+}
+
 class NoInternetException extends DioException {
   NoInternetException({required super.requestOptions});
 

@@ -15,7 +15,7 @@ class CropsServiceImp implements CropsService {
         return getCached.map((e) => CropModel.fromString(e)).toList();
       }
 
-      final response = await dio.get("crops");
+      final response = await dio.get("crops", queries: {"per_page": 100000});
       final data = response.data["data"] as List;
       final crops = data
           .map((crop) => CropModel.fromJson(crop as Map<String, dynamic>))

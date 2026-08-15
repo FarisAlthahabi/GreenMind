@@ -114,7 +114,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
                             ),
                             children: [
                               ...crops.map(
-                                (crop) => _buildCropTile(crop, role,locale),
+                                (crop) => _buildCropTile(crop, role, locale),
                               ),
                               const SizedBox(height: 50),
                             ],
@@ -146,7 +146,7 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
     );
   }
 
-  Widget _buildCropTile(CropModel crop, UserRoleEnum role,Locale locale) {
+  Widget _buildCropTile(CropModel crop, UserRoleEnum role, Locale locale) {
     final name = locale.isAr ? crop.nameAr : crop.nameEn;
     return MainTile(
       child: Column(

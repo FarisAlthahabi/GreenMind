@@ -383,6 +383,7 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
 
   void addMessage(String message) {
     widget.senderController.clear();
+    // aiChatBotCubit.getAiResponseAsStream(message);
     aiChatBotCubit.getAiResponse(message);
   }
 
@@ -407,7 +408,7 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
             ? null
             : () => addMessage(widget.senderController.text);
         if (state is ChatMessagesLoading) {
-          icon = LoadingIndicator(color: context.cs.onPrimary, size: 25);
+          icon = LoadingIndicator(color: context.cs.onSurface, size: 25);
           onTap = null;
         }
         if (state is CurrentTriesState) {

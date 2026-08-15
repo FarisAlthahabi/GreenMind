@@ -251,5 +251,9 @@
   "unknown_user": "مستخدم غير معروف",
   "current_inventory" : "المخزون الحالي",
   "please_contact_admin_to_get_new_password" : "يرجى التواصل مع المديل للحصول على كلمة مرور جديدة",
-  "apply_changes" : "تطبيق التعديلات"
+  "apply_changes" : "تطبيق التعديلات",
+  "internal_server_error" : "حدث خطأ في الخادم",
+  "select_harvest_status" : "اختر حالة الحصاد",
+  "harvested" : "محصود",
+  "unharvested" : "غير محصود"
 }

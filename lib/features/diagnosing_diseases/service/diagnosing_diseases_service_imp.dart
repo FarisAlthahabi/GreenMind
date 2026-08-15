@@ -28,7 +28,11 @@ class DiagnosingDiseasesServiceImp implements DiagnosingDiseasesService {
       }
       final paylod = {'image': multipartFile, "plant_id": ?plantId};
       final formData = FormData.fromMap(paylod);
-      final response = await dio.post("predict", data: formData);
+      final response = await dio.post(
+        "predict",
+        data: formData,
+        duration: AppConstants.duration25s,
+      );
 
       final data = response.data["data"] as Map<String, dynamic>;
       return DiagnoseResponseModel.fromJson(data);

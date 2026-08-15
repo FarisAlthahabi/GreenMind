@@ -50,12 +50,17 @@ class AppInterceptor extends Interceptor {
       get<AuthManagerBloc>().add(SignOutRequested());
       throw UnauthorizedException(err.requestOptions);
     }
-    if (err.type == DioExceptionType.connectionTimeout ||
-        err.type == DioExceptionType.receiveTimeout) {
+    if (err.type == .connectionTimeout || err.type == .receiveTimeout) {
       throw DeadlineExceededException(err.requestOptions);
     }
-    if (err.type == DioExceptionType.connectionError) {
+    if (err.type == .connectionError) {
       throw ConnectionToServerError(err.requestOptions);
+    }
+    if (err.type == .unknown) {
+      throw UnknownException(err.requestOptions);
+    }
+    if (err.response?.statusCode == 500) {
+      throw InternalServerError(err.requestOptions);
     }
     throw CustomDioException(
       response: err.response,

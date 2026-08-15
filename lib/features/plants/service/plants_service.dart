@@ -19,6 +19,7 @@ abstract class PlantsService {
     String? search,
     int? cropId,
     bool? isHealthy,
+    bool? isHarvested,
   });
   Future<PlantModel> getPlant(int id);
   Future<PlantModel> updatePlant(AddPlantModel plant, {int? id});

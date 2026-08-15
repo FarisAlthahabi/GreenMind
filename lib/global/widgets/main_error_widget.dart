@@ -22,8 +22,10 @@ class MainErrorWidget extends StatelessWidget {
       child: Column(
         mainAxisSize: .min,
         crossAxisAlignment: .center,
+        spacing: 5,
         children: [
           SizedBox(height: height),
+          if (!isRefresh) Icon(Icons.error_outline, size: 40),
           Text(error, style: context.tt.titleMedium, textAlign: .center),
           if (onTryAgainTap != null)
             InkWell(

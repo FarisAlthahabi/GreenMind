@@ -251,5 +251,9 @@
   "unknown_user": "Unknown User",
   "current_inventory" : "Current inventory",
   "please_contact_admin_to_get_new_password" : "Please contact admin to get new password",
-  "apply_changes" : "Apply Changes"
+  "apply_changes" : "Apply Changes",
+  "internal_server_error" : "Internal server error",
+  "select_harvest_status" : "Select harvest status",
+  "harvested" : "Harvested",
+  "unharvested" : "Unharvested"
 }

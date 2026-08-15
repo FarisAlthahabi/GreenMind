@@ -10,6 +10,7 @@ import 'package:green_mind/features/plants/model/mark_harvested_model/mark_harve
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/features/plants/service/plants_service.dart';
 import 'package:green_mind/features/plants/view/plants_view.dart';
+import 'package:green_mind/features/plants/view/widgets/plants_filter_widget.dart';
 import 'package:green_mind/global/utils/constants.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
@@ -30,6 +31,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   String searchQuery = "";
   CropModel? cropFilter;
   HealthStatusEnum? selectedHealthStatus;
+  HarvestStatusEnum? selectedHarvestStatus;
   AddPlantModel model = AddPlantModel();
   MarkHarvestedModel markHarvested = MarkHarvestedModel();
   // int? diseaseId;
@@ -126,6 +128,13 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
     }
   }
 
+  void setHarvestStatusFilter(HarvestStatusEnum? status) {
+    if (status != null) {
+      selectedHarvestStatus = status;
+      getPlants(reset: true);
+    }
+  }
+
   void setSearchQuery(String value) {
     searchQuery = value;
     _debounceTimer?.cancel();
@@ -175,6 +184,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
         search: searchQuery,
         cropId: cropFilter?.id,
         isHealthy: selectedHealthStatus?.value,
+        isHarvested : selectedHarvestStatus?.value
       );
 
       lastPage = paginatedPlants.pagination.lastPage;

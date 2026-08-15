@@ -10,6 +10,7 @@ import 'package:green_mind/features/diagnosing_diseases/view/widgets/diagnoses_f
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
 import 'package:green_mind/features/users/cubit/users_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/dio/dio_client.dart';
 import 'package:green_mind/global/extensions/locale_x.dart';
 import 'package:green_mind/global/extensions/string_x.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
@@ -343,10 +344,15 @@ class _DiagnosesPageState extends State<DiagnosesPage> {
                 if (diagnose.originalImagePath.isNotEmpty)
                   _buildImageLabel(
                     "original_image",
-                    diagnose.originalImagePath,
+                    // diagnose.originalImagePath,
+                    "$baseUrl/${diagnose.originalImagePath}",
                   ),
                 if (diagnose.gradCamImagePath.isNotEmpty)
-                  _buildImageLabel("grad_cam", diagnose.gradCamImagePath),
+                  _buildImageLabel(
+                    "grad_cam",
+                    //diagnose.gradCamImagePath
+                    "$baseUrl/${diagnose.gradCamImagePath}",
+                  ),
               ],
             ),
           ],

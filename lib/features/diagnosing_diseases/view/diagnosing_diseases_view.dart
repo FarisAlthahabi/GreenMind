@@ -11,6 +11,7 @@ import 'package:green_mind/features/diagnosing_diseases/model/diagnose_response_
 import 'package:green_mind/features/plants/cubit/plants_cubit.dart';
 import 'package:green_mind/features/plants/model/plant_model/plant_model.dart';
 import 'package:green_mind/global/di/di.dart';
+import 'package:green_mind/global/dio/dio_client.dart';
 import 'package:green_mind/global/extensions/locale_x.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
@@ -239,7 +240,8 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                 child: Text("grad_cam_image".tr(), style: context.tt.bodyLarge),
               ),
               AppImageWidget(
-                url: diagnose.gradCamImagePath,
+                // url: diagnose.gradCamImagePath,
+                url: "$baseUrl/${diagnose.gradCamImagePath}",
                 fit: .fitWidth,
                 borderRadius: AppConstants.borderRadius20,
                 border: .all(width: 0.5, color: context.cs.onSurface),
@@ -410,12 +412,15 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                         ),
                       ),
                       Row(
-                        spacing: 2,
+                        crossAxisAlignment: .start,
+                        spacing: 4,
                         children: [
                           Icon(Icons.source_outlined, size: 20),
-                          Text(
-                            details.officialSource,
-                            style: context.tt.bodySmall,
+                          Expanded(
+                            child: Text(
+                              details.officialSource,
+                              style: context.tt.bodySmall,
+                            ),
                           ),
                         ],
                       ),

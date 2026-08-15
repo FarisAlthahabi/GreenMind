@@ -43,7 +43,7 @@ class _SignInPageState extends State<SignInPage>
   void onForgetPasswordTap() {
     MainSnackBar.showMessage(
       context,
-      "please_contact_admin_to_get_new_password",
+      "please_contact_admin_to_get_new_password".tr(),
     );
     //context.router.push(const ForgetPasswordRoute());
   }

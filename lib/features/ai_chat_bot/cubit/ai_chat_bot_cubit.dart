@@ -45,14 +45,33 @@ class AiChatBotCubit extends Cubit<GeneralAiChatBotState> {
   }
 
   Future<void> getAiResponse(String message) async {
+    addMessage(message);
+    emit(ChatMessagesLoading());
+    try {
+      if (isClosed) return;
+      final aiMessage = await aiChatBotService.sendMessage(
+        message,
+        ctx: "",
+        sessionId: currentSessionId,
+      );
+      currentSessionId = aiMessage.sessionId;
+      addMessage(aiMessage.reply, isUser: false);
+      emit(CurrentTriesState(--currentTries));
+    } catch (e) {
+      if (isClosed) return;
+      emit(ChatMessagesFail(e.toString()));
+    }
+  }
+
+  Future<void> getAiResponseAsStream(String message) async {
     addMessage(message, isUser: true);
     emit(ChatMessagesLoading());
     _cancelStream();
     currentAiMessage = '';
     try {
-      aiChatBotService.sendMessage(message);
+      // aiChatBotService.sendMessageAsStream(message);
       _streamSubscription = aiChatBotService
-          .sendMessage(message, ctx: "", sessionId: currentSessionId)
+          .sendMessageAsStream(message, ctx: "", sessionId: currentSessionId)
           .listen(
             handleChunk,
             onError: handleOnGetAiResponseError,

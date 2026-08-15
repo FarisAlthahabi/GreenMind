@@ -13,9 +13,9 @@ class DiseasesServiceImp implements DiseasesService {
       final getCached = prefs.getStringList(storagePath);
       if (!hasNet && getCached != null) {
         return getCached.map((e) => DiseaseModel.fromString(e)).toList();
-      } 
+      }
 
-      final response = await dio.get("diseases");
+      final response = await dio.get("diseases", queries: {"per_page": 100000});
       final data = response.data["data"] as List;
       final diseases = data
           .map(

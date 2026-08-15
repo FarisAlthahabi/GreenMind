@@ -6,6 +6,7 @@ import 'package:green_mind/global/blocs/internet_connection/cubit/internet_conne
 import 'package:green_mind/global/di/di.dart';
 import 'package:green_mind/global/dio/dio_client.dart';
 import 'package:green_mind/global/models/paginated_model/paginated_model.dart';
+import 'package:green_mind/global/utils/constants.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
