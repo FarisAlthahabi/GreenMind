@@ -1,10 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:green_mind/global/gen/assets.gen.dart';
 import 'package:green_mind/global/mixins/post_frame_mixin.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
+import 'package:green_mind/global/utils/utils.dart';
 
 @RoutePage()
 class SplashView extends StatelessWidget {
@@ -71,7 +71,8 @@ class _SplashPageState extends State<SplashPage>
               scale: _scaleAnimation,
               child: FadeTransition(
                 opacity: _fadeInAnimation,
-                child: Assets.images.png.greenMindPng.image(width: 200),
+                child: Utils.appLogo(context, width: 200),
+                // child: Assets.images.png.greenMindPng.image(width: 200),
               ),
             ),
             const SizedBox(height: 30),

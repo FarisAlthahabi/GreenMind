@@ -134,7 +134,10 @@ class _InventoryPageState extends State<InventoryPage> {
                                 ] else if (hasReachedMax &&
                                     inventories.isNotEmpty &&
                                     currentPage != 1) ...[
-                                  MainErrorWidget(error: 'no_more_data'.tr()),
+                                  MainErrorWidget(
+                                    error: 'no_more_data'.tr(),
+                                    isRefresh: true,
+                                  ),
                                 ],
                                 const SizedBox(height: 35),
                               ],

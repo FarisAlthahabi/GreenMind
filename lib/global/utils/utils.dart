@@ -54,12 +54,49 @@ abstract class Utils {
     return input[0].toUpperCase() + input.substring(1);
   }
 
-  static AssetGenImage appImage(BuildContext context) {
+  static Image appImage(BuildContext context, {double? width, double? height}) {
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return isDark
-        ? Assets.images.png.greenMindWhitePng
-        : Assets.images.png.greenMindDarkPng;
+        ? Assets.images.png.greenMindDark.image(width: width, height: height)
+        : Assets.images.png.greenMindWhite.image(width: width, height: height);
   }
+
+  static Image appLogo(BuildContext context, {double? width, double? height}) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark
+        ? Assets.images.png.greenMindLogoWhite.image(
+            width: width,
+            height: height,
+          )
+        : Assets.images.png.greenMindLogoDark.image(
+            width: width,
+            height: height,
+          );
+  }
+
+  // static SvgPicture appImageSvg(BuildContext context) {
+  //   bool isDark = Theme.of(context).brightness == Brightness.dark;
+  //   return isDark
+  //       ? Assets.images.svg.greenMindWhiteSvg.svg()
+  //       : Assets.images.svg.greenMindDarkSvg.svg();
+  // }
+
+  // static SvgPicture appLogoSvg(
+  //   BuildContext context, {
+  //   double? width,
+  //   double? height,
+  // }) {
+  //   bool isDark = Theme.of(context).brightness == Brightness.dark;
+  //   return isDark
+  //       ? Assets.images.svg.greenMindLogoDarkSvg.svg(
+  //           width: width,
+  //           height: height,
+  //         )
+  //       : Assets.images.svg.greenMindLogoWhiteSvg.svg(
+  //           width: width,
+  //           height: height,
+  //         );
+  // }
 
   static String? validateInput(
     String? val,

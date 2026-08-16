@@ -145,32 +145,32 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
                     "agricultural_expert".tr(),
                     style: context.tt.bodyLarge?.copyWith(fontWeight: .bold),
                   ),
-                  BlocBuilder<AiChatBotCubit, GeneralAiChatBotState>(
-                    buildWhen: (previous, current) =>
-                        current is CurrentTriesState,
-                    builder: (context, state) {
-                      int currentTries = 5;
-                      String text =
-                          "${"available".tr()} - $currentTries ${"remaining_messages".tr()}";
-                      if (state is CurrentTriesState) {
-                        currentTries = state.currentTries;
-                        if (currentTries == 0) {
-                          text = "session_ended".tr();
-                        } else {
-                          text =
-                              "${"available".tr()} - $currentTries ${"remaining_messages".tr()}";
-                        }
-                      }
-                      return Text(text);
-                    },
-                  ),
+                  // BlocBuilder<AiChatBotCubit, GeneralAiChatBotState>(
+                  //   buildWhen: (previous, current) =>
+                  //       current is CurrentTriesState,
+                  //   builder: (context, state) {
+                  //     int currentTries = 5;
+                  //     String text =
+                  //         "${"available".tr()} - $currentTries ${"remaining_messages".tr()}";
+                  //     if (state is CurrentTriesState) {
+                  //       currentTries = state.currentTries;
+                  //       if (currentTries == 0) {
+                  //         text = "session_ended".tr();
+                  //       } else {
+                  //         text =
+                  //             "${"available".tr()} - $currentTries ${"remaining_messages".tr()}";
+                  //       }
+                  //     }
+                  //     return Text(text);
+                  //   },
+                  // ),
                 ],
               ),
             ),
-            InkWell(
-              onTap: aiChatBotCubit.clearMessages,
-              child: Icon(Icons.refresh, size: 30, color: context.cs.primary),
-            ),
+            // InkWell(
+            //   onTap: aiChatBotCubit.clearMessages,
+            //   child: Icon(Icons.refresh, size: 30, color: context.cs.primary),
+            // ),
           ],
         ),
       ),

@@ -142,7 +142,9 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
           ],
         ),
       ),
-      floatingActionButton: MainFab(onTap: () => onUpdateCrop(null)),
+      floatingActionButton: !role.isFarmer
+          ? MainFab(onTap: () => onUpdateCrop(null))
+          : null,
     );
   }
 

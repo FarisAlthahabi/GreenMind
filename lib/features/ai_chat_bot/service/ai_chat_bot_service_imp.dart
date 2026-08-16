@@ -15,7 +15,7 @@ class AiChatBotServiceImp implements AiChatBotService {
       final response = await dioClient.postStreaming(
         'chat',
         data: data,
-        duration: AppConstants.duration25s,
+        duration: AppConstants.duration2m,
       );
 
       final headers = response.headers;
@@ -83,7 +83,7 @@ class AiChatBotServiceImp implements AiChatBotService {
       final response = await dioClient.post(
         'chat',
         data: paylod,
-        duration: AppConstants.duration25s,
+        duration: AppConstants.duration2m,
       );
       final data = response.data["data"] as Map<String, dynamic>;
       return AiMessageModel.fromJson(data);

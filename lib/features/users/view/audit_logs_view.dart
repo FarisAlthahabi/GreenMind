@@ -15,21 +15,22 @@ import 'package:green_mind/global/widgets/main_text_field.dart';
 
 @RoutePage()
 class AuditLogsView extends StatelessWidget {
-  const AuditLogsView({super.key, required this.userId});
-  final int userId;
+  const AuditLogsView({super.key, this.userId});
+  final int? userId;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => get<UsersCubit>()..getAuditLogs(userId, reset: true),
+      create: (context) =>
+          get<UsersCubit>()..getAuditLogs(userId: userId, reset: true),
       child: AuditLogsPage(userId: userId),
     );
   }
 }
 
 class AuditLogsPage extends StatefulWidget {
-  const AuditLogsPage({super.key, required this.userId});
-  final int userId;
+  const AuditLogsPage({super.key, this.userId});
+  final int? userId;
 
   @override
   State<AuditLogsPage> createState() => _AuditLogsPageState();
@@ -39,7 +40,7 @@ class _AuditLogsPageState extends State<AuditLogsPage> {
   late final UsersCubit usersCubit = context.read();
 
   void fetchAuditLogs({bool isRefresh = false}) =>
-      usersCubit.getAuditLogs(widget.userId, reset: isRefresh);
+      usersCubit.getAuditLogs(userId: widget.userId, reset: isRefresh);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,7 @@ class _AuditLogsPageState extends State<AuditLogsPage> {
               hintText: "search",
               prefixIcon: Icon(Icons.search),
               onChanged: (value) =>
-                  usersCubit.setSearchAuditQuery(value, widget.userId),
+                  usersCubit.setSearchAuditQuery(value, userId: widget.userId),
             ),
             Expanded(
               child: BlocBuilder<UsersCubit, GeneralUsersState>(
@@ -77,7 +78,7 @@ class _AuditLogsPageState extends State<AuditLogsPage> {
                               currentScroll >= maxScroll - 200 &&
                               !usersCubit.isLoadingMore &&
                               !hasReachedMax) {
-                            usersCubit.loadMoreAuditLogs(widget.userId);
+                            usersCubit.loadMoreAuditLogs(userId: widget.userId);
                           }
                         }
                         return true;
@@ -104,7 +105,10 @@ class _AuditLogsPageState extends State<AuditLogsPage> {
                                 ] else if (hasReachedMax &&
                                     logs.isNotEmpty &&
                                     currentPage != 1) ...[
-                                  MainErrorWidget(error: 'no_more_data'.tr()),
+                                  MainErrorWidget(
+                                    error: 'no_more_data'.tr(),
+                                    isRefresh: true,
+                                  ),
                                 ],
                                 const SizedBox(height: 35),
                               ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:green_mind/global/gen/assets.gen.dart';
 import 'package:green_mind/global/theme/theme_x.dart';
 import 'package:green_mind/global/utils/constants.dart';
+import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/app_image_widget.dart';
 
 abstract class MainDialogs {
@@ -18,7 +18,8 @@ abstract class MainDialogs {
                 url: image,
                 fit: .fitWidth,
                 bgColor: context.cs.surface,
-                errorWidget: Assets.images.svg.greenMindSvg.svg(),
+                errorWidget: Utils.appLogo(context),
+                // errorWidget: Assets.images.svg.greenMindSvg.svg(),
               ),
             ),
             Positioned(

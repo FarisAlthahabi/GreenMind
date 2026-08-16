@@ -107,7 +107,7 @@ class AppManagerRouteArgs {
 class AuditLogsRoute extends _i20.PageRouteInfo<AuditLogsRouteArgs> {
   AuditLogsRoute({
     _i21.Key? key,
-    required int userId,
+    int? userId,
     List<_i20.PageRouteInfo>? children,
   }) : super(
          AuditLogsRoute.name,
@@ -120,18 +120,20 @@ class AuditLogsRoute extends _i20.PageRouteInfo<AuditLogsRouteArgs> {
   static _i20.PageInfo page = _i20.PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<AuditLogsRouteArgs>();
+      final args = data.argsAs<AuditLogsRouteArgs>(
+        orElse: () => const AuditLogsRouteArgs(),
+      );
       return _i3.AuditLogsView(key: args.key, userId: args.userId);
     },
   );
 }
 
 class AuditLogsRouteArgs {
-  const AuditLogsRouteArgs({this.key, required this.userId});
+  const AuditLogsRouteArgs({this.key, this.userId});
 
   final _i21.Key? key;
 
-  final int userId;
+  final int? userId;
 
   @override
   String toString() {

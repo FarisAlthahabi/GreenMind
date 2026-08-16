@@ -34,10 +34,19 @@ class AuditLogModel {
       entityType: json['entity_type'] as String,
       entityId: json['entity_id'] as int,
       causer: CauserModel.fromJson(json['causer'] as Map<String, dynamic>),
-      oldValues: json['old_values'] as Map<String, dynamic>,
-      newValues: json['new_values'] as Map<String, dynamic>,
+      oldValues: safeCastToMap(json['old_values']),
+      newValues: safeCastToMap(json['new_values']),
+      // oldValues: json['old_values'] as Map<String, dynamic>,
+      // newValues: json['new_values'] as Map<String, dynamic>,
       createdAt: json['created_at'] as String,
     );
+  }
+
+  static Map<String, dynamic> safeCastToMap(dynamic value) {
+    if (value is Map<String, dynamic>) {
+      return value;
+    }
+    return {};
   }
 
   Map<String, dynamic> toJson() {

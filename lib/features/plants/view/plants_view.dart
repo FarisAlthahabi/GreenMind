@@ -74,7 +74,6 @@ enum HealthStatusEnum implements DropDownItemModel {
   bool? get stringify => null;
 }
 
-
 abstract class PlantsViewCallBacks {}
 
 @RoutePage()
@@ -375,7 +374,10 @@ class _PlantsPageState extends State<PlantsPage>
                                     ),
                                   ] else if (plants.isNotEmpty &&
                                       currentPage != 1) ...[
-                                    MainErrorWidget(error: 'no_more_data'.tr()),
+                                    MainErrorWidget(
+                                      error: 'no_more_data'.tr(),
+                                      isRefresh: true,
+                                    ),
                                   ],
                                   const SizedBox(height: 35),
                                 ],

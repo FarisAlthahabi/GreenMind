@@ -46,7 +46,7 @@ class _MainAppBarState extends State<MainAppBar> {
         SizedBox(width: 24),
         Padding(
           padding: AppConstants.padding14,
-          child: Utils.appImage(context).image(),
+          child: Utils.appImage(context),
         ),
       ],
     );

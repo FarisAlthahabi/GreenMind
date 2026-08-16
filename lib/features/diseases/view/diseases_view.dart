@@ -145,7 +145,9 @@ class _DiseasesPageState extends State<DiseasesPage>
           ],
         ),
       ),
-      floatingActionButton: MainFab(onTap: () => onUpdateDisease(null)),
+      floatingActionButton: !role.isFarmer
+          ? MainFab(onTap: () => onUpdateDisease(null))
+          : null,
     );
   }
 

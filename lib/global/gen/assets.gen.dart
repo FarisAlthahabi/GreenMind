@@ -40,23 +40,28 @@ class $AssetsLocalesGen {
 class $AssetsImagesPngGen {
   const $AssetsImagesPngGen();
 
-  /// File path: assets/images/png/green_mind_dark_png.png
-  AssetGenImage get greenMindDarkPng =>
-      const AssetGenImage('assets/images/png/green_mind_dark_png.png');
+  /// File path: assets/images/png/green_mind_dark.png
+  AssetGenImage get greenMindDark =>
+      const AssetGenImage('assets/images/png/green_mind_dark.png');
 
-  /// File path: assets/images/png/green_mind_png.png
-  AssetGenImage get greenMindPng =>
-      const AssetGenImage('assets/images/png/green_mind_png.png');
+  /// File path: assets/images/png/green_mind_logo_dark.png
+  AssetGenImage get greenMindLogoDark =>
+      const AssetGenImage('assets/images/png/green_mind_logo_dark.png');
 
-  /// File path: assets/images/png/green_mind_white_png.png
-  AssetGenImage get greenMindWhitePng =>
-      const AssetGenImage('assets/images/png/green_mind_white_png.png');
+  /// File path: assets/images/png/green_mind_logo_white.png
+  AssetGenImage get greenMindLogoWhite =>
+      const AssetGenImage('assets/images/png/green_mind_logo_white.png');
+
+  /// File path: assets/images/png/green_mind_white.png
+  AssetGenImage get greenMindWhite =>
+      const AssetGenImage('assets/images/png/green_mind_white.png');
 
   /// List of all assets
   List<AssetGenImage> get values => [
-    greenMindDarkPng,
-    greenMindPng,
-    greenMindWhitePng,
+    greenMindDark,
+    greenMindLogoDark,
+    greenMindLogoWhite,
+    greenMindWhite,
   ];
 }
 
@@ -67,9 +72,13 @@ class $AssetsImagesSvgGen {
   SvgGenImage get greenMindDarkSvg =>
       const SvgGenImage('assets/images/svg/green_mind_dark_svg.svg');
 
-  /// File path: assets/images/svg/green_mind_svg.svg
-  SvgGenImage get greenMindSvg =>
-      const SvgGenImage('assets/images/svg/green_mind_svg.svg');
+  /// File path: assets/images/svg/green_mind_logo_dark_svg.svg
+  SvgGenImage get greenMindLogoDarkSvg =>
+      const SvgGenImage('assets/images/svg/green_mind_logo_dark_svg.svg');
+
+  /// File path: assets/images/svg/green_mind_logo_white_svg.svg
+  SvgGenImage get greenMindLogoWhiteSvg =>
+      const SvgGenImage('assets/images/svg/green_mind_logo_white_svg.svg');
 
   /// File path: assets/images/svg/green_mind_white_svg.svg
   SvgGenImage get greenMindWhiteSvg =>
@@ -78,7 +87,8 @@ class $AssetsImagesSvgGen {
   /// List of all assets
   List<SvgGenImage> get values => [
     greenMindDarkSvg,
-    greenMindSvg,
+    greenMindLogoDarkSvg,
+    greenMindLogoWhiteSvg,
     greenMindWhiteSvg,
   ];
 }

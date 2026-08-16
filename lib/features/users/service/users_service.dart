@@ -16,8 +16,8 @@ abstract class UsersService {
   Future<List<UserModel>> getUsers();
   Future<UserModel> getUser(int id);
   Future<UserModel> updateUser(AddUserModel model, {int? id});
-  Future<PaginatedModel<AuditLogModel>> getAuditLogs(
-    int userId, {
+  Future<PaginatedModel<AuditLogModel>> getAuditLogs({
+    int? userId,
     int page = 1,
     String? search,
   });

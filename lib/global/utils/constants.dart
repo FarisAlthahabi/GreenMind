@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 abstract class AppConstants {
   static const appName = "Green Mind";
 
+  static const duration2m = Duration(minutes: 2);
   static const duration1m = Duration(minutes: 1);
   static const duration25s = Duration(seconds: 25);
   static const duration15s = Duration(seconds: 15);

@@ -209,7 +209,7 @@ class _StatsPageState extends State<StatsPage> {
       ),
       IconTitleValueColor(
         "total_quantity",
-        kpis.totalQuantity.toString(),
+        kpis.totalQuantity,
         Icons.storage,
         context.cs.tertiaryFixedDim,
       ),
@@ -357,7 +357,6 @@ class LastDiagnosisCard extends StatefulWidget {
 }
 
 class _LastDiagnosisCardState extends State<LastDiagnosisCard> {
-  
   @override
   Widget build(BuildContext context) {
     final locale = context.locale;

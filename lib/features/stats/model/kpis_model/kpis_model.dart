@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:green_mind/global/utils/json_converters/string_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'kpis_model.g.dart';
@@ -23,8 +24,9 @@ class KpisModel {
   @JsonKey(name: "diseased_plants")
   final int diseasedPlants;
 
+  @StringConverter()
   @JsonKey(name: "total_quantity")
-  final int totalQuantity;
+  final String totalQuantity;
 
   factory KpisModel.fromJson(Map<String, dynamic> json) =>
       _$KpisModelFromJson(json);
@@ -44,7 +46,7 @@ class KpisModel {
     int? totalPlants,
     int? healthyPlants,
     int? diseasedPlants,
-    int? totalQuantity,
+    String? totalQuantity,
   }) {
     return KpisModel(
       totalPlants: totalPlants ?? this.totalPlants,

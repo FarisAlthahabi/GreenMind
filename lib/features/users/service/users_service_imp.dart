@@ -62,8 +62,8 @@ class UsersServiceImp implements UsersService {
   }
 
   @override
-  Future<PaginatedModel<AuditLogModel>> getAuditLogs(
-    int userId, {
+  Future<PaginatedModel<AuditLogModel>> getAuditLogs({
+    int? userId,
     int page = 1,
     String? search,
   }) async {
@@ -77,7 +77,7 @@ class UsersServiceImp implements UsersService {
         return PaginatedModel.fromString(getCached, fromJson);
       }
 
-      final queries = {'user_id': userId, 'page': page, "search": ?search};
+      final queries = {'user_id': ?userId, 'page': page, "search": ?search};
       final response = await dio.get("audit-logs", queries: queries);
       final data = response.data as Map<String, dynamic>;
       final models = PaginatedModel.fromJson(data, fromJson);

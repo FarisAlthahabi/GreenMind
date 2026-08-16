@@ -163,6 +163,7 @@ class _DiagnosesPageState extends State<DiagnosesPage> {
                                         ] else if (diagnoses.isNotEmpty &&
                                             currentPage != 1) ...[
                                           MainErrorWidget(
+                                            isRefresh: true,
                                             error: 'no_more_data'.tr(),
                                           ),
                                         ],

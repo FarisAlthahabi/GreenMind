@@ -26,14 +26,14 @@ class AiChatBotCubit extends Cubit<GeneralAiChatBotState> {
     emit(ChatMessagesSuccess(messages));
   }
 
-  void clearMessages() {
-    messages.clear();
-    currentTries = 5;
-    currentAiMessage = '';
-    _cancelStream();
-    emit(CurrentTriesState(currentTries));
-    emit(ChatMessagesEmpty("-"));
-  }
+  // void clearMessages() {
+  //   messages.clear();
+  //   currentTries = 5;
+  //   currentAiMessage = '';
+  //   _cancelStream();
+  //   emit(CurrentTriesState(currentTries));
+  //   emit(ChatMessagesEmpty("-"));
+  // }
 
   void getMessages() {
     emit(CurrentTriesState(currentTries));

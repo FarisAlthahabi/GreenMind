@@ -130,8 +130,10 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
         "inventory_activities",
         InventoryActivityRoute(),
       ),
-      if (!role.isFarmer)
+      if (!role.isFarmer) ...[
         const DrawerTabModel(Icons.group_outlined, "users", UsersRoute()),
+        DrawerTabModel(Icons.history_outlined, "audit_logs", AuditLogsRoute()),
+      ],
       const DrawerTabModel(Icons.show_chart_outlined, "stats", StatsRoute()),
       const DrawerTabModel(Icons.person_outlined, "profile", ProfileRoute()),
     ];
@@ -225,7 +227,7 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
       child: Column(
         crossAxisAlignment: .stretch,
         children: [
-          Expanded(child: Utils.appImage(context).image()),
+          Expanded(child: Utils.appImage(context)),
           const SizedBox(height: 5),
           Text(
             AppConstants.appName,

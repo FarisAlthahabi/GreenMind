@@ -75,11 +75,11 @@ class UsersCubit extends Cubit<GeneralUsersState> {
     search();
   }
 
-  void setSearchAuditQuery(String value, int userId) {
+  void setSearchAuditQuery(String value, {int? userId}) {
     searchQuery = value;
     _debounceTimer?.cancel();
     _debounceTimer = Timer(AppConstants.duration1s, () {
-      getAuditLogs(userId, reset: true);
+      getAuditLogs(userId: userId, reset: true);
     });
   }
 
@@ -160,7 +160,7 @@ class UsersCubit extends Cubit<GeneralUsersState> {
   }
 
   // Audit logs methods
-  Future<void> getAuditLogs(int userId, {bool reset = false}) async {
+  Future<void> getAuditLogs({int? userId, bool reset = false}) async {
     if (reset) {
       currentPage = 1;
       hasReachedMax = false;
@@ -175,7 +175,7 @@ class UsersCubit extends Cubit<GeneralUsersState> {
     try {
       isLoadingMore = true;
       final paginatedLogs = await usersService.getAuditLogs(
-        userId,
+        userId: userId,
         page: currentPage,
         search: searchAuditQuery,
       );
@@ -213,10 +213,10 @@ class UsersCubit extends Cubit<GeneralUsersState> {
     }
   }
 
-  Future<void> loadMoreAuditLogs(int userId) async {
+  Future<void> loadMoreAuditLogs({int? userId}) async {
     if (!hasReachedMax && !isLoadingMore) {
       currentPage++;
-      await getAuditLogs(userId);
+      await getAuditLogs(userId: userId);
     }
   }
 }
