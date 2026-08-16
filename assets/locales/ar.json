@@ -255,5 +255,6 @@
   "internal_server_error" : "حدث خطأ في الخادم",
   "select_harvest_status" : "اختر حالة الحصاد",
   "harvested" : "محصود",
-  "unharvested" : "غير محصود"
+  "unharvested" : "غير محصود",
+  "app_description" : "نظام العناية بالنباتات والمشتل الذكي"
 }

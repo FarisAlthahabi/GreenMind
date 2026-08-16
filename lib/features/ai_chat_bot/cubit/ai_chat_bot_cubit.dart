@@ -36,7 +36,7 @@ class AiChatBotCubit extends Cubit<GeneralAiChatBotState> {
   // }
 
   void getMessages() {
-    emit(CurrentTriesState(currentTries));
+    // emit(CurrentTriesState(currentTries));
     if (messages.isEmpty) {
       emit(ChatMessagesEmpty("-"));
     } else {
@@ -56,7 +56,7 @@ class AiChatBotCubit extends Cubit<GeneralAiChatBotState> {
       );
       currentSessionId = aiMessage.sessionId;
       addMessage(aiMessage.reply, isUser: false);
-      emit(CurrentTriesState(--currentTries));
+      // emit(CurrentTriesState(--currentTries));
     } catch (e) {
       if (isClosed) return;
       emit(ChatMessagesFail(e.toString()));
@@ -90,7 +90,7 @@ class AiChatBotCubit extends Cubit<GeneralAiChatBotState> {
       currentSessionId = chunk.replaceFirst('SESSION_ID:', '');
       if (kDebugMode) print('Session ID: $currentSessionId');
     } else if (chunk == '[DONE]') {
-      emit(CurrentTriesState(--currentTries));
+      // emit(CurrentTriesState(--currentTries));
       emit(ChatMessagesSuccess(messages));
     } else {
       currentAiMessage += "$chunk ";
@@ -108,7 +108,7 @@ class AiChatBotCubit extends Cubit<GeneralAiChatBotState> {
   }
 
   void handleOnGetAiResponseDone() {
-    if (!isClosed) emit(CurrentTriesState(--currentTries));
+    // if (!isClosed) emit(CurrentTriesState(--currentTries));
   }
 
   void _cancelStream() {

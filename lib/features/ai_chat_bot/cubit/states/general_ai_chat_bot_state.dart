@@ -4,8 +4,8 @@ abstract class GeneralAiChatBotState {}
 
 class GeneralAiChatBotInitial extends GeneralAiChatBotState{}
 
-class CurrentTriesState extends GeneralAiChatBotState{
-  final int currentTries;
+// class CurrentTriesState extends GeneralAiChatBotState{
+//   final int currentTries;
 
-  CurrentTriesState(this.currentTries);
-}
+//   CurrentTriesState(this.currentTries);
+// }

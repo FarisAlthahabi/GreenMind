@@ -73,6 +73,7 @@ class _SignInPageState extends State<SignInPage>
             children: [
               const SizedBox(height: 40),
               _buildImage(),
+              const SizedBox(height: 40),
               _buildTitle(),
               const SizedBox(height: 40),
               _buildUserNameTextField(),

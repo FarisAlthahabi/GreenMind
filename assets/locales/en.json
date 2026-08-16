@@ -255,5 +255,6 @@
   "internal_server_error" : "Internal server error",
   "select_harvest_status" : "Select harvest status",
   "harvested" : "Harvested",
-  "unharvested" : "Unharvested"
+  "unharvested" : "Unharvested",
+  "app_description" : "Smart Plant Care and Nursery System"
 }

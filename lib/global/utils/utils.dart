@@ -55,30 +55,25 @@ abstract class Utils {
   }
 
   static Image appImage(BuildContext context, {double? width, double? height}) {
+    final png = Assets.images.png;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return isDark
-        ? Assets.images.png.greenMindDark.image(width: width, height: height)
-        : Assets.images.png.greenMindWhite.image(width: width, height: height);
+        ? png.greenMindDark.image(width: width, height: height)
+        : png.greenMindWhite.image(width: width, height: height);
   }
 
   static Image appLogo(BuildContext context, {double? width, double? height}) {
+    final png = Assets.images.png;
     bool isDark = Theme.of(context).brightness == Brightness.dark;
     return isDark
-        ? Assets.images.png.greenMindLogoWhite.image(
-            width: width,
-            height: height,
-          )
-        : Assets.images.png.greenMindLogoDark.image(
-            width: width,
-            height: height,
-          );
+        ? png.greenMindLogoWhite.image(width: width, height: height)
+        : png.greenMindLogoDark.image(width: width, height: height);
   }
 
   // static SvgPicture appImageSvg(BuildContext context) {
+  //   final svg = Assets.images.svg;
   //   bool isDark = Theme.of(context).brightness == Brightness.dark;
-  //   return isDark
-  //       ? Assets.images.svg.greenMindWhiteSvg.svg()
-  //       : Assets.images.svg.greenMindDarkSvg.svg();
+  //   return isDark ? svg.greenMindWhiteSvg.svg() : svg.greenMindDarkSvg.svg();
   // }
 
   // static SvgPicture appLogoSvg(
@@ -86,16 +81,11 @@ abstract class Utils {
   //   double? width,
   //   double? height,
   // }) {
+  //   final svg = Assets.images.svg;
   //   bool isDark = Theme.of(context).brightness == Brightness.dark;
   //   return isDark
-  //       ? Assets.images.svg.greenMindLogoDarkSvg.svg(
-  //           width: width,
-  //           height: height,
-  //         )
-  //       : Assets.images.svg.greenMindLogoWhiteSvg.svg(
-  //           width: width,
-  //           height: height,
-  //         );
+  //       ? svg.greenMindLogoDarkSvg.svg(width: width, height: height)
+  //       : svg.greenMindLogoWhiteSvg.svg(width: width, height: height);
   // }
 
   static String? validateInput(

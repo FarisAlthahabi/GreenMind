@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:green_mind/global/mixins/post_frame_mixin.dart';
 import 'package:green_mind/global/router/app_router.gr.dart';
@@ -65,6 +66,7 @@ class _SplashPageState extends State<SplashPage>
         child: Column(
           crossAxisAlignment: .center,
           mainAxisAlignment: .center,
+          spacing: 60,
           // mainAxisSize: .min,
           children: [
             ScaleTransition(
@@ -75,18 +77,31 @@ class _SplashPageState extends State<SplashPage>
                 // child: Assets.images.png.greenMindPng.image(width: 200),
               ),
             ),
-            const SizedBox(height: 30),
             FadeTransition(
               opacity: _fadeInAnimation,
               child: Padding(
                 padding: AppConstants.paddingH4,
-                child: Text(
-                  "Welcome to ${AppConstants.appName}",
-                  textAlign: .center,
-                  style: context.tt.headlineMedium?.copyWith(
-                    fontWeight: .bold,
-                    color: context.cs.primary,
-                  ),
+                child: Column(
+                  crossAxisAlignment: .center,
+                  spacing: 10,
+                  children: [
+                    Text(
+                      "Welcome to ${AppConstants.appName}",
+                      textAlign: .center,
+                      style: context.tt.headlineMedium?.copyWith(
+                        fontWeight: .bold,
+                        color: context.cs.primary,
+                      ),
+                    ),
+                    Text(
+                      "app_description",
+                      textAlign: .center,
+                      style: context.tt.titleLarge?.copyWith(
+                        fontWeight: .bold,
+                        // color: context.cs.primary,
+                      ),
+                    ).tr(),
+                  ],
                 ),
               ),
             ),

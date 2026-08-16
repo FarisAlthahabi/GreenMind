@@ -133,7 +133,7 @@ class _MainTextFieldState extends State<MainTextField> {
             controller: _controller,
             obscureText: isObsecurePassword,
             readOnly: widget.readOnly,
-            onTap: widget.onTap,
+            onTap: () => widget.onTap?.call(),
             onChanged: (text) {
               widget.onChanged?.call(text);
               setState(() {});

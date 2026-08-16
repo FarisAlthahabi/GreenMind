@@ -383,8 +383,8 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
 
   void addMessage(String message) {
     widget.senderController.clear();
-    // aiChatBotCubit.getAiResponseAsStream(message);
-    aiChatBotCubit.getAiResponse(message);
+    aiChatBotCubit.getAiResponseAsStream(message);
+    // aiChatBotCubit.getAiResponse(message);
   }
 
   @override
@@ -395,7 +395,8 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final iconColor = widget.senderController.text.isEmpty
+    final text = widget.senderController.text;
+    final iconColor = text.isEmpty
         ? context.cs.surfaceContainerHigh
         : context.cs.primary;
     return BlocBuilder<AiChatBotCubit, GeneralAiChatBotState>(
@@ -403,20 +404,18 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
         // TODO check this color to come from theme
         Widget icon = const Icon(Icons.send, color: Colors.white);
         String hintText = "write_question_here".tr();
-        bool readOnly = false;
-        var onTap = widget.senderController.text.isEmpty
-            ? null
-            : () => addMessage(widget.senderController.text);
+        // bool readOnly = false;
+        var onTap = text.isEmpty ? null : () => addMessage(text);
         if (state is ChatMessagesLoading) {
           icon = LoadingIndicator(color: context.cs.onSurface, size: 25);
           onTap = null;
         }
-        if (state is CurrentTriesState) {
-          if (state.currentTries == 0) {
-            hintText = "${"session_ended".tr()} - ${"start_new_chat".tr()}";
-            readOnly = true;
-          }
-        }
+        // if (state is CurrentTriesState) {
+        //   if (state.currentTries == 0) {
+        //     hintText = "${"session_ended".tr()} - ${"start_new_chat".tr()}";
+        //     readOnly = true;
+        //   }
+        // }
         return Row(
           spacing: 10,
           children: [
@@ -429,7 +428,7 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
                 fillColor: context.cs.surfaceContainer,
                 borderColor: context.cs.outline,
                 borderWidth: 0.3,
-                readOnly: readOnly,
+                // readOnly: readOnly,
               ),
             ),
             InkWell(
