@@ -34,7 +34,7 @@ class DioClient {
         requestHeader: true,
         requestBody: true,
         responseBody: true,
-        responseHeader: false,
+        responseHeader: true,
         maxWidth: 98,
         compact: true,
         logPrint: dioPrint,

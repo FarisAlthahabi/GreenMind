@@ -63,8 +63,6 @@ class _MarkAsHarvestedWidgetState extends State<MarkAsHarvestedWidget> {
   void onCancelTap(BuildContext context) => Navigator.pop(context);
 
   void onHarvestTap() {
-    // You can add notes or harvest date to the cubit if needed
-    // For now, just mark as harvested
     plantsCubit.markAsHarvested(widget.plant.id);
   }
 

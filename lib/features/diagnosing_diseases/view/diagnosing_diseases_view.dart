@@ -416,6 +416,12 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                         spacing: 4,
                         children: [
                           Icon(Icons.source_outlined, size: 20),
+                          Text(
+                            "${"source".tr()}: ",
+                            style: context.tt.bodyMedium?.copyWith(
+                              fontWeight: .bold,
+                            ),
+                          ),
                           Expanded(
                             child: Text(
                               details.officialSource,
@@ -496,18 +502,21 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
         }
       },
       builder: (context, state) {
-        Widget btn;
-        if (state is UpdatePlantSuccess) {
-          btn = const SizedBox.shrink();
-        } else {
-          btn = MainActionButton(
-            padding: AppConstants.paddingH10V4,
-            borderRadius: AppConstants.borderRadius10,
-            onPressed: () => onApplyChanges(diagnose.plantId, intervalDays),
-            text: "apply_changes".tr(),
-            isLoading: state is UpdatePlantLoading,
-          );
+        Widget? btn;
+        if (diagnose.plantId != null) {
+          if (state is UpdatePlantSuccess) {
+            btn = null;
+          } else {
+            btn = MainActionButton(
+              padding: AppConstants.paddingH10V4,
+              borderRadius: AppConstants.borderRadius10,
+              onPressed: () => onApplyChanges(diagnose.plantId, intervalDays),
+              text: "apply_changes".tr(),
+              isLoading: state is UpdatePlantLoading,
+            );
+          }
         }
+
         return Column(
           mainAxisSize: .min,
           crossAxisAlignment: .start,
@@ -530,17 +539,28 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                   spacing: 5,
                   children: [
                     Row(
-                      spacing: 20,
+                      crossAxisAlignment: .start,
+                      spacing: 10,
                       children: [
-                        Expanded(child: Text("$intervalDays ${"days".tr()}")),
-                        btn,
+                        Text(
+                          "$intervalDays ${"days".tr()}",
+                          style: context.tt.bodyMedium?.copyWith(
+                            fontWeight: .bold,
+                          ),
+                        ),
+                        if (btn != null) ...[
+                          const Spacer(),
+                          btn,
+                        ] else
+                          Expanded(child: Text("${"reason".tr()}: $reason")),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Expanded(child: Text("${"reason".tr()}: $reason")),
-                      ],
-                    ),
+                    if (btn != null)
+                      Row(
+                        children: [
+                          Expanded(child: Text("${"reason".tr()}: $reason")),
+                        ],
+                      ),
                   ],
                 ),
               ),

@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart';
 import 'package:green_mind/global/blocs/internet_connection/cubit/internet_connection_cubit.dart';
 import 'package:green_mind/global/di/di.dart';
@@ -13,20 +13,20 @@ class AppInterceptor extends Interceptor {
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
-    // if (options.method != "GET") {
     if (!await get<InternetConnectionCubit>().hasInternet()) {
       return handler.reject(NoInternetException(requestOptions: options));
     }
-    // }
 
     if (!options.headers.containsKey('Accept')) {
       options.headers['Accept'] = 'application/json';
     }
 
     final prefs = await SharedPreferences.getInstance();
-    final locale = prefs.getString('locale') ?? 'ar';
-    final token = prefs.getString("token");
+    final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale;
+    final locale = prefs.getString('locale') ?? deviceLocale.languageCode;
+    // final locale = prefs.getString('locale') ?? 'ar';
 
+    final token = prefs.getString("token");
     options.headers['Accept-Language'] = locale;
 
     if (token != null && token.isNotEmpty) {

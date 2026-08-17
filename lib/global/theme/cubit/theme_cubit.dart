@@ -17,11 +17,11 @@ class ThemeCubit extends Cubit<ThemeState> {
     ThemeMode themeMode;
     switch (themeString) {
       case 'light':
-        themeMode = ThemeMode.light;
+        themeMode = .light;
       case 'dark':
-        themeMode = ThemeMode.dark;
+        themeMode = .dark;
       default:
-        themeMode = ThemeMode.light;
+        themeMode = .system;
     }
     return themeMode;
   }
@@ -34,7 +34,7 @@ class ThemeCubit extends Cubit<ThemeState> {
   // bool getIsDark() => loadTheme() == ThemeMode.dark;
 
   Future<void> changeTheme(bool isDark) async {
-    ThemeMode newThemeMode = isDark ? ThemeMode.dark : ThemeMode.light;
+    ThemeMode newThemeMode = isDark ? .dark : .light;
     await prefs.setString('themeMode', newThemeMode.name);
     emit(ThemeChanged(newThemeMode));
   }

@@ -24,7 +24,7 @@ class GreenMindApp extends StatelessWidget {
         supportedLocales: SupportedLocales.locales,
         path: SupportedLocales.path,
         fallbackLocale: SupportedLocales.arabic,
-        startLocale: SupportedLocales.arabic,
+        // startLocale: SupportedLocales.arabic,
         child: const GreenMindMaterialApp(),
       ),
     );

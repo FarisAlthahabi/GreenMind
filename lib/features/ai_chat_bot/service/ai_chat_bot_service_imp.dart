@@ -65,9 +65,7 @@ class AiChatBotServiceImp implements AiChatBotService {
         yield response.data.toString();
       }
     } catch (e, stackTrace) {
-      if (kDebugMode) {
-        print("StackTrace of sendMessage: $stackTrace");
-      }
+      if (kDebugMode) print("StackTrace of sendMessage: $stackTrace");
       rethrow;
     }
   }
@@ -88,9 +86,7 @@ class AiChatBotServiceImp implements AiChatBotService {
       final data = response.data["data"] as Map<String, dynamic>;
       return AiMessageModel.fromJson(data);
     } catch (e, stackTrace) {
-      if (kDebugMode) {
-        print("StackTrace of sendMessage: $stackTrace");
-      }
+      if (kDebugMode) print("StackTrace of sendMessage: $stackTrace");
       rethrow;
     }
   }

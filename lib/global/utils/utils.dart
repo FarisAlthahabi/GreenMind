@@ -1,5 +1,6 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:green_mind/features/auth/model/user_model/user_model.dart';
 import 'package:green_mind/features/auth_manager/bloc/auth_manager_bloc.dart';
@@ -70,23 +71,23 @@ abstract class Utils {
         : png.greenMindLogoDark.image(width: width, height: height);
   }
 
-  // static SvgPicture appImageSvg(BuildContext context) {
-  //   final svg = Assets.images.svg;
-  //   bool isDark = Theme.of(context).brightness == Brightness.dark;
-  //   return isDark ? svg.greenMindWhiteSvg.svg() : svg.greenMindDarkSvg.svg();
-  // }
+  static SvgPicture appImageSvg(BuildContext context) {
+    final svg = Assets.images.svg;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? svg.greenMindWhiteSvg.svg() : svg.greenMindDarkSvg.svg();
+  }
 
-  // static SvgPicture appLogoSvg(
-  //   BuildContext context, {
-  //   double? width,
-  //   double? height,
-  // }) {
-  //   final svg = Assets.images.svg;
-  //   bool isDark = Theme.of(context).brightness == Brightness.dark;
-  //   return isDark
-  //       ? svg.greenMindLogoDarkSvg.svg(width: width, height: height)
-  //       : svg.greenMindLogoWhiteSvg.svg(width: width, height: height);
-  // }
+  static SvgPicture appLogoSvg(
+    BuildContext context, {
+    double? width,
+    double? height,
+  }) {
+    final svg = Assets.images.svg;
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark
+        ? svg.greenMindLogoDarkSvg.svg(width: width, height: height)
+        : svg.greenMindLogoWhiteSvg.svg(width: width, height: height);
+  }
 
   static String? validateInput(
     String? val,

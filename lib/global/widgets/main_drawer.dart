@@ -227,7 +227,8 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
       child: Column(
         crossAxisAlignment: .stretch,
         children: [
-          Expanded(child: Utils.appImage(context)),
+          // Expanded(child: Utils.appImage(context)),
+          Expanded(child: Utils.appLogo(context)),
           const SizedBox(height: 5),
           Text(
             AppConstants.appName,
@@ -239,7 +240,8 @@ class _MainDrawerWidgetState extends State<MainDrawerWidget> {
           ),
           const SizedBox(height: 5),
           Text(
-            "smart_plant_care_system".tr(),
+            "app_description".tr(),
+            // "smart_plant_care_system".tr(),
             style: context.tt.bodyMedium,
             textAlign: .center,
           ),

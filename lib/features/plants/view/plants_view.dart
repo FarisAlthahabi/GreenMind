@@ -264,9 +264,9 @@ class _PlantsPageState extends State<PlantsPage>
       builder: (context) => MarkHarvestedView(
         plant: plant,
         plantsCubit: plantsCubit,
-        // onSuccess: () {
-        //   fetchPlants(isRefresh: true);
-        // },
+        onSuccess: () {
+          fetchPlants(isRefresh: true);
+        },
       ),
     );
   }
@@ -332,13 +332,11 @@ class _PlantsPageState extends State<PlantsPage>
                       final currentPage = state.currentPage;
                       return NotificationListener(
                         onNotification: (scrollInfo) {
-                          // Check if we're near the bottom
                           if (scrollInfo is ScrollUpdateNotification) {
                             final maxScroll =
                                 scrollInfo.metrics.maxScrollExtent;
                             final currentScroll = scrollInfo.metrics.pixels;
 
-                            // Load more when user scrolls within 200px of bottom
                             if (maxScroll > 0 &&
                                 currentScroll >= maxScroll - 200 &&
                                 !plantsCubit.isLoadingMore &&
@@ -365,8 +363,6 @@ class _PlantsPageState extends State<PlantsPage>
                                   ...plants.map(
                                     (plant) => _buildPlantTile(plant, locale),
                                   ),
-
-                                  // Show loading indicator at bottom
                                   if (!hasReachedMax) ...[
                                     const Padding(
                                       padding: AppConstants.paddingV8,
