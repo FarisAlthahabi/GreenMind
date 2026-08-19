@@ -10,6 +10,7 @@ import 'package:green_mind/global/utils/utils.dart';
 import 'package:green_mind/global/widgets/loading_indicator.dart';
 import 'package:green_mind/global/widgets/main_snack_bar.dart';
 import 'package:green_mind/global/widgets/main_text_field.dart';
+import 'package:readmore/readmore.dart';
 
 @RoutePage()
 class AiChatBotView extends StatelessWidget {
@@ -33,6 +34,8 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
   final scrollController = ScrollController();
   final senderController = TextEditingController();
   // String initialMessage = '';
+
+  bool _isHeaderVisible = true;
 
   @override
   void initState() {
@@ -65,7 +68,7 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
         padding: AppConstants.padding16,
         child: Column(
           spacing: 20,
-          children: [_buildHeaderDescription(), _buildChatContent()],
+          children: [?_buildHeaderDescription(), _buildChatContent()],
         ),
       ),
     );
@@ -95,27 +98,37 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
     );
   }
 
-  Widget _buildHeaderDescription() {
-    return Container(
-      width: double.infinity,
-      padding: AppConstants.paddingH16V12,
-      decoration: BoxDecoration(
-        color: context.cs.errorContainer,
-        borderRadius: AppConstants.borderRadius10,
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.warning, color: context.cs.error, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'responses_for_consultation'.tr(),
-              style: context.tt.bodyLarge?.copyWith(
-                color: context.cs.onErrorContainer,
+  Widget? _buildHeaderDescription() {
+    if (!_isHeaderVisible) return null;
+    return Dismissible(
+      key: const ValueKey('header'),
+      direction: .horizontal,
+      onDismissed: (direction) {
+        setState(() {
+          _isHeaderVisible = false;
+        });
+      },
+      child: Container(
+        width: double.infinity,
+        padding: AppConstants.paddingH16V12,
+        decoration: BoxDecoration(
+          color: context.cs.errorContainer,
+          borderRadius: AppConstants.borderRadius10,
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.warning, color: context.cs.error, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'responses_for_consultation'.tr(),
+                style: context.tt.bodyLarge?.copyWith(
+                  color: context.cs.onErrorContainer,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -332,13 +345,34 @@ class _AiChatBotPageState extends State<AiChatBotPage> {
                 ),
                 child: Padding(
                   padding: AppConstants.padding12,
-                  child: Text(
+                  child: ReadMoreText(
                     message.message,
-                    style: context.tt.bodyMedium?.copyWith(
-                      color: textColor,
-                      fontWeight: .bold,
-                    ),
+                    trimMode: .Line,
+                    trimLines: 7,
+                    trimCollapsedText: "show_more".tr(),
+                    trimExpandedText: "show_less".tr(),
+                    annotations: [
+                      Annotation(
+                        regExp: RegExp(r'.*'),
+                        spanBuilder:
+                            ({required String text, TextStyle? textStyle}) =>
+                                TextSpan(
+                                  text: text,
+                                  style: context.tt.bodyMedium?.copyWith(
+                                    color: textColor,
+                                    fontWeight: .bold,
+                                  ),
+                                ),
+                      ),
+                    ],
                   ),
+                  // Text(
+                  //   message.message,
+                  //   style: context.tt.bodyMedium?.copyWith(
+                  //     color: textColor,
+                  //     fontWeight: .bold,
+                  //   ),
+                  // ),
                 ),
               ),
               Text(
@@ -383,8 +417,8 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
 
   void addMessage(String message) {
     widget.senderController.clear();
-    aiChatBotCubit.getAiResponseAsStream(message);
-    // aiChatBotCubit.getAiResponse(message);
+    // aiChatBotCubit.getAiResponseAsStream(message);
+    aiChatBotCubit.getAiResponse(message);
   }
 
   @override
@@ -428,6 +462,7 @@ class _TextSenderWidgetState extends State<TextSenderWidget> {
                 fillColor: context.cs.surfaceContainer,
                 borderColor: context.cs.outline,
                 borderWidth: 0.3,
+                maxLines: 4,
                 // readOnly: readOnly,
               ),
             ),

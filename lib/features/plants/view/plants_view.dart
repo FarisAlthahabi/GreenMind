@@ -509,7 +509,7 @@ class _PlantsPageState extends State<PlantsPage>
               ),
               Expanded(
                 child: Text(
-                  "${"harvest_date".tr()}: ${plant.harvestDate?.formatYYYYMMDD ?? "unknown".tr()}",
+                  "${"harvest_date".tr()}: ${plant.harvestDate?.formatYYYYMMDD ?? "unselected".tr()}",
                 ),
               ),
             ],
@@ -529,15 +529,15 @@ class _PlantsPageState extends State<PlantsPage>
     Color color,
     void Function() onTap,
   ) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: AppConstants.borderRadius10,
-      ),
-      child: Padding(
-        padding: AppConstants.padding8,
-        child: InkWell(
-          onTap: onTap,
+    return InkWell(
+      onTap: onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: AppConstants.borderRadius10,
+        ),
+        child: Padding(
+          padding: AppConstants.padding8,
           child: Icon(icon, color: color, size: 20),
         ),
       ),

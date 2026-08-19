@@ -75,7 +75,8 @@ class CropsCubit extends Cubit<GeneralCropsState> {
   }
 
   void addLocalCrop(CropModel crop) {
-    crops.add(crop);
+    // crops.add(crop);
+    crops = [crop, ...crops];
     search();
   }
 

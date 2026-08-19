@@ -204,7 +204,7 @@ class _DiagnosesPageState extends State<DiagnosesPage> {
   Widget _buildDiagnoseTile(DiagnoseModel diagnose, Locale locale) {
     final diseaseName = locale.isAr ? diagnose.nameAr : diagnose.nameEn;
     final technicalName = diagnose.nameTechnical;
-    final plantName = diagnose.plant?.name ?? "unknown_plant".tr();
+    final plantName = diagnose.plant?.name ?? "unselected_plant".tr();
     final confidence = diagnose.confidencePercentage;
     final isHealthy = (double.tryParse(confidence) ?? 0) > 50;
     final statusColor = isHealthy ? context.cs.primary : context.cs.error;

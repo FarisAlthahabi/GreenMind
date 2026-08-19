@@ -155,7 +155,7 @@ class _DispatchInventoryWidgetState extends State<DispatchInventoryWidget> {
   Widget _buildCloseIcon() {
     return InkWell(
       onTap: () => onCancelTap(context),
-      child: Icon(Icons.close, size: 20, color: context.cs.onSurfaceVariant),
+      child: Icon(Icons.close, size: 25, color: context.cs.onSurfaceVariant),
     );
   }
 }

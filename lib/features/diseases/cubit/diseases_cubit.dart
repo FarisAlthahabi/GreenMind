@@ -75,7 +75,8 @@ class DiseasesCubit extends Cubit<GeneralDiseasesState> {
   }
 
   void addLocalDisease(DiseaseModel disease) {
-    diseases.add(disease);
+    diseases = [disease, ...diseases];
+    // diseases.add(disease);
     search();
   }
 

@@ -102,27 +102,27 @@ class _StatsPageState extends State<StatsPage> {
             final confidenceRangesColumns = [
               ChartModel(
                 "less_than_40",
-                confidenceRanges.lessThan40.toDouble(),
+                double.tryParse(confidenceRanges.lessThan40) ?? 0.00,
                 Colors.red.shade400, // Low confidence - Red
               ),
               ChartModel(
                 "from_40_to_59",
-                confidenceRanges.from40To59.toDouble(),
+                double.tryParse(confidenceRanges.from40To59) ?? 40.00,
                 Colors.orange.shade400, // Below average - Orange
               ),
               ChartModel(
                 "from_60_to_79",
-                confidenceRanges.from60To79.toDouble(),
+                double.tryParse(confidenceRanges.from60To79) ?? 60.00,
                 Colors.amber.shade400, // Average - Amber/Yellow
               ),
               ChartModel(
                 "from_80_to_89",
-                confidenceRanges.from80To89.toDouble(),
+                double.tryParse(confidenceRanges.from80To89) ?? 80.00,
                 Colors.green.shade400, // Good - Light Green
               ),
               ChartModel(
                 "from_90_to_100",
-                confidenceRanges.from90To100.toDouble(),
+                double.tryParse(confidenceRanges.from90To100) ?? 100.00,
                 Colors.teal.shade400, // Excellent - Teal/Green
               ),
             ];

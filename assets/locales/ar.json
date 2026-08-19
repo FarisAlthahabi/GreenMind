@@ -217,7 +217,7 @@
   "select_user" : "اختر المستخدم",
   "select_plant" : "اختر النبات",
   "reason" : "السبب",
-  "unknown_plant" : "نبات غير معروف",
+  "unselected_plant" : "نبات غير محدد",
   "select_plant_optional" : "اختر النبات (اختياري)",
   "mark_as_harvested": "تحديد كمحصول",
   "harvest_quantity": "كمية المحصول",
@@ -256,5 +256,6 @@
   "select_harvest_status" : "اختر حالة الحصاد",
   "harvested" : "محصود",
   "unharvested" : "غير محصود",
-  "app_description" : "نظام العناية بالنباتات والمشتل الذكي"
+  "app_description" : "نظام العناية بالنباتات والمشتل الذكي",
+  "unselected" : "غير محدد"
 }

@@ -153,7 +153,7 @@ class _UpdateDiseaseWidgetState extends State<UpdateDiseaseWidget> {
   Widget _buildCloseIcon() {
     return InkWell(
       onTap: () => onCancelTap(context),
-      child: const Icon(Icons.close, size: 20),
+      child: const Icon(Icons.close, size: 25),
     );
   }
 }

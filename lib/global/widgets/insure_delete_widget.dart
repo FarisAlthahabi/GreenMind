@@ -142,7 +142,7 @@ class _InsureDeleteViewState<T extends DeleteModel>
         ),
         child: Padding(
           padding: AppConstants.padding16,
-          child: Icon(Icons.delete, color: context.cs.error, size: 35),
+          child: Icon(Icons.delete, color: context.cs.error, size: 25),
         ),
       ),
     );

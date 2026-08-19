@@ -50,6 +50,8 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
   late final DiagnosingDiseasesCubit diagnosingDiseasesCubit = context.read();
   late final PlantsCubit plantsCubit = context.read();
 
+  bool _isHeaderVisible = true;
+
   @override
   void initState() {
     super.initState();
@@ -84,7 +86,7 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
                 child: FadeInAnimation(child: widget),
               ),
               children: [
-                _buildHeaderDescription(),
+                ?_buildHeaderDescription(),
                 _buildUploadImageWithDiagonseBtn(),
                 const SizedBox.shrink(),
                 _buildResaultView(locale),
@@ -96,27 +98,37 @@ class _DiagnosingDiseasesPageState extends State<DiagnosingDiseasesPage> {
     );
   }
 
-  Widget _buildHeaderDescription() {
-    return Container(
-      width: .infinity,
-      padding: AppConstants.paddingH16V12,
-      decoration: BoxDecoration(
-        color: context.cs.errorContainer,
-        borderRadius: AppConstants.borderRadius10,
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.warning, color: context.cs.error, size: 20),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              'ai_diagnosis_for_consultation'.tr(),
-              style: context.tt.bodyLarge?.copyWith(
-                color: context.cs.onErrorContainer,
+  Widget? _buildHeaderDescription() {
+    if (!_isHeaderVisible) return null;
+    return Dismissible(
+      key: const ValueKey('header'),
+      direction: .horizontal,
+      onDismissed: (direction) {
+        setState(() {
+          _isHeaderVisible = false;
+        });
+      },
+      child: Container(
+        width: .infinity,
+        padding: AppConstants.paddingH16V12,
+        decoration: BoxDecoration(
+          color: context.cs.errorContainer,
+          borderRadius: AppConstants.borderRadius10,
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.warning, color: context.cs.error, size: 20),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                'ai_diagnosis_for_consultation'.tr(),
+                style: context.tt.bodyLarge?.copyWith(
+                  color: context.cs.onErrorContainer,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

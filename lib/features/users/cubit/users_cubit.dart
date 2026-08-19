@@ -127,7 +127,8 @@ class UsersCubit extends Cubit<GeneralUsersState> {
   }
 
   void addLocalUser(UserModel user) {
-    users.add(user);
+    users = [user, ...users];
+    // users.add(user);
     search();
   }
 

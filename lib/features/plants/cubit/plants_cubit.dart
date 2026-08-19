@@ -184,7 +184,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
         search: searchQuery,
         cropId: cropFilter?.id,
         isHealthy: selectedHealthStatus?.value,
-        isHarvested : selectedHarvestStatus?.value
+        isHarvested: selectedHarvestStatus?.value,
       );
 
       lastPage = paginatedPlants.pagination.lastPage;
@@ -280,7 +280,7 @@ class PlantsCubit extends Cubit<GeneralPlantsState> {
   // }
 
   void addLocalPlant(PlantModel plant) {
-    plants = [...plants, plant];
+    plants = [plant, ...plants];
     // search();
     emitPlants();
   }

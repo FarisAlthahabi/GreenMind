@@ -177,7 +177,7 @@
 //   Widget _buildCloseIcon() {
 //     return InkWell(
 //       onTap: () => onCancelTap(context),
-//       child: Icon(Icons.close, size: 20),
+//       child: Icon(Icons.close, size: 25),
 //     );
 //   }
 // }

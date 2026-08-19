@@ -217,7 +217,7 @@
   "select_user": "Select user",
   "select_plant": "Select plant",
   "reason": "Reason",
-  "unknown_plant": "Unknown Plant",
+  "unselected_plant": "Unselected Plant",
   "select_plant_optional": "Select plant (optional)",
   "mark_as_harvested": "Mark as Harvested",
   "harvest_quantity": "Harvest Quantity",
@@ -256,5 +256,6 @@
   "select_harvest_status" : "Select harvest status",
   "harvested" : "Harvested",
   "unharvested" : "Unharvested",
-  "app_description" : "Smart Plant Care and Nursery System"
+  "app_description" : "Smart Plant Care and Nursery System",
+  "unselected" : "Unselected"
 }

@@ -441,15 +441,15 @@ class _IrrigationSchedulePageState extends State<IrrigationSchedulePage>
     void Function() onTap, {
     bool isLoading = false,
   }) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: AppConstants.borderRadius10,
-      ),
-      child: Padding(
-        padding: AppConstants.padding8,
-        child: InkWell(
-          onTap: isLoading ? null : onTap,
+    return InkWell(
+      onTap: isLoading ? null : onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: AppConstants.borderRadius10,
+        ),
+        child: Padding(
+          padding: AppConstants.padding8,
           child: isLoading
               ? const LoadingIndicator(size: 20)
               : Icon(icon, color: color, size: 20),

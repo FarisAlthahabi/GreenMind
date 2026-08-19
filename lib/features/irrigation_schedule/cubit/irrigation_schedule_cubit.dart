@@ -188,7 +188,8 @@ class IrrigationScheduleCubit extends Cubit<GeneralIrrigationScheduleState> {
   }
 
   void addLocalSchedule(IrrigationScheduleModel schedule) {
-    schedules.add(schedule);
+    schedules = [schedule, ...schedules];
+    // schedules.add(schedule);
   }
 
   void updateLocalSchedule(IrrigationScheduleModel schedule) {

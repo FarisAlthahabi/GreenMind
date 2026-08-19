@@ -229,15 +229,15 @@ class _UsersPageState extends State<UsersPage> implements UsersViewCallBacks {
     Color color,
     void Function() onTap,
   ) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: AppConstants.borderRadius10,
-      ),
-      child: Padding(
-        padding: AppConstants.padding8,
-        child: InkWell(
-          onTap: onTap,
+    return InkWell(
+      onTap: onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: AppConstants.borderRadius10,
+        ),
+        child: Padding(
+          padding: AppConstants.padding8,
           child: Icon(icon, color: color, size: 20),
         ),
       ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:green_mind/global/utils/json_converters/string_converter.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'confidence_ranges.g.dart';
@@ -15,20 +16,25 @@ class ConfidenceRangesModel {
     required this.from90To100,
   });
 
+  @StringConverter()
   @JsonKey(name: "less_than_40")
-  final int lessThan40;
+  final String lessThan40;
 
+  @StringConverter()
   @JsonKey(name: "from_40_to_59")
-  final int from40To59;
+  final String from40To59;
 
+  @StringConverter()
   @JsonKey(name: "from_60_to_79")
-  final int from60To79;
+  final String from60To79;
 
+  @StringConverter()
   @JsonKey(name: "from_80_to_89")
-  final int from80To89;
+  final String from80To89;
 
+  @StringConverter()
   @JsonKey(name: "from_90_to_100")
-  final int from90To100;
+  final String from90To100;
 
   factory ConfidenceRangesModel.fromJson(Map<String, dynamic> json) =>
       _$ConfidenceRangesModelFromJson(json);
@@ -45,11 +51,11 @@ class ConfidenceRangesModel {
   }
 
   ConfidenceRangesModel copyWith({
-    int? lessThan40,
-    int? from40To59,
-    int? from60To79,
-    int? from80To89,
-    int? from90To100,
+    String? lessThan40,
+    String? from40To59,
+    String? from60To79,
+    String? from80To89,
+    String? from90To100,
   }) {
     return ConfidenceRangesModel(
       lessThan40: lessThan40 ?? this.lessThan40,

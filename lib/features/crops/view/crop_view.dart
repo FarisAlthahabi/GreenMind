@@ -200,15 +200,15 @@ class _CropsPageState extends State<CropsPage> implements CropsViewCallBacks {
     Color color,
     void Function() onTap,
   ) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: AppConstants.borderRadius10,
-      ),
-      child: Padding(
-        padding: AppConstants.padding10,
-        child: InkWell(
-          onTap: onTap,
+    return InkWell(
+      onTap: onTap,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: bgColor,
+          borderRadius: AppConstants.borderRadius10,
+        ),
+        child: Padding(
+          padding: AppConstants.padding10,
           child: Icon(icon, color: color, size: 20),
         ),
       ),
